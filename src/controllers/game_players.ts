@@ -4,6 +4,7 @@ import { GamePlayerDataType } from '@/models/games'
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
+import { updateGameStatus } from './games'
 
 export async function getUsersByGame(
   id: string,
@@ -47,6 +48,26 @@ export async function updateAmountSpent(playerId: string, amountSpent: number) {
   return data || []
 }
 
+async function verifyBustedPlayersLength() {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('game_players')
+    .select()
+    .eq('busted_at', null)
+
+  if (error) {
+    throw error
+  }
+
+  if (data.length === 1) {
+    updateGameStatus(data[0].game_id)
+  }
+
+  return data || []
+}
+
 export async function bustPlayer(playerId: string, bustedAt: Date | null) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
@@ -60,6 +81,8 @@ export async function bustPlayer(playerId: string, bustedAt: Date | null) {
   if (error) {
     throw error
   }
+
+  // await verifyBustedPlayersLength()
 
   revalidatePath('game')
 

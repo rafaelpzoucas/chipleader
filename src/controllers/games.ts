@@ -73,3 +73,17 @@ export async function getFinishedGames(): Promise<GameDataType[]> {
 
   return games || []
 }
+
+export async function updateGameStatus(gameId: string) {
+  const { data: games, error } = await supabase
+    .from('games')
+    .update({ status: false })
+    .eq('id', gameId)
+    .select()
+
+  if (error) {
+    throw error
+  }
+
+  return games || []
+}

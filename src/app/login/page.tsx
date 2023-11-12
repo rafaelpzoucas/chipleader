@@ -1,5 +1,11 @@
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { createClient } from '@/utils/supabase/server'
+import { ArrowLeft, Mail } from 'lucide-react'
 import { cookies, headers } from 'next/headers'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 export default function Login({
@@ -7,7 +13,7 @@ export default function Login({
 }: {
   searchParams: { message: string }
 }) {
-  async function signInWithEmail(formData: FormData) {
+  async function signInWithMagicLink(formData: FormData) {
     'use server'
 
     const cookieStore = cookies()
@@ -25,34 +31,39 @@ export default function Login({
     })
 
     if (error) {
-      return redirect('/login?message=Could not authenticate user')
+      return redirect('/login?message=Não foi possível autenticar o usuário.')
     }
+
+    return redirect(
+      '/login?message=Clique no link que enviamos para se autenticar.',
+    )
   }
 
   return (
-    <div className="p-4 ">
-      <form
-        className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
-        action={signInWithEmail}
-      >
-        <label className="text-md" htmlFor="email">
-          E-mail
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="exemplo@exemplo.com"
-          required
-        />
-        <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
-          Sign In
-        </button>
-        {searchParams?.message && (
-          <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-            {searchParams.message}
-          </p>
-        )}
-      </form>
+    <div className="flex items-center justify-center h-screen p-4">
+      {searchParams?.message ? (
+        <div className="flex flex-col gap-2">
+          <Link href="/login">
+            <Button>
+              <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
+            </Button>
+          </Link>
+          <Alert>
+            <Mail className="h-4 w-4" />
+            <AlertTitle>Verifique o seu e-mail</AlertTitle>
+            <AlertDescription>{searchParams.message}</AlertDescription>
+          </Alert>
+        </div>
+      ) : (
+        <form
+          className="flex flex-col gap-6 w-full justify-center text-foreground"
+          action={signInWithMagicLink}
+        >
+          <Label htmlFor="email">E-mail</Label>
+          <Input name="email" placeholder="exemplo@exemplo.com" required />
+          <Button type="submit">Confirmar e-mail</Button>
+        </form>
+      )}
     </div>
   )
 }
