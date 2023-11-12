@@ -48,6 +48,26 @@ export async function updateAmountSpent(playerId: string, amountSpent: number) {
   return data || []
 }
 
+async function bustLastPlayer(gamePlayersId: string) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('game_players')
+    .update({ busted_at: new Date() })
+    .eq('id', gamePlayersId)
+    .select()
+
+  if (error) {
+    throw error
+  }
+
+  revalidatePath('game')
+  console.log('teste', data)
+
+  return data || []
+}
+
 async function verifyBustedPlayersLength() {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
@@ -55,14 +75,14 @@ async function verifyBustedPlayersLength() {
   const { data, error } = await supabase
     .from('game_players')
     .select()
-    .eq('busted_at', null)
+    .is('busted_at', null)
 
   if (error) {
     throw error
   }
 
   if (data.length === 1) {
-    updateGameStatus(data[0].game_id)
+    Promise.all([updateGameStatus(data[0].game_id), bustLastPlayer(data[0].id)])
   }
 
   return data || []
@@ -82,7 +102,7 @@ export async function bustPlayer(playerId: string, bustedAt: Date | null) {
     throw error
   }
 
-  // await verifyBustedPlayersLength()
+  await verifyBustedPlayersLength()
 
   revalidatePath('game')
 

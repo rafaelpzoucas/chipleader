@@ -1,10 +1,11 @@
+'use client'
+
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/client'
 import { ArrowLeft, Mail } from 'lucide-react'
-import { cookies, headers } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -14,15 +15,12 @@ export default function Login({
   searchParams: { message: string }
 }) {
   async function signInWithMagicLink(formData: FormData) {
-    'use server'
+    const supabase = createClient()
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const origin = headers().get('origin')
+    const origin = location.origin
     const email = formData.get('email') as string
 
-    const { data, error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: false,
@@ -37,6 +35,16 @@ export default function Login({
     return redirect(
       '/login?message=Clique no link que enviamos para se autenticar.',
     )
+  }
+
+  async function signInWithGoogle() {
+    const supabase = createClient()
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    })
+
+    if (error) throw error
   }
 
   return (
@@ -55,14 +63,21 @@ export default function Login({
           </Alert>
         </div>
       ) : (
-        <form
-          className="flex flex-col gap-6 w-full justify-center text-foreground"
-          action={signInWithMagicLink}
-        >
-          <Label htmlFor="email">E-mail</Label>
-          <Input name="email" placeholder="exemplo@exemplo.com" required />
-          <Button type="submit">Confirmar e-mail</Button>
-        </form>
+        <div className="flex flex-col gap-4">
+          <Button variant="outline" onClick={signInWithGoogle}>
+            Continuar com o Google
+          </Button>
+          <form
+            className="flex flex-col gap-6 w-full justify-center text-foreground"
+            action={signInWithMagicLink}
+          >
+            <div className="space-y-1">
+              <Label htmlFor="email">E-mail</Label>
+              <Input name="email" placeholder="exemplo@exemplo.com" required />
+            </div>
+            <Button type="submit">Confirmar e-mail</Button>
+          </form>
+        </div>
       )}
     </div>
   )
