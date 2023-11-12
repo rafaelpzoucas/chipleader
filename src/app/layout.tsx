@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:3000'
+  : 'http://localhost:3010'
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className={inter.className}>{children}</body>
     </html>
   )
