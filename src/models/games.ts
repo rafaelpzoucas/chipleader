@@ -1,4 +1,4 @@
-import { ExpenseDataType } from './expenses'
+import { ExpenseDataType } from './expenses.types'
 import { UserDataType } from './users'
 
 export type GamePlayerDataType = {

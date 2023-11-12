@@ -31,11 +31,13 @@ export default async function AuthButton() {
       </form>
     </div>
   ) : (
-    <Link
-      href="/login"
-      className="w-full p-8 flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
-    >
-      <Button className="w-full">Login</Button>
-    </Link>
+    <div className="w-full p-8">
+      <Link
+        href="/login"
+        className="w-full flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+      >
+        <Button className="w-full">Login</Button>
+      </Link>
+    </div>
   )
 }
