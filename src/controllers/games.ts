@@ -1,18 +1,7 @@
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { GameDataType } from '@/models/games'
+import { createClient } from '@/utils/supabase/client'
 
-export type GameDataType = {
-  id: string
-  payout: number
-  status: boolean
-  buy_in: number
-  game_players: []
-  game_expenses: []
-  created_at: string
-}
-
-const cookieStore = cookies()
-const supabase = createClient(cookieStore)
+const supabase = createClient()
 
 export async function getGames(): Promise<GameDataType[]> {
   const { data: games, error } = await supabase.from('games').select(`
@@ -20,6 +9,25 @@ export async function getGames(): Promise<GameDataType[]> {
       game_players (*),
       game_expenses (*)
     `)
+
+  if (error) {
+    throw error
+  }
+
+  return games || []
+}
+
+export async function getGameById(id: string): Promise<GameDataType[]> {
+  const { data: games, error } = await supabase
+    .from('games')
+    .select(
+      `
+      *,
+      game_players(*),
+      game_expenses(*)
+    `,
+    )
+    .eq('id', id)
 
   if (error) {
     throw error

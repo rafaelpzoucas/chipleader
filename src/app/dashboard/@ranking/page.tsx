@@ -6,89 +6,48 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { getTop10UsersByRanking } from '@/controllers/users'
+import { UserDataType } from '@/models/users'
+import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ChevronRight } from 'lucide-react'
 
-export default function Ranking() {
+export default async function Ranking() {
+  const users: UserDataType[] = await getTop10UsersByRanking()
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Ranking</CardTitle>
+        <CardTitle>Ranking top 10</CardTitle>
       </CardHeader>
 
       <CardContent>
         <ol>
-          <li className="flex flex-row items-center gap-4 py-4 w-full">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+          {users.length > 0 &&
+            users.map((user) => (
+              <li
+                key={user.id}
+                className="flex flex-row items-center gap-4 py-4 w-full"
+              >
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
 
-            <div>
-              <strong>Rafael Zoucas</strong>
-              <p className="text-muted-foreground text-xs">Ranking #12</p>
-            </div>
+                <div>
+                  <strong>{user.name}</strong>
+                  <p className="text-muted-foreground text-xs">
+                    Ranking #{users.indexOf(user) + 1}
+                  </p>
+                </div>
 
-            <div className="flex flex-col text-right ml-auto">
-              <span className="text-muted-foreground text-xs">
-                Prêmio acumulado
-              </span>
-              <strong>R$ 1000,00</strong>
-            </div>
-          </li>
-          <li className="flex flex-row items-center gap-4 py-4 w-full">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-
-            <div>
-              <strong>Rafael Zoucas</strong>
-              <p className="text-muted-foreground text-xs">Ranking #12</p>
-            </div>
-
-            <div className="flex flex-col text-right ml-auto">
-              <span className="text-muted-foreground text-xs">
-                Prêmio acumulado
-              </span>
-              <strong>R$ 1000,00</strong>
-            </div>
-          </li>
-          <li className="flex flex-row items-center gap-4 py-4 w-full">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-
-            <div>
-              <strong>Rafael Zoucas</strong>
-              <p className="text-muted-foreground text-xs">Ranking #12</p>
-            </div>
-
-            <div className="flex flex-col text-right ml-auto">
-              <span className="text-muted-foreground text-xs">
-                Prêmio acumulado
-              </span>
-              <strong>R$ 1000,00</strong>
-            </div>
-          </li>
-          <li className="flex flex-row items-center gap-4 py-4 w-full">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-
-            <div>
-              <strong>Rafael Zoucas</strong>
-              <p className="text-muted-foreground text-xs">Ranking #12</p>
-            </div>
-
-            <div className="flex flex-col text-right ml-auto">
-              <span className="text-muted-foreground text-xs">
-                Prêmio acumulado
-              </span>
-              <strong>R$ 1000,00</strong>
-            </div>
-          </li>
+                <div className="flex flex-col text-right ml-auto">
+                  <span className="text-muted-foreground text-xs">
+                    Prêmio acumulado
+                  </span>
+                  <strong>{formatCurrencyBRL(user.cumulative_winnings)}</strong>
+                </div>
+              </li>
+            ))}
         </ol>
       </CardContent>
 

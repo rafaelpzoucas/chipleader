@@ -5,7 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { GameDataType, getActiveGames } from '@/controllers/games'
+import { getActiveGames } from '@/controllers/games'
+import { GameDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ChevronRight, Users } from 'lucide-react'
 import Link from 'next/link'
