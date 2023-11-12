@@ -7,7 +7,7 @@ export default async function Game({ params }: { params: { id: string } }) {
   const game: GameDataType[] = await getGameById(params.id)
 
   return (
-    <main className="space-y-8 p-4 pb-10">
+    <main className="p-4 pb-10">
       {game[0].status ? (
         <ActiveGame game={game[0]} />
       ) : (

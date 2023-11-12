@@ -36,7 +36,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
   }, 0)
 
   return (
-    <div className="space-y-8 p-4 pb-10">
+    <div className="space-y-8">
       <header className="flex flex-row items-center">
         <Link href="/dashboard" className="p-3">
           <ArrowLeft className="w-6 h-6" />
@@ -50,11 +50,9 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
         <InvitePlayersSheet gameId={game.id} />
 
         {game.game_players.length > 0 &&
-          game.game_players.map(() =>
-            players.map((player) => (
-              <PlayerCardSheet key={player.id} player={player} />
-            )),
-          )}
+          players.map((player) => (
+            <PlayerCardSheet key={player.id} player={player} />
+          ))}
       </section>
 
       <section className="space-y-3">
