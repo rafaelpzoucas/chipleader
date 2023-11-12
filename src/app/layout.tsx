@@ -3,8 +3,8 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
+const defaultUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
   : 'http://localhost:3010'
 
 export const metadata = {
