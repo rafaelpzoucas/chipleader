@@ -31,7 +31,7 @@ export default async function AuthButton() {
       </form>
     </div>
   ) : (
-    <div className="w-full p-8">
+    <div className="w-full max-w-sm p-8">
       <Link
         href="/login"
         className="w-full flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"

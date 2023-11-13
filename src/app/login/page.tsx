@@ -48,9 +48,9 @@ export default function Login({
   }
 
   return (
-    <div className="flex items-center justify-center h-screen p-4">
+    <div className="flex items-center justify-center h-screen p-8">
       {searchParams?.message ? (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full">
           <Link href="/login">
             <Button>
               <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
@@ -63,10 +63,11 @@ export default function Login({
           </Alert>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 w-full">
           <Button variant="outline" onClick={signInWithGoogle}>
             Continuar com o Google
           </Button>
+          <hr />
           <form
             className="flex flex-col gap-6 w-full justify-center text-foreground"
             action={signInWithMagicLink}
