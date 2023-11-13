@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Button } from './ui/button'
 
-export default async function AuthButton() {
+export default async function Authenticate() {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 

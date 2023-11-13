@@ -1,7 +1,7 @@
+import Authenticate from '@/components/authenticate'
 import { createClient } from '@/utils/supabase/server'
 import { Spade } from 'lucide-react'
 import { cookies } from 'next/headers'
-import AuthButton from '../components/AuthButton'
 
 export default async function Index() {
   const cookieStore = cookies()
@@ -27,7 +27,7 @@ export default async function Index() {
       </h1>
       <p>Faça seu login para começar.</p>
 
-      {isSupabaseConnected && <AuthButton />}
+      {isSupabaseConnected && <Authenticate />}
     </div>
   )
 }
