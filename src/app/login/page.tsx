@@ -37,7 +37,7 @@ export default function Login({
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3010/auth/callback',
+        redirectTo: 'http://chipleader.vercel.app/auth/callback',
       },
     })
 
@@ -67,7 +67,7 @@ export default function Login({
             <Button variant="outline" onClick={signInWithGoogle}>
               Continuar com o Google
             </Button>
-            <hr />
+            {/* <hr /> */}
             {/* <form
               className="flex flex-col gap-6 w-full justify-center text-foreground"
               action={signInWithMagicLink}
