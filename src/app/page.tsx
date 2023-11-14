@@ -1,7 +1,8 @@
 import Authenticate from '@/components/authenticate'
 import { createClient } from '@/utils/supabase/server'
-import { Spade } from 'lucide-react'
 import { cookies } from 'next/headers'
+import Image from 'next/image'
+import logo from '../../public/chipleader-logo.svg'
 
 export default async function Index() {
   const cookieStore = cookies()
@@ -21,8 +22,8 @@ export default async function Index() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="flex flex-row items-center justify-center gap-2 text-2xl font-bold">
-        <Spade />
+      <Image src={logo} width={100} height={100} alt="Chipleader" />
+      <h1 className="flex flex-row items-center justify-center gap-2 text-2xl font-bold mt-4">
         Chipleader
       </h1>
       <p>Faça seu login para começar.</p>

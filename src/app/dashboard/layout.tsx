@@ -3,18 +3,20 @@ import { Plus } from 'lucide-react'
 
 export default function DashboardLayout({
   children,
+  userHeader,
   active,
   ranking,
   history,
 }: {
   children: React.ReactNode
+  userHeader: React.ReactNode
   active: React.ReactNode
   ranking: React.ReactNode
   history: React.ReactNode
 }) {
   return (
     <main className="space-y-6 pb-10">
-      {children}
+      {userHeader}
 
       <div className="flex px-4">
         <Button className="w-full">

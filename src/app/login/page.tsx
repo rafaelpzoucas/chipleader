@@ -2,34 +2,38 @@
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { createClient } from '@/utils/supabase/client'
 import { ArrowLeft, Mail } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import googleLogo from '../../../public/google-logo.svg'
 
 export default function Login({
   searchParams,
 }: {
   searchParams: { message: string }
 }) {
-  // async function signInWithMagicLink(formData: FormData) {
-  //   const supabase = createClient()
+  async function signInWithMagicLink(formData: FormData) {
+    const supabase = createClient()
 
-  //   const origin = location.origin
-  //   const email = formData.get('email') as string
+    const origin = location.origin
+    const email = formData.get('email') as string
 
-  //   const { error } = await supabase.auth.signInWithOtp({
-  //     email,
-  //     options: {
-  //       shouldCreateUser: false,
-  //       emailRedirectTo: `${origin}/auth/callback`,
-  //     },
-  //   })
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
+    })
 
-  //   if (error) {
-  //     return redirect('/login?message=error')
-  //   }
-  //   return redirect('/login?message=confirm')
-  // }
+    if (error) {
+      return redirect('/login?message=error')
+    }
+    return redirect('/login?message=confirm')
+  }
 
   async function signInWithGoogle() {
     const supabase = createClient()
@@ -65,10 +69,17 @@ export default function Login({
         ) : (
           <div className="flex flex-col gap-4 w-full">
             <Button variant="outline" onClick={signInWithGoogle}>
+              <Image
+                src={googleLogo}
+                width={20}
+                height={20}
+                alt="G"
+                className="mr-2"
+              />
               Continuar com o Google
             </Button>
-            {/* <hr /> */}
-            {/* <form
+            <hr />
+            <form
               className="flex flex-col gap-6 w-full justify-center text-foreground"
               action={signInWithMagicLink}
             >
@@ -86,7 +97,7 @@ export default function Login({
                 )}
               </div>
               <Button type="submit">Confirmar e-mail</Button>
-            </form> */}
+            </form>
           </div>
         )}
       </div>
