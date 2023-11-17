@@ -4,10 +4,13 @@ import { GameDataType, GamePlayerDataType } from '@/models/games'
 
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { formatDate } from '@/utils/formatDate'
+import { User } from 'lucide-react'
 import Link from 'next/link'
 
 export async function HistoryCard({ game }: { game: GameDataType }) {
   const players: GamePlayerDataType[] = await getUsersByGame(game.id)
+
+  console.log(players[0])
 
   return (
     <Link href={`/game/${game.id}`}>
@@ -22,8 +25,14 @@ export async function HistoryCard({ game }: { game: GameDataType }) {
                 {index + 1}º lugar
               </p>
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>{player.users.name[0]}</AvatarFallback>
+                <AvatarImage src={player.users?.user_metadata?.avatar_url} />
+                <AvatarFallback>
+                  {player.users.user_metadata ? (
+                    player.users.user_metadata.name[0]
+                  ) : (
+                    <User className="w-4 h-4" />
+                  )}
+                </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-baseline">
                 <strong>{player.users.name.split(' ')[0]}</strong>

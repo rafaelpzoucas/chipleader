@@ -17,7 +17,7 @@ import {
   GamePlayerDataType,
 } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { ArrowLeft, Plus, User } from 'lucide-react'
 import Link from 'next/link'
 import { getExpensesByGame, getUsersByGame } from './actions'
 import { GameExpense } from './game-expense'
@@ -63,8 +63,14 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
               {index === 0 ? '2' : index === 1 ? '1' : '3'}º lugar
             </p>
             <Avatar className={cn(index === 1 && 'w-16 h-16')}>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>{player.users.name[0]}</AvatarFallback>
+              <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
+              <AvatarFallback>
+                {player?.users?.user_metadata?.name ? (
+                  player?.users?.user_metadata?.name[0]
+                ) : (
+                  <User className="w-4 h-4" />
+                )}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-center justify-center">
               <strong>{player.users.name.split(' ')[0]}</strong>
@@ -92,8 +98,16 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
               <Card className="p-4 w-full">
                 <header className="relative flex flex-row items-end gap-4 w-full">
                   <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>{player.users.name[0]}</AvatarFallback>
+                    <AvatarImage
+                      src={player?.users?.user_metadata?.avatar_url}
+                    />
+                    <AvatarFallback>
+                      {player?.users?.user_metadata?.name ? (
+                        player?.users?.user_metadata?.name[0]
+                      ) : (
+                        <User className="w-4 h-4" />
+                      )}
+                    </AvatarFallback>
                   </Avatar>
 
                   <div className="text-left">

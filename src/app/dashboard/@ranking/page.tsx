@@ -9,7 +9,8 @@ import {
 import { getTop10UsersByRanking } from '@/controllers/users'
 import { UserDataType } from '@/models/users'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, User } from 'lucide-react'
+import Link from 'next/link'
 
 export default async function Ranking() {
   const users: UserDataType[] = await getTop10UsersByRanking()
@@ -31,7 +32,11 @@ export default async function Ranking() {
                 <Avatar>
                   <AvatarImage src={user?.user_metadata?.avatar_url} />
                   <AvatarFallback>
-                    {user && user?.user_metadata?.name[0]}
+                    {user?.user_metadata?.name ? (
+                      user?.user_metadata?.name[0]
+                    ) : (
+                      <User className="w-4 h-4" />
+                    )}
                   </AvatarFallback>
                 </Avatar>
 
@@ -57,11 +62,13 @@ export default async function Ranking() {
         </ol>
       </CardContent>
 
-      <CardFooter>
-        <p>Ver todos</p>
+      <Link href="/ranking">
+        <CardFooter className="p-4">
+          <p>Ver todos</p>
 
-        <ChevronRight className="w-4 h-4 ml-auto" />
-      </CardFooter>
+          <ChevronRight className="w-4 h-4 ml-auto" />
+        </CardFooter>
+      </Link>
     </Card>
   )
 }
