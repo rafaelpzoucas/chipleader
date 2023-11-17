@@ -37,14 +37,12 @@ export default function Login({
   }
 
   async function signInWithGoogle() {
-    const defaultUrl = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}/auth/callback`
-      : 'http://localhost:3010/auth/callback'
+    const defaulURL = 'https://chipleader.vercel.app/auth/callback'
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: defaultUrl,
+        redirectTo: defaulURL,
       },
     })
 
