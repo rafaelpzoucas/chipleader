@@ -74,6 +74,19 @@ export async function getFinishedGames(): Promise<GameDataType[]> {
   return games || []
 }
 
+export async function createGame(buyIn: number) {
+  const { data, error } = await supabase
+    .from('games')
+    .insert([{ buy_in: buyIn }])
+    .select()
+
+  if (error) {
+    console.log(error)
+  }
+
+  return data || []
+}
+
 export async function updateGameStatus(gameId: string) {
   const { data: games, error } = await supabase
     .from('games')

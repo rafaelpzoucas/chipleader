@@ -1,4 +1,4 @@
-import { getGameById } from '@/controllers/games'
+import { createGame, getGameById } from '@/controllers/games'
 import { GameDataType } from '@/models/games'
 import { create } from 'zustand'
 
@@ -19,6 +19,13 @@ export const useGame = create<useGameStoreType>((set) => ({
 
     if (response) {
       set({ game: response })
+    }
+  },
+  createGame: async (buyIn: number) => {
+    const response = await createGame(buyIn)
+
+    if (response) {
+      console.log('created')
     }
   },
   setPayout: (buyIn: number) =>

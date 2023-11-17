@@ -16,9 +16,9 @@ export default function Login({
 }: {
   searchParams: { message: string }
 }) {
-  async function signInWithMagicLink(formData: FormData) {
-    const supabase = createClient()
+  const supabase = createClient()
 
+  async function signInWithMagicLink(formData: FormData) {
     const origin = location.origin
     const email = formData.get('email') as string
 
@@ -36,16 +36,16 @@ export default function Login({
   }
 
   async function signInWithGoogle() {
-    const supabase = createClient()
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://chipleader.vercel.app/auth/callback',
+        redirectTo: 'http://localhost:3010/auth/callback',
       },
     })
 
-    if (error) throw error
+    if (error) {
+      console.log(error)
+    }
   }
 
   return (
