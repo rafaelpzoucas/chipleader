@@ -29,12 +29,18 @@ export default async function Ranking() {
                 className="flex flex-row items-center gap-4 py-4 w-full"
               >
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage src={user?.user_metadata?.avatar_url} />
+                  <AvatarFallback>
+                    {user && user?.user_metadata?.name[0]}
+                  </AvatarFallback>
                 </Avatar>
 
                 <div>
-                  <strong>{user.name}</strong>
+                  <strong>
+                    {user && user?.user_metadata?.name
+                      ? user.user_metadata.name
+                      : user.name}
+                  </strong>
                   <p className="text-muted-foreground text-xs">
                     Ranking #{users.indexOf(user) + 1}
                   </p>

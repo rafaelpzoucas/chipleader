@@ -45,6 +45,7 @@ export async function getUsersByGame(
     `,
     )
     .eq('game_id', id)
+    .order('busted_at', { ascending: false })
 
   if (error) {
     throw error

@@ -61,8 +61,8 @@ export default function DashboardLayout({
 
       <section className="px-4">{ranking}</section>
 
-      <section className="space-y-3">
-        <h1 className="ml-4 font-bold">Últimos jogos</h1>
+      <section>
+        <h1 className="ml-4 mb-3 font-bold">Últimos jogos</h1>
         {history}
       </section>
     </main>

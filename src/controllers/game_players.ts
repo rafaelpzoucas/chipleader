@@ -21,6 +21,7 @@ export async function getUsersByGame(
     `,
     )
     .eq('game_id', id)
+    .order('busted_at', { ascending: false })
 
   if (error) {
     throw error
@@ -63,7 +64,6 @@ async function bustLastPlayer(gamePlayersId: string) {
   }
 
   revalidatePath('game')
-  console.log('teste', data)
 
   return data || []
 }
@@ -82,8 +82,19 @@ async function verifyBustedPlayersLength() {
   }
 
   if (data.length === 1) {
-    Promise.all([updateGameStatus(data[0].game_id), bustLastPlayer(data[0].id)])
+    await updateGameStatus(data[0].game_id)
+
+    const bustLastPlayerPromise = () =>
+      new Promise(() => {
+        setTimeout(() => {
+          bustLastPlayer(data[0].id)
+        }, 1000)
+      })
+
+    await bustLastPlayerPromise()
   }
+
+  revalidatePath('game')
 
   return data || []
 }

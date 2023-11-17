@@ -10,6 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { cn } from '@/lib/utils'
 import {
   GameDataType,
   GameExpenseDataType,
@@ -25,6 +26,8 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
   const players: GamePlayerDataType[] = await getUsersByGame(game.id)
   const expenses: GameExpenseDataType[] = await getExpensesByGame(game.id)
 
+  const podiumPlayers = [players[1], players[0], players[2]]
+
   const totalPayout = players.reduce((acc, player) => {
     return acc + player.amount_spent
   }, 0)
@@ -32,6 +35,16 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
   const totalExpensesPrice = expenses.reduce((acc, expense) => {
     return acc + expense.expenses.price
   }, 0)
+
+  const expensesPriceEach = totalExpensesPrice / players.length
+
+  function calculatePayout(index: number, amountSpent: number) {
+    const percentages = [0.3, 0.5, 0.2]
+    const percentage = percentages[index] || 0
+    const payout = totalPayout * percentage - amountSpent - expensesPriceEach
+
+    return payout
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -44,75 +57,54 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
         <h1 className="text-xl font-bold">Jogo finalizado</h1>
       </header>
       <section className="flex flex-row items-center justify-center gap-8 p-4">
-        <div className="flex flex-col items-center">
-          <p className="text-muted-foreground text-xs mb-3">2º lugar</p>
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>{players[1].users.name[0]}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col items-center justify-center">
-            <strong>{players[1].users.name.split(' ')[0]}</strong>
-            <span className="text-xs">
-              + {formatCurrencyBRL(totalPayout * 0.3)}
-            </span>
-            <span className="text-xs">- R$ 100,00</span>
-            <strong>R$ 100,00</strong>
+        {podiumPlayers.map((player, index) => (
+          <div key={player.id} className="flex flex-col items-center">
+            <p className="text-muted-foreground text-xs mb-3">
+              {index === 0 ? '2' : index === 1 ? '1' : '3'}º lugar
+            </p>
+            <Avatar className={cn(index === 1 && 'w-16 h-16')}>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>{player.users.name[0]}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col items-center justify-center">
+              <strong>{player.users.name.split(' ')[0]}</strong>
+              <strong
+                className={cn(
+                  calculatePayout(index, player.amount_spent) < 0 &&
+                    'text-destructive',
+                  calculatePayout(index, player.amount_spent) > 0 &&
+                    'text-emerald-600',
+                )}
+              >
+                {formatCurrencyBRL(calculatePayout(index, player.amount_spent))}
+              </strong>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col items-center">
-          <p className="text-muted-foreground text-xs mb-3">1º lugar</p>
-          <Avatar className="w-16 h-16">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>{players[0].users.name[0]}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col items-center justify-center">
-            <strong>{players[0].users.name.split(' ')[0]}</strong>
-            <span className="text-xs">
-              + {formatCurrencyBRL(totalPayout * 0.5)}
-            </span>
-            <span className="text-xs">- R$ 100,00</span>
-            <strong>R$ 100,00</strong>
-          </div>
-        </div>
-        <div className="flex flex-col items-center">
-          <p className="text-muted-foreground text-xs mb-3">3º lugar</p>
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>{players[2].users.name[0]}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col items-center justify-center">
-            <strong>{players[2].users.name.split(' ')[0]}</strong>
-            <span className="text-xs">
-              + {formatCurrencyBRL(totalPayout * 0.2)}
-            </span>
-            <span className="text-xs">- R$ 100,00</span>
-            <strong>R$ 100,00</strong>
-          </div>
-        </div>
+        ))}
       </section>
 
       <section className="space-y-2">
         {game.game_players.length > 0 &&
-          players.map((player) => (
+          players.slice(3).map((player, index) => (
             <div key={player.id} className="flex flex-row gap-4 items-center">
-              <strong>4º</strong>
+              <strong>{index + 4}º</strong>
 
               <Card className="p-4 w-full">
                 <header className="relative flex flex-row items-end gap-4 w-full">
                   <Avatar>
                     <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>R</AvatarFallback>
+                    <AvatarFallback>{player.users.name[0]}</AvatarFallback>
                   </Avatar>
 
                   <div className="text-left">
-                    <strong>Rafael Zoucas</strong>
+                    <strong>{player.users.name}</strong>
                     <p className="text-muted-foreground text-xs">
                       Ganhos {formatCurrencyBRL(100)}
                     </p>
                   </div>
 
-                  <div className="flex flex-col ml-auto text-sm h-full">
-                    <strong>{formatCurrencyBRL(1000)}</strong>
+                  <div className="flex flex-col ml-auto text-sm h-full text-right">
+                    <strong>- {formatCurrencyBRL(player.amount_spent)}</strong>
                   </div>
                 </header>
               </Card>

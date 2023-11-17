@@ -1,4 +1,4 @@
-export type GoogleUserMetaDataType = {
+export type UserMetadataType = {
   iss: string
   sub: string
   name: string
@@ -15,4 +15,5 @@ export type UserDataType = {
   name: string
   cumulative_winnings: number
   amount_spent: number
+  user_metadata: UserMetadataType
 }

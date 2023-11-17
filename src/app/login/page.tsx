@@ -32,14 +32,19 @@ export default function Login({
     if (error) {
       return redirect('/login?message=error')
     }
+
     return redirect('/login?message=confirm')
   }
 
   async function signInWithGoogle() {
+    const defaultUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3010'
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3010/auth/callback',
+        redirectTo: defaultUrl,
       },
     })
 
