@@ -1,10 +1,31 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getTop10UsersByRanking } from '@/controllers/users'
 import { cn } from '@/lib/utils'
 import { UserDataType } from '@/models/users'
 
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
+import { createClient } from '@/utils/supabase/server'
 import { User } from 'lucide-react'
+import { cookies } from 'next/headers'
+
+async function getTop10UsersByRanking(): Promise<UserDataType[]> {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: users, error } = await supabase
+    .from('users')
+    .select()
+    .order('cumulative_winnings', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  if (error) {
+    throw error
+  }
+
+  return users || []
+}
 
 export default async function RankingPage() {
   const users: UserDataType[] = await getTop10UsersByRanking()
