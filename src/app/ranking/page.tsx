@@ -7,7 +7,7 @@ import { createClient } from '@/utils/supabase/server'
 import { User } from 'lucide-react'
 import { cookies } from 'next/headers'
 
-async function getTop10UsersByRanking(): Promise<UserDataType[]> {
+async function getUsersByRanking(): Promise<UserDataType[]> {
   'use server'
 
   const cookieStore = cookies()
@@ -18,7 +18,6 @@ async function getTop10UsersByRanking(): Promise<UserDataType[]> {
     .select()
     .order('cumulative_winnings', { ascending: false })
     .order('created_at', { ascending: false })
-    .limit(10)
 
   if (error) {
     throw error
@@ -28,7 +27,7 @@ async function getTop10UsersByRanking(): Promise<UserDataType[]> {
 }
 
 export default async function RankingPage() {
-  const users: UserDataType[] = await getTop10UsersByRanking()
+  const users: UserDataType[] = await getUsersByRanking()
 
   const podiumPlayers = [users[1], users[0], users[2]]
 
