@@ -4,14 +4,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { GameExpenseDataType } from '@/models/games'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { createClient } from '@/utils/supabase/server'
-import { MoreVertical, Trash } from 'lucide-react'
+import { MoreVertical, Pencil, Trash } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
+import { getUsersByGame } from './actions'
+import { ExpensesForm } from './expenses-form'
 
-export function GameExpense({ expense }: { expense: GameExpenseDataType }) {
+type GameExpensePropsType = {
+  expense: GameExpenseDataType
+}
+
+export async function GameExpense({ expense }: GameExpensePropsType) {
+  const players: GamePlayerDataType[] = await getUsersByGame(expense.game_id)
+
   async function handleRemoveExpense() {
     'use server'
 
@@ -38,28 +53,48 @@ export function GameExpense({ expense }: { expense: GameExpenseDataType }) {
       key={expense.id}
       className="flex flex-row items-center justify-between py-3 border-t"
     >
-      <span>{expense.expenses.description}</span>
+      <span>{expense.description}</span>
       <strong className="ml-auto mr-2">
-        {formatCurrencyBRL(expense.expenses.price)}
+        {formatCurrencyBRL(expense.price)}
       </strong>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="p-2">
-          <MoreVertical className="w-4 h-4" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>Editar</DropdownMenuItem>
-          <DropdownMenuItem>
-            <form action={handleRemoveExpense}>
-              <button
-                type="submit"
-                className="flex flex-row items-center gap-2"
-              >
-                <Trash className="w-4 h-4" /> Excluir
-              </button>
-            </form>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Sheet>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="p-2">
+            <MoreVertical className="w-4 h-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <SheetTrigger>
+                <Pencil className="w-4 h-4 mr-2" /> Editar
+              </SheetTrigger>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem>
+              <form action={handleRemoveExpense}>
+                <button
+                  type="submit"
+                  className="flex flex-row items-center gap-2"
+                >
+                  <Trash className="w-4 h-4" /> Excluir
+                </button>
+              </form>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Editar despesa</SheetTitle>
+          </SheetHeader>
+
+          <ExpensesForm
+            players={players}
+            gameId={expense.game_id}
+            expenseId={expense.id}
+            defaultValues={expense}
+          />
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

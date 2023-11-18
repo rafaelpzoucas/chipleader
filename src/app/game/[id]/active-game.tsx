@@ -1,6 +1,4 @@
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Sheet,
   SheetContent,
@@ -8,7 +6,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-
 import {
   GameDataType,
   GameExpenseDataType,
@@ -18,6 +15,7 @@ import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { getExpensesByGame, getUsersByGame } from './actions'
+import { ExpensesForm } from './expenses-form'
 import { GameExpense } from './game-expense'
 import { GameWinnings } from './game-winnings'
 import { InvitePlayersSheet } from './invite-players-sheet'
@@ -32,7 +30,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
   }, 0)
 
   const totalExpensesPrice = expenses.reduce((acc, expense) => {
-    return acc + expense.expenses.price
+    return acc + expense.price
   }, 0)
 
   return (
@@ -47,7 +45,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
       <GameWinnings totalPayout={totalPayout} />
 
       <section className="space-y-2">
-        <InvitePlayersSheet gameId={game.id} />
+        <InvitePlayersSheet gameId={game.id} buyIn={game.buy_in} />
 
         {game.game_players.length > 0 &&
           players.map((player) => (
@@ -83,19 +81,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
                 <SheetTitle>Nova despesa</SheetTitle>
               </SheetHeader>
 
-              <form action="" className="space-y-4">
-                <div className="space-y-1">
-                  <Label>Descrição</Label>
-                  <Input placeholder="Digite a descrição..." />
-                </div>
-
-                <div className="space-y-1">
-                  <Label>Valor</Label>
-                  <Input placeholder="R$ 0,00" />
-                </div>
-
-                <Button className="w-full">Adicionar despesa</Button>
-              </form>
+              <ExpensesForm players={players} gameId={game.id} />
             </SheetContent>
           </Sheet>
         </div>

@@ -13,13 +13,18 @@ import { copyToClipboard } from '@/utils/copyToClipboard'
 import { Check, Copy, Plus } from 'lucide-react'
 import { useState } from 'react'
 
-export function InvitePlayersSheet({ gameId }: { gameId: string }) {
+type InvitePlayersSheetProps = {
+  gameId: string
+  buyIn: number
+}
+
+export function InvitePlayersSheet({ gameId, buyIn }: InvitePlayersSheetProps) {
   const [isCopied, setIsCopied] = useState(false)
 
-  const gameLink = `https://chipleader.vercel.app/game/${gameId}`
+  const inviteLink = `${location.origin}/api/invite/game?code=${gameId}&buyin=${buyIn}`
 
   function handleCopy() {
-    copyToClipboard(gameLink)
+    copyToClipboard(inviteLink)
 
     setIsCopied((state) => !state)
 
@@ -43,7 +48,7 @@ export function InvitePlayersSheet({ gameId }: { gameId: string }) {
 
           <div className="flex flex-row gap-3">
             <Card className="flex items-center px-4 w-full truncate text-muted-foreground bg-secondary">
-              <span className="w-full truncate">{gameLink}</span>
+              <span className="w-full truncate">{inviteLink}</span>
             </Card>
             <Button
               variant={isCopied ? 'default' : 'outline'}

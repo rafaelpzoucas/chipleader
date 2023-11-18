@@ -1,4 +1,3 @@
-import { ExpenseDataType } from './expenses.types'
 import { UserDataType } from './users'
 
 export type GamePlayerDataType = {
@@ -15,8 +14,9 @@ export type GameExpenseDataType = {
   id: string
   created_at: string
   game_id: string
-  expense_id: string
-  expenses: ExpenseDataType
+  game_player: string
+  description: string
+  price: number
 }
 
 export type GameDataType = {
