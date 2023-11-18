@@ -33,7 +33,7 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
   }, 0)
 
   const totalExpensesPrice = expenses.reduce((acc, expense) => {
-    return acc + expense.expenses.price
+    return acc + expense.price
   }, 0)
 
   const expensesPriceEach = totalExpensesPrice / players.length
