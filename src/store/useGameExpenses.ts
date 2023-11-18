@@ -5,6 +5,6 @@ type UseGameExpensesType = {
   gameExpenses: GameExpenseDataType[]
 }
 
-export const useGameExpenses = create<UseGameExpensesType>((set) => ({
+export const useGameExpenses = create<UseGameExpensesType>(() => ({
   gameExpenses: [],
 }))

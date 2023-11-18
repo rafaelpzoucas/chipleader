@@ -9,10 +9,14 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('users')
     .update({ user_metadata: user?.user_metadata })
     .eq('id', user?.id)
     .select()
+
+  if (error) {
+    console.log(error)
+  }
   return <></>
 }
