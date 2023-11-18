@@ -26,6 +26,11 @@ export async function getUserInfo(
 }
 
 export async function getTop10UsersByRanking(): Promise<UserDataType[]> {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
   const { data: users, error } = await supabase
     .from('users')
     .select()
