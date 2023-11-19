@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -21,6 +20,7 @@ import { ArrowLeft, Plus, User } from 'lucide-react'
 import Link from 'next/link'
 import { getExpensesByGame, getUsersByGame } from '../actions'
 import { GameExpense } from './game-expense'
+import { PlayerCardSheet } from './player-card-sheet'
 
 export async function InactiveGame({ game }: { game: GameDataType }) {
   const players: GamePlayerDataType[] = await getUsersByGame(game.id)
@@ -97,33 +97,12 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
             <div key={player.id} className="flex flex-row gap-4 items-center">
               <strong>{index + 4}º</strong>
 
-              <Card className="p-4 w-full">
-                <header className="relative flex flex-row items-end gap-4 w-full">
-                  <Avatar>
-                    <AvatarImage
-                      src={player?.users?.user_metadata?.avatar_url}
-                    />
-                    <AvatarFallback>
-                      {player?.users?.user_metadata?.name ? (
-                        player?.users?.user_metadata?.name[0]
-                      ) : (
-                        <User className="w-4 h-4" />
-                      )}
-                    </AvatarFallback>
-                  </Avatar>
-
-                  <div className="text-left">
-                    <strong>{player.users.name}</strong>
-                    <p className="text-muted-foreground text-xs">
-                      Ganhos {formatCurrencyBRL(100)}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col ml-auto text-sm h-full text-right">
-                    <strong>- {formatCurrencyBRL(player.amount_spent)}</strong>
-                  </div>
-                </header>
-              </Card>
+              <PlayerCardSheet
+                player={player}
+                expenses={expenses}
+                totalPlayers={players.length}
+                gameStatus={game.status}
+              />
             </div>
           ))}
       </section>

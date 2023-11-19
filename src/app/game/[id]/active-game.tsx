@@ -56,6 +56,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
               player={player}
               expenses={expenses}
               totalPlayers={players.length}
+              gameStatus={game.status}
             />
           ))}
       </section>
@@ -75,11 +76,12 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
           {expenses.map((expense) => (
             <GameExpense key={expense.id} expense={expense} />
           ))}
+
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" className="w-full mt-4">
                 <Plus className="w-4 h-4 mr-2" />
-                Adicionar despesa
+                Despesa
               </Button>
             </SheetTrigger>
 

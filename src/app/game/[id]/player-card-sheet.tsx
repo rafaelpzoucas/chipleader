@@ -14,17 +14,19 @@ type PlayerCardSheetPropsType = {
   player: GamePlayerDataType
   expenses: GameExpenseDataType[]
   totalPlayers: number
+  gameStatus: boolean
 }
 
 export function PlayerCardSheet({
   player,
   expenses,
   totalPlayers,
+  gameStatus,
 }: PlayerCardSheetPropsType) {
   const [amountSpent, setAmountSpent] = useState(player.amount_spent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
-  const isBusted = player.busted_at !== null
+  const isBusted = player.busted_at !== null && gameStatus
 
   const totalExpensesPrice = expenses.reduce((acc, expense) => {
     return acc + expense.price
@@ -50,12 +52,7 @@ export function PlayerCardSheet({
             </Avatar>
 
             <div className="text-left">
-              <strong>
-                {player?.users?.name}{' '}
-                <span className="text-xs text-muted-foreground">
-                  {isBusted && '(Eliminado)'}
-                </span>
-              </strong>
+              <strong>{player?.users?.name} </strong>
               <p className="text-muted-foreground text-xs">
                 Ganhos {formatCurrencyBRL(player?.users?.cumulative_winnings)}
               </p>
@@ -64,7 +61,9 @@ export function PlayerCardSheet({
             <div className="flex flex-col ml-auto text-sm h-full text-right">
               <strong>
                 {formatCurrencyBRL(
-                  player.amount_paid - player.amount_spent - totalExpensesEach,
+                  player?.amount_paid -
+                    player?.amount_spent -
+                    totalExpensesEach,
                 )}
               </strong>
             </div>
@@ -78,6 +77,7 @@ export function PlayerCardSheet({
           expensesEach={totalExpensesEach}
           setAmountSpent={setAmountSpent}
           setIsSheetOpen={setIsSheetOpen}
+          gameStatus={gameStatus}
         />
       </SheetContent>
     </Sheet>

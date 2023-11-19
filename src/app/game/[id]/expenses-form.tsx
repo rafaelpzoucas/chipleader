@@ -60,6 +60,12 @@ export function ExpensesForm({
       await updateExpense(values, expenseId)
     } else {
       await createExpense(gameId, values)
+
+      form.reset({
+        description: '',
+        price: '',
+        userId: '',
+      })
     }
 
     if (values.userId) {

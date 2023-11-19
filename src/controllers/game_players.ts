@@ -85,9 +85,10 @@ async function verifyBustedPlayersLength() {
     await updateGameStatus(data[0].game_id)
 
     const bustLastPlayerPromise = () =>
-      new Promise(() => {
+      new Promise((resolve) => {
         setTimeout(() => {
           bustLastPlayer(data[0].id)
+          resolve('')
         }, 1000)
       })
 

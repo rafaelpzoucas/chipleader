@@ -16,6 +16,7 @@ import { GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { Minus, Plus, User } from 'lucide-react'
 import { useState } from 'react'
+import { updateAmountPaid } from '../actions'
 
 interface ManagePlayerSheetProps {
   player: GamePlayerDataType
@@ -23,6 +24,7 @@ interface ManagePlayerSheetProps {
   expensesEach: number
   setAmountSpent: React.Dispatch<React.SetStateAction<number>>
   setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
+  gameStatus: boolean
 }
 
 export function ManagePlayerSheet({
@@ -31,10 +33,12 @@ export function ManagePlayerSheet({
   expensesEach,
   setAmountSpent,
   setIsSheetOpen,
+  gameStatus,
 }: ManagePlayerSheetProps) {
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
   const buyInPrice = 25
   const isBusted = player.busted_at !== null
+  const balance = player.amount_paid - player.amount_spent - expensesEach
 
   function subBuyIn(buyInPrice: number) {
     if (amountSpent > 0) {
@@ -48,6 +52,17 @@ export function ManagePlayerSheet({
 
   async function handleUpdateAmountSpent() {
     const response = await updateAmountSpent(player.id, amountSpent)
+
+    if (response) {
+      setIsSheetOpen(false)
+    }
+  }
+
+  async function handleUpdateAmountPaid() {
+    const response = await updateAmountPaid(
+      player.amount_paid + balance * -1,
+      player.id,
+    )
 
     if (response) {
       setIsSheetOpen(false)
@@ -82,38 +97,40 @@ export function ManagePlayerSheet({
           </p>
         </div>
 
-        <strong className="ml-auto">
-          {formatCurrencyBRL(
-            player.amount_paid - player.amount_spent - expensesEach,
-          )}
-        </strong>
+        <strong className="ml-auto">{formatCurrencyBRL(balance)}</strong>
       </header>
 
       <section className="space-y-2">
         <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
           <span>Valor pago:</span>
-          <strong className="ml-auto">
+          <strong className="ml-auto text-emerald-600">
             {formatCurrencyBRL(player.amount_paid)}
           </strong>
         </div>
 
         <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
           <span>Buy-ins:</span>
-          <strong className="ml-auto">
-            {formatCurrencyBRL(player.amount_spent)}
+          <strong className="ml-auto text-destructive">
+            {formatCurrencyBRL(player.amount_spent * -1)}
           </strong>
         </div>
 
         <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
           <span>Despesas:</span>
-          <strong className="ml-auto">{formatCurrencyBRL(expensesEach)}</strong>
+          <strong className="ml-auto text-destructive">
+            {formatCurrencyBRL(expensesEach * -1)}
+          </strong>
         </div>
       </section>
 
       {isBusted ? (
-        <Button className="w-full" onClick={() => handleBustPlayer(null)}>
-          Voltar para o jogo
-        </Button>
+        gameStatus === true ? (
+          <Button className="w-full" onClick={() => handleBustPlayer(null)}>
+            Voltar para o jogo
+          </Button>
+        ) : (
+          <Button onClick={handleUpdateAmountPaid}>Marcar como pago</Button>
+        )
       ) : (
         <>
           <div className="flex flex-row items-center justify-between gap-4">

@@ -133,7 +133,7 @@ export async function updateExpense(
 export async function updateAmountPaid(value: number, gamePlayerId?: string) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('game_players')
     .update({
       amount_paid: value,
@@ -146,4 +146,6 @@ export async function updateAmountPaid(value: number, gamePlayerId?: string) {
   }
 
   revalidatePath('game')
+
+  return data || []
 }
