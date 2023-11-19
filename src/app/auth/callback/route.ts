@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const buyin = searchParams.get('buyin')
 
   const next =
-    invite && buyin
+    invite !== undefined && buyin !== undefined
       ? `/api/invite/game?code=${invite}&buyin=${buyin}`
       : '/dashboard'
 
