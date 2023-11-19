@@ -1,4 +1,5 @@
-import { createGame, getGameById } from '@/controllers/games'
+import { getGameById } from '@/app/game/actions'
+import { createGame } from '@/controllers/games'
 import { GameDataType } from '@/models/games'
 import { create } from 'zustand'
 
