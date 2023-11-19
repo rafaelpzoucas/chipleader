@@ -8,10 +8,8 @@ export async function GET(request: Request) {
   const invite = searchParams.get('invite')
   const buyin = searchParams.get('buyin')
 
-  const next =
-    invite !== undefined && buyin !== undefined
-      ? `/api/invite/game?code=${invite}&buyin=${buyin}`
-      : '/dashboard'
+  const inviteURL = `/api/invite/game?code=${invite}&buyin=${buyin}`
+  const next = searchParams.get('next') ?? '/dashboard'
 
   if (code) {
     const cookieStore = cookies()
@@ -36,6 +34,10 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
+      if (invite && buyin) {
+        return NextResponse.redirect(`${origin}${inviteURL}`)
+      }
+
       return NextResponse.redirect(`${origin}${next}`)
     }
   }

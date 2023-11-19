@@ -22,10 +22,15 @@ export default function Login({
     const origin = location.origin
     const email = formData.get('email') as string
 
+    const redirectURL =
+      searchParams.invite && searchParams.buyin
+        ? `${origin}/auth/callback?invite=${searchParams.invite}&buyin=${searchParams.buyin}`
+        : `${origin}/auth/callback`
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${origin}/auth/callback?invite=${searchParams.invite}&buyin=${searchParams.buyin}`,
+        emailRedirectTo: redirectURL,
       },
     })
 
