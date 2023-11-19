@@ -17,25 +17,6 @@ export async function getGames(): Promise<GameDataType[]> {
   return games || []
 }
 
-export async function getGameById(id: string): Promise<GameDataType[]> {
-  const { data: games, error } = await supabase
-    .from('games')
-    .select(
-      `
-      *,
-      game_players(*),
-      game_expenses(*)
-    `,
-    )
-    .eq('id', id)
-
-  if (error) {
-    throw error
-  }
-
-  return games || []
-}
-
 export async function getActiveGames(): Promise<GameDataType[]> {
   const { data: games, error } = await supabase
     .from('games')

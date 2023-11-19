@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,11 +15,12 @@ import {
 import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { createClient } from '@/utils/supabase/server'
-import { MoreVertical, Pencil, Trash } from 'lucide-react'
+import { CircleDollarSign, MoreVertical, Pencil, Trash } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
-import { getUsersByGame } from './actions'
+import { getUsersByGame } from '../actions'
 import { ExpensesForm } from './expenses-form'
+import { GameExpensePlayerAvatar } from './game-expense-player-avatar'
 
 type GameExpensePropsType = {
   expense: GameExpenseDataType
@@ -53,10 +55,22 @@ export async function GameExpense({ expense }: GameExpensePropsType) {
       key={expense.id}
       className="flex flex-row items-center justify-between py-3 border-t"
     >
+      {expense.game_player ? (
+        <GameExpensePlayerAvatar expenseGamePlayerId={expense.game_player} />
+      ) : (
+        <Avatar className="w-8 h-8 mr-3">
+          <AvatarFallback>
+            <CircleDollarSign className="w-4 h-4" />
+          </AvatarFallback>
+        </Avatar>
+      )}
+
       <span>{expense.description}</span>
+
       <strong className="ml-auto mr-2">
         {formatCurrencyBRL(expense.price)}
       </strong>
+
       <Sheet>
         <DropdownMenu>
           <DropdownMenuTrigger className="p-2">

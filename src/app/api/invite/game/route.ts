@@ -15,6 +15,12 @@ export async function GET(request: Request) {
       data: { user },
     } = await supabase.auth.getUser()
 
+    if (!user) {
+      return NextResponse.redirect(
+        `${origin}/login?invite=${code}&buyin=${buyin}`,
+      )
+    }
+
     const { error } = await supabase
       .from('game_players')
       .insert([{ player_id: user?.id, game_id: code, amount_spent: buyin }])

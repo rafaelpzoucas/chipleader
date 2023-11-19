@@ -14,7 +14,7 @@ import {
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { getExpensesByGame, getUsersByGame } from './actions'
+import { getExpensesByGame, getUsersByGame } from '../actions'
 import { ExpensesForm } from './expenses-form'
 import { GameExpense } from './game-expense'
 import { GameWinnings } from './game-winnings'
@@ -33,6 +33,8 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
     return acc + expense.price
   }, 0)
 
+  const totalExpensesEach = totalExpensesPrice / players.length
+
   return (
     <div className="space-y-8">
       <header className="flex flex-row items-center">
@@ -49,7 +51,12 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
 
         {game.game_players.length > 0 &&
           players.map((player) => (
-            <PlayerCardSheet key={player.id} player={player} />
+            <PlayerCardSheet
+              key={player.id}
+              player={player}
+              expenses={expenses}
+              totalPlayers={players.length}
+            />
           ))}
       </section>
 
@@ -59,7 +66,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
 
           {totalExpensesPrice > 0 && (
             <span className="text-sm">
-              {formatCurrencyBRL(totalExpensesPrice / players.length)} para cada
+              {formatCurrencyBRL(totalExpensesEach)} para cada
             </span>
           )}
         </header>

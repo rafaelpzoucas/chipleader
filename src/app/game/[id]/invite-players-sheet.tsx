@@ -21,7 +21,7 @@ type InvitePlayersSheetProps = {
 export function InvitePlayersSheet({ gameId, buyIn }: InvitePlayersSheetProps) {
   const [isCopied, setIsCopied] = useState(false)
 
-  const inviteLink = `${location.origin}/api/invite/game?code=${gameId}&buyin=${buyIn}`
+  const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/invite/game?code=${gameId}&buyin=${buyIn}`
 
   function handleCopy() {
     copyToClipboard(inviteLink)

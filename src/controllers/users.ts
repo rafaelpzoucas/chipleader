@@ -2,9 +2,6 @@ import { UserDataType } from '@/models/users'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 
-const cookieStore = cookies()
-const supabase = createClient(cookieStore)
-
 export async function getUserInfo(
   userId?: string,
 ): Promise<UserDataType[] | undefined> {

@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select'
 import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { createExpense, updateAmountPaid, updateExpense } from './actions'
+import { createExpense, updateAmountPaid, updateExpense } from '../actions'
 
 export const expensesFormSchema = z.object({
   userId: z.string().optional(),
@@ -61,12 +61,16 @@ export function ExpensesForm({
     } else {
       await createExpense(gameId, values)
     }
+
     if (values.userId) {
-      const gamePlayerId = players.filter(
+      const gamePlayer = players.filter(
         (player) => player.player_id === values.userId,
       )[0]
 
-      await updateAmountPaid(parseFloat(values.price), gamePlayerId.id)
+      await updateAmountPaid(
+        parseFloat(values.price) + gamePlayer.amount_paid,
+        gamePlayer.id,
+      )
     }
   }
 
@@ -92,11 +96,11 @@ export function ExpensesForm({
                         <header className="relative flex flex-row items-end gap-4 w-full">
                           <Avatar>
                             <AvatarImage
-                              src={player.users.user_metadata.avatar_url}
+                              src={player?.users?.user_metadata?.avatar_url}
                             />
                             <AvatarFallback>
-                              {player.users.user_metadata.name ? (
-                                player.users.user_metadata.name[0]
+                              {player?.users?.user_metadata?.name ? (
+                                player?.users?.user_metadata?.name[0]
                               ) : (
                                 <User className="w-4 h-4" />
                               )}
@@ -104,11 +108,13 @@ export function ExpensesForm({
                           </Avatar>
 
                           <div className="text-left">
-                            <strong>{player.users.user_metadata.name} </strong>
+                            <strong>
+                              {player?.users?.user_metadata?.name}{' '}
+                            </strong>
                             <p className="text-muted-foreground text-xs">
                               Ganhos{' '}
                               {formatCurrencyBRL(
-                                player.users.cumulative_winnings,
+                                player?.users?.cumulative_winnings,
                               )}
                             </p>
                           </div>

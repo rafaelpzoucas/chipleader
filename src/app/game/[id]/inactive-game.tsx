@@ -19,7 +19,7 @@ import {
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ArrowLeft, Plus, User } from 'lucide-react'
 import Link from 'next/link'
-import { getExpensesByGame, getUsersByGame } from './actions'
+import { getExpensesByGame, getUsersByGame } from '../actions'
 import { GameExpense } from './game-expense'
 
 export async function InactiveGame({ game }: { game: GameDataType }) {
@@ -58,7 +58,7 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
       </header>
       <section className="flex flex-row items-center justify-center gap-8 p-4">
         {podiumPlayers.map((player, index) => (
-          <div key={player.id} className="flex flex-col items-center">
+          <div key={player?.id} className="flex flex-col items-center">
             <p className="text-muted-foreground text-xs mb-3">
               {index === 0 ? '2' : index === 1 ? '1' : '3'}º lugar
             </p>
@@ -73,16 +73,18 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-center justify-center">
-              <strong>{player.users.name.split(' ')[0]}</strong>
+              <strong>{player?.users?.name.split(' ')[0]}</strong>
               <strong
                 className={cn(
-                  calculatePayout(index, player.amount_spent) < 0 &&
+                  calculatePayout(index, player?.amount_spent) < 0 &&
                     'text-destructive',
-                  calculatePayout(index, player.amount_spent) > 0 &&
+                  calculatePayout(index, player?.amount_spent) > 0 &&
                     'text-emerald-600',
                 )}
               >
-                {formatCurrencyBRL(calculatePayout(index, player.amount_spent))}
+                {formatCurrencyBRL(
+                  calculatePayout(index, player?.amount_spent),
+                )}
               </strong>
             </div>
           </div>

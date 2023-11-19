@@ -10,7 +10,9 @@ import Link from 'next/link'
 export async function HistoryCard({ game }: { game: GameDataType }) {
   const players: GamePlayerDataType[] = await getUsersByGame(game.id)
 
-  console.log(players[0])
+  const totalExpensesPrice = game.game_expenses.reduce((acc, expense) => {
+    return acc + expense.price
+  }, 0)
 
   return (
     <Link href={`/game/${game.id}`}>
@@ -18,13 +20,13 @@ export async function HistoryCard({ game }: { game: GameDataType }) {
         key={game.id}
         className="flex flex-row justify-between gap-3 p-4 border-t"
       >
-        <section className="flex flex-row items-center justify-center gap-8">
+        <section className="grid grid-cols-3 items-center justify-center gap-8">
           {players.slice(0, 3).map((player, index) => (
             <div key={player.id} className="flex flex-col items-center">
               <p className="text-muted-foreground text-xs mb-2">
                 {index + 1}º lugar
               </p>
-              <Avatar>
+              <Avatar className="w-8 h-8">
                 <AvatarImage src={player.users?.user_metadata?.avatar_url} />
                 <AvatarFallback>
                   {player.users.user_metadata ? (
@@ -40,10 +42,18 @@ export async function HistoryCard({ game }: { game: GameDataType }) {
             </div>
           ))}
         </section>
-        <aside className="flex flex-col items-end justify-between text-xs">
-          <span>{formatDate(game.created_at, 'dd MMM')}</span>
-          <span>Buy-in: {formatCurrencyBRL(game.buy_in)}</span>
-          <span>Despesas: R$ 150,00</span>
+        <aside className="flex flex-col gap-1 items-end justify-between text-xs text-right">
+          <span>{formatDate(game.created_at, 'dd/MM/yyyy')}</span>
+          <span>
+            <span className="text-muted-foreground">Buy-in:</span>
+            <br />
+            <strong>{formatCurrencyBRL(game.buy_in)}</strong>
+          </span>
+          <span>
+            <span className="text-muted-foreground">Despesas:</span>
+            <br />
+            <strong>{formatCurrencyBRL(totalExpensesPrice)}</strong>
+          </span>
         </aside>
       </div>
     </Link>

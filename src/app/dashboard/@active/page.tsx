@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { getActiveGames } from '@/controllers/games'
 import { GameDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
@@ -18,21 +12,16 @@ export default async function Active() {
     <>
       {games.length > 0 &&
         games.map((game) => (
-          <Card key={game.id}>
-            <CardHeader className="flex flex-row w-full items-center gap-2">
-              <CardTitle>Jogo ativo</CardTitle>
-              <div className="ml-auto text-right">
-                <p className="text-xs text-muted-foreground">Buy-in:</p>
-                <strong>{formatCurrencyBRL(game.buy_in)}</strong>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div>
-                <p className="text-xs text-muted-foreground">Despesas:</p>
-                <strong>{formatCurrencyBRL(0)}</strong>
-              </div>
-            </CardContent>
-            <Link href={`/game/${game.id}`}>
+          <Link key={game.id} href={`/game/${game.id}`}>
+            <Card className="bg-primary text-white">
+              <CardHeader className="flex flex-row w-full items-center gap-2">
+                <CardTitle>Jogo ativo</CardTitle>
+                <div className="ml-auto text-right">
+                  <p className="text-xs opacity-50">Buy-in:</p>
+                  <strong>{formatCurrencyBRL(game.buy_in)}</strong>
+                </div>
+              </CardHeader>
+
               <CardFooter>
                 <div className="flex flex-row items-center gap-2">
                   <Users className="w-4 h-4" />
@@ -42,8 +31,8 @@ export default async function Active() {
 
                 <ChevronRight className="w-4 h-4 ml-auto" />
               </CardFooter>
-            </Link>
-          </Card>
+            </Card>
+          </Link>
         ))}
     </>
   )

@@ -42,7 +42,9 @@ export function NewGameForm() {
     const response = await createGame(values.buyin)
 
     if (response) {
-      router.push(`/api/invite/game?code=${response[0].id}`)
+      router.push(
+        `/api/invite/game?code=${response[0].id}&buyin=${values.buyin}`,
+      )
     }
   }
 

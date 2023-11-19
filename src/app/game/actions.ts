@@ -10,7 +10,7 @@ import {
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
-import { expensesFormSchema } from './expenses-form'
+import { expensesFormSchema } from './[id]/expenses-form'
 
 export async function getGameById(id: string): Promise<GameDataType[]> {
   const cookieStore = cookies()
@@ -30,6 +30,8 @@ export async function getGameById(id: string): Promise<GameDataType[]> {
   if (error) {
     throw error
   }
+
+  revalidatePath('game')
 
   return games || []
 }

@@ -14,12 +14,13 @@ import {
 import { bustPlayer, updateAmountSpent } from '@/controllers/game_players'
 import { GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { Minus, Plus } from 'lucide-react'
+import { Minus, Plus, User } from 'lucide-react'
 import { useState } from 'react'
 
 interface ManagePlayerSheetProps {
   player: GamePlayerDataType
   amountSpent: number
+  expensesEach: number
   setAmountSpent: React.Dispatch<React.SetStateAction<number>>
   setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -27,6 +28,7 @@ interface ManagePlayerSheetProps {
 export function ManagePlayerSheet({
   player,
   amountSpent,
+  expensesEach,
   setAmountSpent,
   setIsSheetOpen,
 }: ManagePlayerSheetProps) {
@@ -65,8 +67,10 @@ export function ManagePlayerSheet({
     <>
       <header className="flex flex-row items-end gap-4 w-full">
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>{player.users.name[0]}</AvatarFallback>
+          <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
+          <AvatarFallback>
+            {player?.users?.name[0] ?? <User className="w-4 h-4" />}
+          </AvatarFallback>
         </Avatar>
 
         <div className="text-left">
@@ -79,9 +83,32 @@ export function ManagePlayerSheet({
         </div>
 
         <strong className="ml-auto">
-          {formatCurrencyBRL(player.amount_spent)}
+          {formatCurrencyBRL(
+            player.amount_paid - player.amount_spent - expensesEach,
+          )}
         </strong>
       </header>
+
+      <section className="space-y-2">
+        <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+          <span>Valor pago:</span>
+          <strong className="ml-auto">
+            {formatCurrencyBRL(player.amount_paid)}
+          </strong>
+        </div>
+
+        <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+          <span>Buy-ins:</span>
+          <strong className="ml-auto">
+            {formatCurrencyBRL(player.amount_spent)}
+          </strong>
+        </div>
+
+        <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+          <span>Despesas:</span>
+          <strong className="ml-auto">{formatCurrencyBRL(expensesEach)}</strong>
+        </div>
+      </section>
 
       {isBusted ? (
         <Button className="w-full" onClick={() => handleBustPlayer(null)}>

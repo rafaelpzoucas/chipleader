@@ -14,7 +14,7 @@ import googleLogo from '../../../public/google-logo.svg'
 export default function Login({
   searchParams,
 }: {
-  searchParams: { message: string }
+  searchParams: { message: string; invite: string; buyin: string }
 }) {
   const supabase = createClient()
 
@@ -25,7 +25,7 @@ export default function Login({
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${origin}/auth/callback`,
+        emailRedirectTo: `${origin}/auth/callback?invite=${searchParams.invite}&buyin=${searchParams.buyin}`,
       },
     })
 
@@ -37,7 +37,7 @@ export default function Login({
   }
 
   async function signInWithGoogle() {
-    const defaulURL = 'https://chipleader.vercel.app/auth/callback'
+    const defaulURL = `https://chipleader.vercel.app/auth/callback?invite=${searchParams.invite}&buyin=${searchParams.buyin}`
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',

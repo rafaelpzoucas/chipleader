@@ -6,6 +6,7 @@ export type GamePlayerDataType = {
   game_id: string
   busted_at: string
   amount_spent: number
+  amount_paid: number
   users: UserDataType
   created_at: string
 }
@@ -25,6 +26,6 @@ export type GameDataType = {
   status: boolean
   buy_in: number
   game_players: GamePlayerDataType[]
-  game_expenses: []
+  game_expenses: GameExpenseDataType[]
   created_at: string
 }
