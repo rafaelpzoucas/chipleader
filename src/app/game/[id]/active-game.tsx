@@ -57,6 +57,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
               expenses={expenses}
               totalPlayers={players.length}
               gameStatus={game.status}
+              payout={totalPayout}
             />
           ))}
       </section>

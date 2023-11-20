@@ -15,6 +15,7 @@ type PlayerCardSheetPropsType = {
   expenses: GameExpenseDataType[]
   totalPlayers: number
   gameStatus: boolean
+  payout: number
 }
 
 export function PlayerCardSheet({
@@ -22,6 +23,7 @@ export function PlayerCardSheet({
   expenses,
   totalPlayers,
   gameStatus,
+  payout,
 }: PlayerCardSheetPropsType) {
   const [amountSpent, setAmountSpent] = useState(player.amount_spent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -78,6 +80,7 @@ export function PlayerCardSheet({
           setAmountSpent={setAmountSpent}
           setIsSheetOpen={setIsSheetOpen}
           gameStatus={gameStatus}
+          payout={payout}
         />
       </SheetContent>
     </Sheet>

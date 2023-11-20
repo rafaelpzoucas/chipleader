@@ -1,5 +1,3 @@
-import { NewGameForm } from './new-game-form'
-
 export default function DashboardLayout({
   children,
   userHeader,
@@ -16,10 +14,6 @@ export default function DashboardLayout({
   return (
     <main className="space-y-6 pb-10">
       {userHeader}
-
-      <div className="flex px-4">
-        <NewGameForm />
-      </div>
 
       <section className="px-4">{active}</section>
 

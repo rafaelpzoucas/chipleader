@@ -25,6 +25,7 @@ interface ManagePlayerSheetProps {
   setAmountSpent: React.Dispatch<React.SetStateAction<number>>
   setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
   gameStatus: boolean
+  payout: number
 }
 
 export function ManagePlayerSheet({
@@ -34,6 +35,7 @@ export function ManagePlayerSheet({
   setAmountSpent,
   setIsSheetOpen,
   gameStatus,
+  payout,
 }: ManagePlayerSheetProps) {
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
   const buyInPrice = 25
@@ -70,7 +72,12 @@ export function ManagePlayerSheet({
   }
 
   async function handleBustPlayer(bustedAt: Date | null) {
-    const response = await bustPlayer(player.id, bustedAt)
+    const response = await bustPlayer(
+      player.id,
+      bustedAt,
+      player.users.id,
+      payout,
+    )
 
     if (response) {
       setIsSheetOpen(false)

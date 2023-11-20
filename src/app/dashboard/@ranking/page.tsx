@@ -73,10 +73,10 @@ export default async function Ranking() {
                 </div>
 
                 <div className="flex flex-col text-right ml-auto">
-                  <span className="text-muted-foreground text-xs">
-                    Prêmio acumulado
-                  </span>
                   <strong>{formatCurrencyBRL(user.cumulative_winnings)}</strong>
+                  <span className="text-muted-foreground text-xs">
+                    Acumulados
+                  </span>
                 </div>
               </li>
             ))}

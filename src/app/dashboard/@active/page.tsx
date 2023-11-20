@@ -4,13 +4,14 @@ import { GameDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ChevronRight, Users } from 'lucide-react'
 import Link from 'next/link'
+import { NewGameForm } from '../new-game-form'
 
 export default async function Active() {
   const games: GameDataType[] = await getActiveGames()
 
   return (
     <>
-      {games.length > 0 &&
+      {games.length > 0 ? (
         games.map((game) => (
           <Link key={game.id} href={`/game/${game.id}`}>
             <Card className="bg-primary text-white">
@@ -33,7 +34,10 @@ export default async function Active() {
               </CardFooter>
             </Card>
           </Link>
-        ))}
+        ))
+      ) : (
+        <NewGameForm />
+      )}
     </>
   )
 }
