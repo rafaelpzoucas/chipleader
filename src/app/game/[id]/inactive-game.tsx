@@ -102,6 +102,7 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
                 expenses={expenses}
                 totalPlayers={players.length}
                 gameStatus={game.status}
+                payout={totalPayout}
               />
             </div>
           ))}
