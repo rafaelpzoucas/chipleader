@@ -38,7 +38,10 @@ export async function GameExpensePlayerAvatar({
         src={expensePlayer && expensePlayer[0]?.user_metadata?.avatar_url}
       />
       <AvatarFallback>
-        {(expensePlayer && expensePlayer[0]?.user_metadata?.name[0]) ?? (
+        {(expensePlayer &&
+          expensePlayer[0]?.user_metadata &&
+          expensePlayer[0]?.user_metadata?.name &&
+          expensePlayer[0]?.user_metadata?.name[0]) ?? (
           <User className="w-4 h-4" />
         )}
       </AvatarFallback>

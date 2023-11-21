@@ -15,7 +15,7 @@ export type GameExpenseDataType = {
   id: string
   created_at: string
   game_id: string
-  game_player: string
+  game_player_id: string
   description: string
   price: number
 }

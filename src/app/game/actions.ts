@@ -93,7 +93,7 @@ export async function createExpense(
     .insert([
       {
         game_id: gameId,
-        game_player: values.userId,
+        game_player_id: values.gamePlayerId,
         description: values.description,
         price: values.price,
       },
@@ -107,16 +107,40 @@ export async function createExpense(
   revalidatePath('game')
 }
 
+export async function getExpenseById(expenseId?: string) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: gameExpense, error } = await supabase
+    .from('game_expenses')
+    .select('*')
+    .eq('id', expenseId)
+
+  if (error) {
+    throw error
+  }
+
+  return gameExpense[0] || []
+}
+
 export async function updateExpense(
   values: z.infer<typeof expensesFormSchema>,
   expenseId?: string,
 ) {
+  const expense = await getExpenseById(expenseId)
+
+  if (expense.game_player_id === values.gamePlayerId) {
+    console.log('Essa despesa já está com esse jogador.')
+    return
+  }
+
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
+
   const { error } = await supabase
     .from('game_expenses')
     .update({
-      game_player: values.userId,
+      game_player_id: values.gamePlayerId,
       description: values.description,
       price: values.price,
     })
@@ -130,14 +154,29 @@ export async function updateExpense(
   revalidatePath('game')
 }
 
-export async function updateAmountPaid(value: number, gamePlayerId?: string) {
+export async function getCurrentAmountPaid(currentPlayerId?: string) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
-  const { data, error } = await supabase
+
+  const { data: gamePlayers, error } = await supabase
     .from('game_players')
-    .update({
-      amount_paid: value,
-    })
+    .select('amount_paid')
+    .eq('id', currentPlayerId)
+
+  if (error) {
+    throw error
+  }
+
+  return gamePlayers[0] || []
+}
+
+export async function increaseAmountPaid(value: number, gamePlayerId: string) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { error } = await supabase
+    .from('game_players')
+    .update({ amount_paid: value })
     .eq('id', gamePlayerId)
     .select()
 
@@ -146,6 +185,26 @@ export async function updateAmountPaid(value: number, gamePlayerId?: string) {
   }
 
   revalidatePath('game')
+}
 
-  return data || []
+export async function decreaseAmountPaid(
+  price: number,
+  currentGamePlayerId?: string,
+) {
+  // pegar o id do jogador que está com a despesa
+  // subtrair o valor da despesa do amount_paid]
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { error } = await supabase
+    .from('game_players')
+    .update({ amount_paid: price })
+    .eq('id', currentGamePlayerId)
+    .select()
+
+  if (error) {
+    throw error
+  }
+
+  revalidatePath('game')
 }

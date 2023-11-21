@@ -23,12 +23,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useToast } from '@/components/ui/use-toast'
 import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { createExpense, updateAmountPaid, updateExpense } from '../actions'
+import {
+  createExpense,
+  decreaseAmountPaid,
+  getCurrentAmountPaid,
+  increaseAmountPaid,
+  updateExpense,
+} from '../actions'
 
 export const expensesFormSchema = z.object({
-  userId: z.string().optional(),
+  gamePlayerId: z.string().optional(),
   description: z.string(),
   price: z.string(),
 })
@@ -38,6 +45,7 @@ type ExpensesFormPropsType = {
   gameId: string
   expenseId?: string
   defaultValues?: GameExpenseDataType
+  currentPlayerId?: string
 }
 
 export function ExpensesForm({
@@ -45,38 +53,67 @@ export function ExpensesForm({
   gameId,
   expenseId,
   defaultValues,
+  currentPlayerId,
 }: ExpensesFormPropsType) {
+  const { toast } = useToast()
+
   const form = useForm<z.infer<typeof expensesFormSchema>>({
     resolver: zodResolver(expensesFormSchema),
     defaultValues: {
       description: defaultValues?.description,
       price: defaultValues?.price.toString(),
-      userId: defaultValues?.game_player,
+      gamePlayerId: defaultValues?.game_player_id,
     },
   })
 
   async function onSubmit(values: z.infer<typeof expensesFormSchema>) {
     if (defaultValues) {
       await updateExpense(values, expenseId)
+
+      if (values.gamePlayerId) {
+        const gamePlayer = players.filter(
+          (player) => player.id === values.gamePlayerId,
+        )[0]
+
+        const newIncreaseValue =
+          gamePlayer.amount_paid + parseFloat(values.price)
+
+        await increaseAmountPaid(newIncreaseValue, gamePlayer.id)
+
+        if (currentPlayerId) {
+          const currentPlayer = await getCurrentAmountPaid(currentPlayerId)
+
+          const newDecreaseValue =
+            currentPlayer.amount_paid - parseFloat(values.price)
+
+          await decreaseAmountPaid(newDecreaseValue, currentPlayerId)
+        }
+      }
+
+      toast({
+        title: 'Despesa atualizada com sucesso!',
+      })
     } else {
       await createExpense(gameId, values)
+
+      if (values.gamePlayerId) {
+        const gamePlayer = players.filter(
+          (player) => player.id === values.gamePlayerId,
+        )[0]
+        const newValue = parseFloat(values.price) + gamePlayer.amount_paid
+
+        await increaseAmountPaid(newValue, gamePlayer.id)
+      }
 
       form.reset({
         description: '',
         price: '',
-        userId: '',
+        gamePlayerId: '',
       })
-    }
 
-    if (values.userId) {
-      const gamePlayer = players.filter(
-        (player) => player.player_id === values.userId,
-      )[0]
-
-      await updateAmountPaid(
-        parseFloat(values.price) + gamePlayer.amount_paid,
-        gamePlayer.id,
-      )
+      toast({
+        title: 'Despesa criada com sucesso!',
+      })
     }
   }
 
@@ -85,7 +122,7 @@ export function ExpensesForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         <FormField
           control={form.control}
-          name="userId"
+          name="gamePlayerId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Vincular a um jogador</FormLabel>
@@ -98,7 +135,7 @@ export function ExpensesForm({
                 <SelectContent>
                   {players.length > 0 &&
                     players.map((player) => (
-                      <SelectItem key={player.id} value={player.player_id}>
+                      <SelectItem key={player.id} value={player.id}>
                         <header className="relative flex flex-row items-end gap-4 w-full">
                           <Avatar>
                             <AvatarImage

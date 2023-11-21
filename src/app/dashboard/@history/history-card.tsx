@@ -29,8 +29,8 @@ export async function HistoryCard({ game }: { game: GameDataType }) {
               <Avatar className="w-8 h-8">
                 <AvatarImage src={player.users?.user_metadata?.avatar_url} />
                 <AvatarFallback>
-                  {player.users.user_metadata ? (
-                    player.users.user_metadata.name[0]
+                  {player?.users?.user_metadata?.name ? (
+                    player?.users?.user_metadata.name[0]
                   ) : (
                     <User className="w-4 h-4" />
                   )}
