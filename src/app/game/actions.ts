@@ -174,7 +174,7 @@ export async function increaseAmountPaid(value: number, gamePlayerId: string) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('game_players')
     .update({ amount_paid: value })
     .eq('id', gamePlayerId)
@@ -185,14 +185,14 @@ export async function increaseAmountPaid(value: number, gamePlayerId: string) {
   }
 
   revalidatePath('game')
+
+  return data || []
 }
 
 export async function decreaseAmountPaid(
   price: number,
   currentGamePlayerId?: string,
 ) {
-  // pegar o id do jogador que está com a despesa
-  // subtrair o valor da despesa do amount_paid]
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 

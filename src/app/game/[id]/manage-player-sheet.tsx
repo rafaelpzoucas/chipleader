@@ -16,7 +16,7 @@ import { GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { Minus, Plus, User } from 'lucide-react'
 import { useState } from 'react'
-import { updateAmountPaid } from '../actions'
+import { increaseAmountPaid } from '../actions'
 
 interface ManagePlayerSheetProps {
   player: GamePlayerDataType
@@ -61,7 +61,7 @@ export function ManagePlayerSheet({
   }
 
   async function handleUpdateAmountPaid() {
-    const response = await updateAmountPaid(
+    const response = await increaseAmountPaid(
       player.amount_paid + balance * -1,
       player.id,
     )
