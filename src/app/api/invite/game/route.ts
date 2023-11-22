@@ -21,6 +21,17 @@ export async function GET(request: Request) {
       )
     }
 
+    const { data: gamePlayers, error: gamePlayersError } = await supabase
+      .from('game_players')
+      .select('*')
+      .eq('game_id', code)
+      .eq('user_id', user.id)
+
+    if (!gamePlayersError && gamePlayers.length > 0) {
+      return NextResponse.redirect(`${origin}/game/${code}`)
+    }
+    console.log(gamePlayers)
+
     const { error } = await supabase
       .from('game_players')
       .insert([{ user_id: user?.id, game_id: code, amount_spent: buyin }])
