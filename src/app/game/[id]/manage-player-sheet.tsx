@@ -128,9 +128,7 @@ export function ManagePlayerSheet({
         </Avatar>
 
         <div className="text-left">
-          <strong>
-            {player.users.name} {isBusted && '(Eliminado)'}
-          </strong>
+          <strong>{player.users.name}</strong>
           <p className="text-muted-foreground text-xs">
             Ganhos {formatCurrencyBRL(player.users.cumulative_winnings)}
           </p>

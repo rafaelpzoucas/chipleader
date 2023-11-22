@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -7,19 +6,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { cn } from '@/lib/utils'
 import {
   GameDataType,
   GameExpenseDataType,
   GamePlayerDataType,
 } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { ArrowLeft, Plus, User } from 'lucide-react'
+import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { getExpensesByGame, getUsersByGame } from '../actions'
 import { ExpensesForm } from './expenses-form'
 import { GameExpense } from './game-expense'
 import { PlayerCardSheet } from './player-card-sheet'
+import { PodiumPlayerSheet } from './podium-player-sheet'
 
 export async function InactiveGame({ game }: { game: GameDataType }) {
   const players: GamePlayerDataType[] = await getUsersByGame(game.id)
@@ -37,14 +36,6 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
 
   const expensesPriceEach = totalExpensesPrice / players.length
 
-  function calculatePayout(index: number, amountSpent: number) {
-    const percentages = [0.3, 0.5, 0.2]
-    const percentage = percentages[index] || 0
-    const payout = totalPayout * percentage - amountSpent - expensesPriceEach
-
-    return payout
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <header className="flex flex-row gap-2 items-center">
@@ -57,36 +48,15 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
       </header>
       <section className="flex flex-row items-center justify-center gap-8 p-4">
         {podiumPlayers.map((player, index) => (
-          <div key={player?.id} className="flex flex-col items-center">
-            <p className="text-muted-foreground text-xs mb-3">
-              {index === 0 ? '2' : index === 1 ? '1' : '3'}º lugar
-            </p>
-            <Avatar className={cn(index === 1 && 'w-16 h-16')}>
-              <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
-              <AvatarFallback>
-                {player?.users?.user_metadata?.name ? (
-                  player?.users?.user_metadata?.name[0]
-                ) : (
-                  <User className="w-4 h-4" />
-                )}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col items-center justify-center">
-              <strong>{player?.users?.name.split(' ')[0]}</strong>
-              <strong
-                className={cn(
-                  calculatePayout(index, player?.amount_spent) < 0 &&
-                    'text-destructive',
-                  calculatePayout(index, player?.amount_spent) > 0 &&
-                    'text-emerald-600',
-                )}
-              >
-                {formatCurrencyBRL(
-                  calculatePayout(index, player?.amount_spent),
-                )}
-              </strong>
-            </div>
-          </div>
+          <PodiumPlayerSheet
+            key={player.id}
+            player={player}
+            expenses={expenses}
+            totalPlayers={players.length}
+            gameStatus={game.status}
+            payout={totalPayout}
+            index={index}
+          />
         ))}
       </section>
 
@@ -112,7 +82,7 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
 
           {totalExpensesPrice > 0 && (
             <span className="text-sm">
-              {formatCurrencyBRL(totalExpensesPrice / players.length)} para cada
+              {formatCurrencyBRL(expensesPriceEach)} para cada
             </span>
           )}
         </header>
