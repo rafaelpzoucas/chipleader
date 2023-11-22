@@ -45,7 +45,7 @@ export function PlayerCardSheet({
             isBusted && 'bg-muted text-muted-foreground',
           )}
         >
-          <header className="relative flex flex-row items-end gap-4 w-full">
+          <header className="relative flex flex-row items-center gap-4 w-full">
             <Avatar className={cn(isBusted && 'opacity-50')}>
               <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
               <AvatarFallback>
@@ -55,9 +55,9 @@ export function PlayerCardSheet({
 
             <div className="text-left">
               <strong>{player?.users?.name} </strong>
-              <p className="text-muted-foreground text-xs">
+              {/* <p className="text-muted-foreground text-xs">
                 Ganhos {formatCurrencyBRL(player?.users?.cumulative_winnings)}
-              </p>
+              </p> */}
             </div>
 
             <div className="flex flex-col ml-auto text-sm h-full text-right">

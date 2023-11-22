@@ -49,7 +49,7 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
       <section className="flex flex-row items-center justify-center gap-8 p-4">
         {podiumPlayers.map((player, index) => (
           <PodiumPlayerSheet
-            key={player.id}
+            key={player?.id}
             player={player}
             expenses={expenses}
             totalPlayers={players.length}

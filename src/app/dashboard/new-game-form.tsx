@@ -72,7 +72,12 @@ export function NewGameForm() {
                 <FormItem>
                   <FormLabel>Buy-in</FormLabel>
                   <FormControl>
-                    <Input placeholder="R$ 25,00" {...field} />
+                    <Input
+                      inputMode="numeric"
+                      type="number"
+                      placeholder="R$ 25,00"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

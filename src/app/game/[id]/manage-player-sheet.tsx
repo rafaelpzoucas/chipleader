@@ -125,7 +125,7 @@ export function ManagePlayerSheet({
 
   return (
     <>
-      <header className="flex flex-row items-end gap-4 w-full">
+      <header className="flex flex-row items-center gap-4 w-full">
         <Avatar>
           <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
           <AvatarFallback>
@@ -135,9 +135,9 @@ export function ManagePlayerSheet({
 
         <div className="text-left">
           <strong>{player.users.name}</strong>
-          <p className="text-muted-foreground text-xs">
+          {/* <p className="text-muted-foreground text-xs">
             Ganhos {formatCurrencyBRL(player.users.cumulative_winnings)}
-          </p>
+          </p> */}
         </div>
 
         <strong className="ml-auto">{formatCurrencyBRL(balance)}</strong>

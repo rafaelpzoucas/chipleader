@@ -10,7 +10,7 @@ export default async function Game({ params }: { params: { id: string } }) {
 
   return (
     <main className="p-4 pb-10">
-      {game[0].status ? (
+      {game[0]?.status ? (
         <ActiveGame game={game[0]} />
       ) : (
         <InactiveGame game={game[0]} />

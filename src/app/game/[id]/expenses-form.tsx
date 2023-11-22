@@ -25,7 +25,6 @@ import {
 } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
 import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
-import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import {
   createExpense,
   decreaseAmountPaid,
@@ -136,7 +135,7 @@ export function ExpensesForm({
                   {players.length > 0 &&
                     players.map((player) => (
                       <SelectItem key={player.id} value={player.id}>
-                        <header className="relative flex flex-row items-end gap-4 w-full">
+                        <header className="relative flex flex-row items-center gap-4 w-full">
                           <Avatar>
                             <AvatarImage
                               src={player?.users?.user_metadata?.avatar_url}
@@ -154,12 +153,12 @@ export function ExpensesForm({
                             <strong>
                               {player?.users?.user_metadata?.name}{' '}
                             </strong>
-                            <p className="text-muted-foreground text-xs">
+                            {/* <p className="text-muted-foreground text-xs">
                               Ganhos{' '}
                               {formatCurrencyBRL(
                                 player?.users?.cumulative_winnings,
                               )}
-                            </p>
+                            </p> */}
                           </div>
                         </header>
                       </SelectItem>

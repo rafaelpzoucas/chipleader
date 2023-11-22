@@ -26,7 +26,7 @@ export function PodiumPlayerSheet({
   payout,
   index,
 }: PlayerCardSheetPropsType) {
-  const [amountSpent, setAmountSpent] = useState(player.amount_spent)
+  const [amountSpent, setAmountSpent] = useState(player?.amount_spent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   const totalExpensesPrice = expenses.reduce((acc, expense) => {
