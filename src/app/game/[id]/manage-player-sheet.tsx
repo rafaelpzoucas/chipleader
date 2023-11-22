@@ -21,6 +21,7 @@ import {
   finishGame,
   getUnbustedGamePlayers,
   increaseAmountPaid,
+  unbustPlayer,
   updateUserCumulativeWinnings,
 } from '../actions'
 
@@ -114,7 +115,12 @@ export function ManagePlayerSheet({
   }
 
   async function handleUnbustPlayer() {
-    const batata = 0
+    const response = await unbustPlayer(player.id)
+
+    if (response) {
+      setIsSheetOpen(false)
+      setIsBustPlayerSheetOpen(false)
+    }
   }
 
   return (

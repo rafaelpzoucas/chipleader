@@ -247,6 +247,25 @@ export async function bustPlayer(gamePlayerId: string) {
   return data || []
 }
 
+export async function unbustPlayer(gamePlayerId: string) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('game_players')
+    .update({ busted_at: null })
+    .eq('id', gamePlayerId)
+    .select()
+
+  if (error) {
+    throw error
+  }
+
+  revalidatePath('game')
+
+  return data || []
+}
+
 export async function getUnbustedGamePlayers(gameId: string) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
