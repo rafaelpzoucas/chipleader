@@ -30,7 +30,6 @@ export async function GET(request: Request) {
     if (!gamePlayersError && gamePlayers.length > 0) {
       return NextResponse.redirect(`${origin}/game/${code}`)
     }
-    console.log(gamePlayers)
 
     const { error } = await supabase
       .from('game_players')
