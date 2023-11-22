@@ -1,47 +1,64 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { GamePlayerDataType } from '@/models/games'
 import { UserDataType } from '@/models/users'
 import { createClient } from '@/utils/supabase/server'
 import { User } from 'lucide-react'
 import { cookies } from 'next/headers'
 
-async function getExpenseUserById(gamePlayerId: string) {
-  'use server'
+type GameExpensePlayerAvatarPropsType = {
+  expenseGamePlayerId: string
+}
 
+async function getGameplayerById(expenseGamePlayerId: string) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 
   const { data, error } = await supabase
-    .from('users')
-    .select()
-    .eq('id', gamePlayerId)
+    .from('game_players')
+    .select('*')
+    .eq('id', expenseGamePlayerId)
 
   if (error) {
     throw error
   }
 
-  return data || []
+  return data[0] || []
 }
 
-type GameExpensePlayerAvatarPropsType = {
-  expenseGamePlayerId: string
+async function getUserById(userId: string) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: users, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+
+  if (error) {
+    throw error
+  }
+
+  return users[0] || []
 }
 
 export async function GameExpensePlayerAvatar({
   expenseGamePlayerId,
 }: GameExpensePlayerAvatarPropsType) {
-  const expensePlayer: UserDataType[] =
-    await getExpenseUserById(expenseGamePlayerId)
+  const gamePlayer: GamePlayerDataType =
+    await getGameplayerById(expenseGamePlayerId)
+
+  const expensePlayer: UserDataType = await getUserById(gamePlayer?.user_id)
 
   return (
     <Avatar className="w-8 h-8 mr-3">
       <AvatarImage
-        src={expensePlayer && expensePlayer[0]?.user_metadata?.avatar_url}
+        src={expensePlayer && expensePlayer?.user_metadata?.avatar_url}
       />
       <AvatarFallback>
         {(expensePlayer &&
-          expensePlayer[0]?.user_metadata &&
-          expensePlayer[0]?.user_metadata?.name &&
-          expensePlayer[0]?.user_metadata?.name[0]) ?? (
+          expensePlayer?.user_metadata &&
+          expensePlayer?.user_metadata?.name &&
+          expensePlayer?.user_metadata?.name[0]) ?? (
           <User className="w-4 h-4" />
         )}
       </AvatarFallback>

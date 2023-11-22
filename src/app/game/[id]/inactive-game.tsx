@@ -1,7 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Sheet,
   SheetContent,
@@ -19,6 +17,7 @@ import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ArrowLeft, Plus, User } from 'lucide-react'
 import Link from 'next/link'
 import { getExpensesByGame, getUsersByGame } from '../actions'
+import { ExpensesForm } from './expenses-form'
 import { GameExpense } from './game-expense'
 import { PlayerCardSheet } from './player-card-sheet'
 
@@ -117,37 +116,29 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
             </span>
           )}
         </header>
-        {expenses.map((expense) => (
-          <GameExpense key={expense.id} expense={expense} />
-        ))}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" className="w-full mt-4">
-              <Plus className="w-4 h-4 mr-2" />
-              Adicionar despesa
-            </Button>
-          </SheetTrigger>
 
-          <SheetContent side="bottom">
-            <SheetHeader>
-              <SheetTitle>Nova despesa</SheetTitle>
-            </SheetHeader>
+        <div>
+          {expenses.map((expense) => (
+            <GameExpense key={expense.id} expense={expense} />
+          ))}
 
-            <form action="" className="space-y-4">
-              <div className="space-y-1">
-                <Label>Descrição</Label>
-                <Input placeholder="Digite a descrição..." />
-              </div>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="w-full mt-4">
+                <Plus className="w-4 h-4 mr-2" />
+                Despesa
+              </Button>
+            </SheetTrigger>
 
-              <div className="space-y-1">
-                <Label>Valor</Label>
-                <Input placeholder="R$ 0,00" />
-              </div>
+            <SheetContent side="bottom">
+              <SheetHeader>
+                <SheetTitle>Nova despesa</SheetTitle>
+              </SheetHeader>
 
-              <Button className="w-full">Adicionar despesa</Button>
-            </form>
-          </SheetContent>
-        </Sheet>
+              <ExpensesForm players={players} gameId={game.id} />
+            </SheetContent>
+          </Sheet>
+        </div>
       </section>
     </div>
   )
