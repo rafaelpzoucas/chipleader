@@ -91,6 +91,7 @@ export function ExpensesForm({
 
       toast({
         title: 'Despesa atualizada com sucesso!',
+        variant: 'success',
       })
     } else {
       await createExpense(gameId, values)
@@ -112,6 +113,7 @@ export function ExpensesForm({
 
       toast({
         title: 'Despesa criada com sucesso!',
+        variant: 'success',
       })
     }
   }

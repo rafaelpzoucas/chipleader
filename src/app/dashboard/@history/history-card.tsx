@@ -49,11 +49,6 @@ export async function HistoryCard({ game }: { game: GameDataType }) {
             <br />
             <strong>{formatCurrencyBRL(game.buy_in)}</strong>
           </span>
-          <span>
-            <span className="text-muted-foreground">Despesas:</span>
-            <br />
-            <strong>{formatCurrencyBRL(totalExpensesPrice)}</strong>
-          </span>
         </aside>
       </div>
     </Link>
