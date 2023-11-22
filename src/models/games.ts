@@ -2,7 +2,7 @@ import { UserDataType } from './users'
 
 export type GamePlayerDataType = {
   id: string
-  player_id: string
+  user_id: string
   game_id: string
   busted_at: string
   amount_spent: number

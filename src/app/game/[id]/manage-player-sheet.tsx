@@ -11,12 +11,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { bustPlayer, updateAmountSpent } from '@/controllers/game_players'
+import { updateAmountSpent } from '@/controllers/game_players'
 import { GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { Minus, Plus, User } from 'lucide-react'
 import { useState } from 'react'
-import { increaseAmountPaid } from '../actions'
+import {
+  bustPlayer,
+  finishGame,
+  getUnbustedGamePlayers,
+  increaseAmountPaid,
+  updateUserCumulativeWinnings,
+} from '../actions'
 
 interface ManagePlayerSheetProps {
   player: GamePlayerDataType
@@ -71,18 +77,44 @@ export function ManagePlayerSheet({
     }
   }
 
-  async function handleBustPlayer(bustedAt: Date | null) {
-    const response = await bustPlayer(
-      player.id,
-      bustedAt,
-      player.users.id,
-      payout,
-    )
+  async function handleBustPlayer() {
+    const unbustedPlayers = await getUnbustedGamePlayers(player.game_id)
 
-    if (response) {
-      setIsSheetOpen(false)
-      setIsBustPlayerSheetOpen(false)
+    console.log({ unbustedPlayers })
+
+    if (unbustedPlayers.length > 3) {
+      const response = await bustPlayer(player.id)
+
+      if (response) {
+        setIsSheetOpen(false)
+        setIsBustPlayerSheetOpen(false)
+      }
     }
+
+    if (unbustedPlayers.length === 3) {
+      await bustPlayer(player.id)
+      await updateUserCumulativeWinnings(payout * 0.2, player.user_id)
+    }
+
+    if (unbustedPlayers.length === 2) {
+      await bustPlayer(player.id)
+      await updateUserCumulativeWinnings(payout * 0.3, player.user_id)
+
+      const unbustedPlayers: GamePlayerDataType[] =
+        await getUnbustedGamePlayers(player.game_id)
+
+      await bustPlayer(unbustedPlayers[0].id)
+      await updateUserCumulativeWinnings(
+        payout * 0.5,
+        unbustedPlayers[0].user_id,
+      )
+
+      await finishGame(player.game_id)
+    }
+  }
+
+  async function handleUnbustPlayer() {
+    const batata = 0
   }
 
   return (
@@ -132,7 +164,7 @@ export function ManagePlayerSheet({
 
       {isBusted ? (
         gameStatus === true ? (
-          <Button className="w-full" onClick={() => handleBustPlayer(null)}>
+          <Button className="w-full" onClick={handleUnbustPlayer}>
             Voltar para o jogo
           </Button>
         ) : (
@@ -161,7 +193,7 @@ export function ManagePlayerSheet({
                   <Button
                     variant="destructive"
                     className="w-full"
-                    onClick={() => handleBustPlayer(new Date())}
+                    onClick={handleBustPlayer}
                   >
                     Sim, eliminar
                   </Button>

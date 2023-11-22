@@ -60,6 +60,25 @@ export async function getUsersByGame(
   return users || []
 }
 
+export async function finishGame(gameId: string) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('games')
+    .update({ status: false })
+    .eq('id', gameId)
+    .select()
+
+  if (error) {
+    throw error
+  }
+
+  revalidatePath('game')
+
+  return data || []
+}
+
 export async function getExpensesByGame(
   id: string,
 ): Promise<GameExpenseDataType[]> {
@@ -207,4 +226,64 @@ export async function decreaseAmountPaid(
   }
 
   revalidatePath('game')
+}
+
+export async function bustPlayer(gamePlayerId: string) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('game_players')
+    .update({ busted_at: new Date() })
+    .eq('id', gamePlayerId)
+    .select()
+
+  if (error) {
+    throw error
+  }
+
+  revalidatePath('game')
+
+  return data || []
+}
+
+export async function getUnbustedGamePlayers(gameId: string) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('game_players')
+    .select('*')
+    .eq('game_id', gameId)
+    .is('busted_at', null)
+
+  if (error) {
+    throw error
+  }
+
+  revalidatePath('game')
+
+  return data || []
+}
+
+export async function updateUserCumulativeWinnings(
+  winning: number,
+  userId: string,
+) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({ cumulative_winnings: winning })
+    .eq('id', userId)
+    .select()
+
+  if (error) {
+    throw error
+  }
+
+  revalidatePath('game')
+
+  return data || []
 }

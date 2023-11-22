@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
     const { error } = await supabase
       .from('game_players')
-      .insert([{ player_id: user?.id, game_id: code, amount_spent: buyin }])
+      .insert([{ user_id: user?.id, game_id: code, amount_spent: buyin }])
       .select()
 
     if (!error) {
