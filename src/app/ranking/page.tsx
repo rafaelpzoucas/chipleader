@@ -4,8 +4,9 @@ import { UserDataType } from '@/models/users'
 
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { createClient } from '@/utils/supabase/server'
-import { User } from 'lucide-react'
+import { ArrowLeft, User } from 'lucide-react'
 import { cookies } from 'next/headers'
+import Link from 'next/link'
 
 async function getUsersByRanking(): Promise<UserDataType[]> {
   'use server'
@@ -33,8 +34,11 @@ export default async function RankingPage() {
 
   return (
     <section className="p-4">
-      <header className="py-2">
-        <h1 className="text-xl">Ranking</h1>
+      <header className="flex flex-row items-center">
+        <Link href="/dashboard" className="p-3">
+          <ArrowLeft className="w-6 h-6" />
+        </Link>
+        <h1 className="text-lg font-bold">Ranking</h1>
       </header>
 
       <section className="flex flex-row items-center justify-center gap-10 p-4 py-8">
