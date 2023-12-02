@@ -81,8 +81,6 @@ export function ManagePlayerSheet({
   async function handleBustPlayer() {
     const unbustedPlayers = await getUnbustedGamePlayers(player.game_id)
 
-    console.log({ unbustedPlayers })
-
     if (unbustedPlayers.length > 3) {
       const response = await bustPlayer(player.id)
 

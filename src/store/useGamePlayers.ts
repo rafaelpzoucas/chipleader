@@ -18,8 +18,6 @@ export const useGamePlayers = create<UseGamePlayersType>((set) => ({
   getPlayersByGame: async (gameId: string) => {
     const response = await getUsersByGame(gameId)
 
-    console.log('Teste')
-
     if (response) {
       set({ gamePlayers: response })
 

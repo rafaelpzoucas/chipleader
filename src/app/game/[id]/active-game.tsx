@@ -11,7 +11,7 @@ import { CreateExpenseSheet } from './create-expense-sheet'
 import { GameExpense } from './game-expense'
 import { GameWinnings } from './game-winnings'
 import { InvitePlayersSheet } from './invite-players-sheet'
-import { PlayerCardSheet } from './player-card-sheet'
+import RealTimeGamePlayers from './real-time-game-players'
 
 export default async function ActiveGame({ game }: { game: GameDataType }) {
   const players: GamePlayerDataType[] = await getUsersByGame(game.id)
@@ -41,17 +41,12 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
       <section className="space-y-2">
         <InvitePlayersSheet gameId={game.id} buyIn={game.buy_in} />
 
-        {game.game_players.length > 0 &&
-          players.map((player) => (
-            <PlayerCardSheet
-              key={player.id}
-              player={player}
-              expenses={expenses}
-              totalPlayers={players.length}
-              gameStatus={game.status}
-              payout={totalPayout}
-            />
-          ))}
+        <RealTimeGamePlayers
+          game={game}
+          players={players}
+          expenses={expenses}
+          totalPayout={totalPayout}
+        />
       </section>
 
       <section className="space-y-3">
