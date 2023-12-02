@@ -216,14 +216,14 @@ export function ExpensesForm({
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Buy-in</FormLabel>
+                  <FormLabel>Preço</FormLabel>
                   <FormControl>
                     <CurrencyInput
                       value={field.value}
                       onChangeValue={(_, value) => {
                         field.onChange(value)
                       }}
-                      InputElement={<Input />}
+                      InputElement={<Input placeholder="R$ 0,00" />}
                     />
                   </FormControl>
                 </FormItem>

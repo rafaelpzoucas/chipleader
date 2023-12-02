@@ -10,10 +10,6 @@ import Link from 'next/link'
 export async function HistoryCard({ game }: { game: GameDataType }) {
   const players: GamePlayerDataType[] = await getUsersByGame(game.id)
 
-  const totalExpensesPrice = game.game_expenses.reduce((acc, expense) => {
-    return acc + expense.price
-  }, 0)
-
   return (
     <Link href={`/game/${game.id}`}>
       <div

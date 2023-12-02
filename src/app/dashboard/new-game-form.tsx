@@ -82,7 +82,7 @@ export function NewGameForm() {
                       onChangeValue={(_, value) => {
                         field.onChange(value)
                       }}
-                      InputElement={<Input />}
+                      InputElement={<Input placeholder="R$ 0,00" />}
                     />
                   </FormControl>
                   <FormMessage />
