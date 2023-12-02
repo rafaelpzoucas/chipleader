@@ -33,6 +33,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
 import { useState } from 'react'
+import { CurrencyInput } from 'react-currency-mask'
 import {
   createExpense,
   decreaseAmountPaid,
@@ -215,12 +216,14 @@ export function ExpensesForm({
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Valor</FormLabel>
+                  <FormLabel>Buy-in</FormLabel>
                   <FormControl>
-                    <Input
-                      inputMode="numeric"
-                      placeholder="R$ 0,00"
-                      {...field}
+                    <CurrencyInput
+                      value={field.value}
+                      onChangeValue={(_, value) => {
+                        field.onChange(value)
+                      }}
+                      InputElement={<Input />}
                     />
                   </FormControl>
                 </FormItem>
