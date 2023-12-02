@@ -45,7 +45,7 @@ import {
 export const expensesFormSchema = z.object({
   gamePlayerId: z.string().optional(),
   description: z.string(),
-  price: z.string(),
+  price: z.number(),
 })
 
 type ExpensesFormPropsType = {
@@ -72,7 +72,7 @@ export function ExpensesForm({
     resolver: zodResolver(expensesFormSchema),
     defaultValues: {
       description: defaultValues?.description,
-      price: defaultValues?.price.toString(),
+      price: defaultValues?.price,
       gamePlayerId: defaultValues?.game_player_id,
     },
   })
@@ -86,16 +86,14 @@ export function ExpensesForm({
           (player) => player.id === values.gamePlayerId,
         )[0]
 
-        const newIncreaseValue =
-          gamePlayer.amount_paid + parseFloat(values.price)
+        const newIncreaseValue = gamePlayer.amount_paid + values.price
 
         await increaseAmountPaid(newIncreaseValue, gamePlayer.id)
 
         if (currentPlayerId) {
           const currentPlayer = await getCurrentAmountPaid(currentPlayerId)
 
-          const newDecreaseValue =
-            currentPlayer.amount_paid - parseFloat(values.price)
+          const newDecreaseValue = currentPlayer.amount_paid - values.price
 
           await decreaseAmountPaid(newDecreaseValue, currentPlayerId)
         }
@@ -114,14 +112,14 @@ export function ExpensesForm({
         const gamePlayer = players.filter(
           (player) => player.id === values.gamePlayerId,
         )[0]
-        const newValue = parseFloat(values.price) + gamePlayer.amount_paid
+        const newValue = values.price + gamePlayer.amount_paid
 
         await increaseAmountPaid(newValue, gamePlayer.id)
       }
 
       form.reset({
         description: '',
-        price: '',
+        price: 0,
         gamePlayerId: '',
       })
 
