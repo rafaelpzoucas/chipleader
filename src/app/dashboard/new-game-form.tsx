@@ -61,7 +61,7 @@ export function NewGameForm() {
           Novo jogo
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent side="bottom">
         <SheetHeader>
           <SheetTitle>Novo jogo</SheetTitle>
         </SheetHeader>
