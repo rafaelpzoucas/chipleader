@@ -33,7 +33,7 @@ export function EditExpenseSheet({
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="bottom">
+      <SheetContent side="bottom" className="h-full sm:h-fit">
         <SheetHeader>
           <SheetTitle>Nova despesa</SheetTitle>
         </SheetHeader>
