@@ -7,7 +7,7 @@ import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { getExpensesByGame, getUsersByGame } from '../actions'
-import { ExpensesForm } from './expenses-form'
+import { CreateExpenseSheet } from './create-expense-sheet'
 import { GameExpense } from './game-expense'
 import { GameWinnings } from './game-winnings'
 import { InvitePlayersSheet } from './invite-players-sheet'
@@ -70,7 +70,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
             <GameExpense key={expense.id} expense={expense} />
           ))}
 
-          <ExpensesForm players={players} gameId={game.id} />
+          <CreateExpenseSheet players={players} game={game} />
         </div>
       </section>
     </div>
