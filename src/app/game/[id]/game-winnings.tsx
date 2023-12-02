@@ -7,12 +7,12 @@ export function GameWinnings({ totalPayout }: { totalPayout: number }) {
     <section className="flex flex-row items-center justify-center gap-8 p-4">
       <div className="flex flex-col items-center">
         <p className="text-muted-foreground text-xs mb-3">2º lugar</p>
-        <Avatar>
+        <Avatar className="w-12 h-12">
           <AvatarFallback>
             <User className="w-4 h-4" />
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center mt-2">
           <strong>{formatCurrencyBRL(totalPayout * 0.3)}</strong>
         </div>
       </div>
@@ -23,7 +23,7 @@ export function GameWinnings({ totalPayout }: { totalPayout: number }) {
             <User className="w-5 h-5" />
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center mt-2">
           <strong>{formatCurrencyBRL(totalPayout * 0.5)}</strong>
         </div>
       </div>
@@ -34,7 +34,7 @@ export function GameWinnings({ totalPayout }: { totalPayout: number }) {
             <User className="w-4 h-4" />
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center mt-2">
           <strong>{formatCurrencyBRL(totalPayout * 0.2)}</strong>
         </div>
       </div>

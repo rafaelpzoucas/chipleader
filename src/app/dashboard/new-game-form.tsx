@@ -17,12 +17,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { createGame } from '@/controllers/games'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus } from 'lucide-react'
+import { Loader, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { CurrencyInput } from 'react-currency-mask'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+import { createGame } from '../game/actions'
 
 const newGameFormSchema = z.object({
   buyin: z.number(),
@@ -30,6 +32,7 @@ const newGameFormSchema = z.object({
 
 export function NewGameForm() {
   const router = useRouter()
+  const [isCreatingGame, setIsCreatingGame] = useState(false)
 
   const newGameForm = useForm<z.infer<typeof newGameFormSchema>>({
     resolver: zodResolver(newGameFormSchema),
@@ -39,6 +42,8 @@ export function NewGameForm() {
   })
 
   async function handleCreateGame(values: z.infer<typeof newGameFormSchema>) {
+    setIsCreatingGame(true)
+
     const response = await createGame(values.buyin)
 
     if (response) {
@@ -56,7 +61,7 @@ export function NewGameForm() {
           Novo jogo
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom">
+      <SheetContent>
         <SheetHeader>
           <SheetTitle>Novo jogo</SheetTitle>
         </SheetHeader>
@@ -72,19 +77,27 @@ export function NewGameForm() {
                 <FormItem>
                   <FormLabel>Buy-in</FormLabel>
                   <FormControl>
-                    <Input
-                      inputMode="numeric"
-                      type="number"
-                      placeholder="R$ 25,00"
-                      {...field}
+                    <CurrencyInput
+                      value={field.value}
+                      onChangeValue={(_, value) => {
+                        field.onChange(value)
+                      }}
+                      InputElement={<Input />}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Criar jogo
+            <Button type="submit" className="w-full" disabled={isCreatingGame}>
+              {isCreatingGame ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  <span>Criando jogo</span>
+                </>
+              ) : (
+                <span>Criar jogo</span>
+              )}
             </Button>
           </form>
         </Form>

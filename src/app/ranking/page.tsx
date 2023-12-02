@@ -1,5 +1,5 @@
+import { Podium } from '@/components/podium'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { cn } from '@/lib/utils'
 import { UserDataType } from '@/models/users'
 
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
@@ -41,29 +41,7 @@ export default async function RankingPage() {
         <h1 className="text-lg font-bold">Ranking</h1>
       </header>
 
-      <section className="flex flex-row items-center justify-center gap-10 p-4 py-8">
-        {podiumPlayers.map((player, index) => (
-          <div key={player.id} className="flex flex-col items-center">
-            <p className="text-muted-foreground text-xs mb-3">
-              {index === 0 ? '2' : index === 1 ? '1' : '3'}º lugar
-            </p>
-            <Avatar className={cn(index === 1 && 'w-16 h-16')}>
-              <AvatarImage src={player?.user_metadata?.avatar_url} />
-              <AvatarFallback>
-                {player?.user_metadata?.name ? (
-                  player?.user_metadata?.name[0]
-                ) : (
-                  <User className="w-4 h-4" />
-                )}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col items-center justify-center">
-              <strong>{player.name.split(' ')[0]}</strong>
-              <strong>{formatCurrencyBRL(player.cumulative_winnings)}</strong>
-            </div>
-          </div>
-        ))}
-      </section>
+      <Podium podiumPlayers={podiumPlayers} />
 
       <ol>
         {users.length > 0 &&
@@ -86,8 +64,8 @@ export default async function RankingPage() {
               <div>
                 <strong>
                   {user && user?.user_metadata?.name
-                    ? user.user_metadata.name
-                    : user.name}
+                    ? user.user_metadata.name.split(' ')[0]
+                    : user.name.split(' ')[0]}
                 </strong>
                 <p className="text-muted-foreground text-xs">
                   Ranking #{users.indexOf(user) + 1}
@@ -95,10 +73,10 @@ export default async function RankingPage() {
               </div>
 
               <div className="flex flex-col text-right ml-auto">
-                <span className="text-muted-foreground text-xs">
-                  Prêmio acumulado
-                </span>
                 <strong>{formatCurrencyBRL(user.cumulative_winnings)}</strong>
+                <span className="text-muted-foreground text-xs">
+                  Acumulados
+                </span>
               </div>
             </li>
           ))}

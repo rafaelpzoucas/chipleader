@@ -14,7 +14,7 @@ export default async function Active() {
       {games.length > 0 ? (
         games.map((game) => (
           <Link key={game.id} href={`/game/${game.id}`}>
-            <Card className="bg-primary text-white">
+            <Card className="bg-primary text-white dark:text-background">
               <CardHeader className="flex flex-row w-full items-center gap-2">
                 <CardTitle>Jogo ativo</CardTitle>
                 <div className="ml-auto text-right">

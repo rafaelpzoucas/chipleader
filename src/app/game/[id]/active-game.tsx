@@ -1,18 +1,10 @@
-import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
 import {
   GameDataType,
   GameExpenseDataType,
   GamePlayerDataType,
 } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { getExpensesByGame, getUsersByGame } from '../actions'
 import { ExpensesForm } from './expenses-form'
@@ -78,22 +70,7 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
             <GameExpense key={expense.id} expense={expense} />
           ))}
 
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="w-full mt-4">
-                <Plus className="w-4 h-4 mr-2" />
-                Despesa
-              </Button>
-            </SheetTrigger>
-
-            <SheetContent side="bottom">
-              <SheetHeader>
-                <SheetTitle>Nova despesa</SheetTitle>
-              </SheetHeader>
-
-              <ExpensesForm players={players} gameId={game.id} />
-            </SheetContent>
-          </Sheet>
+          <ExpensesForm players={players} gameId={game.id} />
         </div>
       </section>
     </div>

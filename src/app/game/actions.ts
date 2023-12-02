@@ -12,6 +12,25 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { expensesFormSchema } from './[id]/expenses-form'
 
+export async function createGame(buyIn: number) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('games')
+    .insert([{ buy_in: buyIn }])
+    .select()
+
+  if (error) {
+    console.log(error)
+  }
+
+  revalidatePath('dashboard')
+  revalidatePath('game')
+
+  return data || []
+}
+
 export async function getGameById(id: string): Promise<GameDataType[]> {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
