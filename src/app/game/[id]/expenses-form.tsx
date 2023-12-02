@@ -221,7 +221,9 @@ export function ExpensesForm({
                       onChangeValue={(_, value) => {
                         field.onChange(value)
                       }}
-                      InputElement={<Input placeholder="R$ 0,00" />}
+                      InputElement={
+                        <Input inputMode="numeric" placeholder="R$ 0,00" />
+                      }
                     />
                   </FormControl>
                 </FormItem>
