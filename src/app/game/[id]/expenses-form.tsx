@@ -61,6 +61,7 @@ export function ExpensesForm({
   const { toast } = useToast()
 
   const [isCreatingExpense, setIsCreatingExpense] = useState(false)
+  const [isSavingExpense, setIsSavingExpense] = useState(false)
 
   const form = useForm<z.infer<typeof expensesFormSchema>>({
     resolver: zodResolver(expensesFormSchema),
@@ -73,6 +74,8 @@ export function ExpensesForm({
 
   async function onSubmit(values: z.infer<typeof expensesFormSchema>) {
     if (defaultValues) {
+      setIsSavingExpense(true)
+
       await updateExpense(values, expenseId)
 
       if (values.gamePlayerId) {
@@ -203,19 +206,33 @@ export function ExpensesForm({
             </FormItem>
           )}
         />
-
-        <Button className="w-full" disabled={isCreatingExpense}>
-          {defaultValues ? (
-            'Salvar alterações'
-          ) : isCreatingExpense ? (
-            <>
-              <Loader className="w-4 h-4 mr-2 animate-spin" />
-              <span>Adicionando despesa...</span>
-            </>
-          ) : (
-            <span>Adicionar despesa</span>
-          )}
-        </Button>
+        {defaultValues ? (
+          <Button className="w-full" disabled={isCreatingExpense}>
+            {defaultValues ? (
+              'Salvar alterações'
+            ) : isCreatingExpense ? (
+              <>
+                <Loader className="w-4 h-4 mr-2 animate-spin" />
+                <span>Adicionando despesa...</span>
+              </>
+            ) : (
+              <span>Adicionar despesa</span>
+            )}
+          </Button>
+        ) : (
+          <Button className="w-full" disabled={isSavingExpense}>
+            {defaultValues ? (
+              'Salvar alterações'
+            ) : isCreatingExpense ? (
+              <>
+                <Loader className="w-4 h-4 mr-2 animate-spin" />
+                <span>Salvando alterações...</span>
+              </>
+            ) : (
+              <span>Salvar alterações</span>
+            )}
+          </Button>
+        )}
       </form>
     </Form>
   )

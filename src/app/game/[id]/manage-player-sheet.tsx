@@ -14,7 +14,7 @@ import {
 import { updateAmountSpent } from '@/controllers/game_players'
 import { GamePlayerDataType } from '@/models/games'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { Minus, Plus, User } from 'lucide-react'
+import { Loader, Minus, Plus, User } from 'lucide-react'
 import { useState } from 'react'
 import {
   bustPlayer,
@@ -44,10 +44,13 @@ export function ManagePlayerSheet({
   gameStatus,
   payout,
 }: ManagePlayerSheetProps) {
-  const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
   const buyInPrice = 25
   const isBusted = player.busted_at !== null
   const balance = player.amount_paid - player.amount_spent - expensesEach
+
+  const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [isEliminating, setIsEliminating] = useState(false)
 
   function subBuyIn(buyInPrice: number) {
     if (amountSpent > 0) {
@@ -60,11 +63,15 @@ export function ManagePlayerSheet({
   }
 
   async function handleUpdateAmountSpent() {
+    setIsSaving(true)
+
     const response = await updateAmountSpent(player.id, amountSpent)
 
     if (response) {
       setIsSheetOpen(false)
     }
+
+    setIsSaving(false)
   }
 
   async function handleUpdateAmountPaid() {
@@ -79,6 +86,8 @@ export function ManagePlayerSheet({
   }
 
   async function handleBustPlayer() {
+    setIsEliminating(true)
+
     const unbustedPlayers = await getUnbustedGamePlayers(player.game_id)
 
     if (unbustedPlayers.length > 3) {
@@ -110,6 +119,8 @@ export function ManagePlayerSheet({
 
       await finishGame(player.game_id)
     }
+
+    setIsEliminating(false)
   }
 
   async function handleUnbustPlayer() {
@@ -196,8 +207,16 @@ export function ManagePlayerSheet({
                     variant="destructive"
                     className="w-full"
                     onClick={handleBustPlayer}
+                    disabled={isEliminating}
                   >
-                    Sim, eliminar
+                    {isEliminating ? (
+                      <>
+                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        <span>Eliminando jogador...</span>
+                      </>
+                    ) : (
+                      <span>Sim, eliminar</span>
+                    )}
                   </Button>
                   <SheetClose asChild>
                     <Button variant="outline" className="w-full">
@@ -227,8 +246,19 @@ export function ManagePlayerSheet({
             </Card>
           </div>
           <footer>
-            <Button className="w-full" onClick={handleUpdateAmountSpent}>
-              Salvar
+            <Button
+              className="w-full"
+              onClick={handleUpdateAmountSpent}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  <span>Salvando alterações...</span>
+                </>
+              ) : (
+                <span>Salvar</span>
+              )}
             </Button>
           </footer>
         </>
