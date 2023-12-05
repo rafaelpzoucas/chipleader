@@ -13,7 +13,7 @@ export default function DashboardLayout({
 }) {
   return (
     <main className="space-y-6 pb-10">
-      {userHeader}
+      {/* {userHeader} */}
 
       <section className="px-4">{active}</section>
 
