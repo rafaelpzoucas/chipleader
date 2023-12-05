@@ -42,12 +42,15 @@ export default function Login({
   }
 
   async function signInWithGoogle() {
-    const defaulURL = `https://chipleader.vercel.app/auth/callback?invite=${searchParams.invite}&buyin=${searchParams.buyin}`
+    const redirectURL =
+      searchParams.invite && searchParams.buyin
+        ? `${origin}/auth/callback?invite=${searchParams.invite}&buyin=${searchParams.buyin}`
+        : `${origin}/auth/callback`
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: defaulURL,
+        redirectTo: redirectURL,
       },
     })
 
