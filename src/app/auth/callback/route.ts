@@ -36,6 +36,8 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser()
 
     if (user) {
+      console.log(user)
+
       const { error: insertUserError } = await supabase
         .from('users')
         .insert([{ id: user.id, user_metadata: user.user_metadata }])
