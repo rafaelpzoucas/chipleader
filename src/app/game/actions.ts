@@ -2,11 +2,7 @@
 
 import { z } from 'zod'
 
-import {
-  GameDataType,
-  GameExpenseDataType,
-  GamePlayerDataType,
-} from '@/models/games'
+import { GameDataType, GameExpenseDataType } from '@/models/games'
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
@@ -55,9 +51,7 @@ export async function getGameById(id: string): Promise<GameDataType[]> {
   return games || []
 }
 
-export async function getUsersByGame(
-  id: string,
-): Promise<GamePlayerDataType[]> {
+export async function getUsersByGame(id: string) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 
@@ -70,6 +64,7 @@ export async function getUsersByGame(
     `,
     )
     .eq('game_id', id)
+    .order('created_at', { ascending: false })
     .order('busted_at', { ascending: false })
 
   if (error) {

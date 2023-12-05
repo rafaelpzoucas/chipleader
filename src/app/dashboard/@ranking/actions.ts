@@ -1,8 +1,7 @@
-import { UserDataType } from '@/models/users'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 
-export async function getTop10UsersByRanking(): Promise<UserDataType[]> {
+export async function getTop10UsersByRanking() {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 
