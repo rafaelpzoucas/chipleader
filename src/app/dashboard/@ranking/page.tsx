@@ -1,4 +1,3 @@
-import { Podium } from '@/components/podium'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
@@ -47,7 +46,7 @@ export default async function Ranking() {
         </CardHeader>
 
         <CardContent>
-          <Podium podiumPlayers={podiumPlayers} />
+          {/* <Podium podiumPlayers={podiumPlayers} /> */}
 
           <ol>
             {users.length > 0 &&
