@@ -7,7 +7,7 @@ export async function getTop10UsersByRanking() {
 
   const { data: users, error } = await supabase
     .from('users')
-    .select()
+    .select('*')
     .order('cumulative_winnings', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(10)
