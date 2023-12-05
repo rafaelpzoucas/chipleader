@@ -1,5 +1,4 @@
 import { Podium } from '@/components/podium'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
   CardContent,
@@ -8,8 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { UserDataType } from '@/models/users'
-import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { ChevronRight, User } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { getTop10UsersByRanking } from './actions'
 
@@ -28,7 +26,7 @@ export default async function Ranking() {
         <CardContent>
           <Podium podiumPlayers={podiumPlayers} />
 
-          <ol>
+          {/* <ol>
             {users.length > 0 &&
               users.slice(3).map((user) => (
                 <li
@@ -67,7 +65,7 @@ export default async function Ranking() {
                   </div>
                 </li>
               ))}
-          </ol>
+          </ol> */}
         </CardContent>
 
         <CardFooter className="px-4">
