@@ -1,4 +1,3 @@
-import { Podium } from '@/components/podium'
 import {
   Card,
   CardContent,
@@ -6,15 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { UserDataType } from '@/models/users'
 import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-import { getTop10UsersByRanking } from './actions'
 
 export default async function Ranking() {
-  const users: UserDataType[] = await getTop10UsersByRanking()
+  // const users: UserDataType[] = await getTop10UsersByRanking()
 
-  const podiumPlayers = [users[1], users[0], users[2]]
+  // const podiumPlayers = [users[1], users[0], users[2]]
 
   return (
     <Link href="/ranking">
@@ -24,7 +21,7 @@ export default async function Ranking() {
         </CardHeader>
 
         <CardContent>
-          <Podium podiumPlayers={podiumPlayers} />
+          {/* <Podium podiumPlayers={podiumPlayers} /> */}
 
           {/* <ol>
             {users.length > 0 &&
