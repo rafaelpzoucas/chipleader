@@ -34,7 +34,7 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      if (invite && buyin) {
+      if (invite !== 'undefined' && buyin !== 'undefined') {
         return NextResponse.redirect(`${origin}${inviteURL}`)
       }
 
