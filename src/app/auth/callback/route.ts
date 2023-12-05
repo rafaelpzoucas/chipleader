@@ -31,6 +31,20 @@ export async function GET(request: Request) {
       },
     )
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (user) {
+      const { error: insertUserError } = await supabase
+        .from('users')
+        .insert([{ id: user.id, user_metadata: user.user_metadata }])
+
+      if (insertUserError) {
+        NextResponse.redirect(`${origin}/auth/auth-code-error`)
+      }
+    }
+
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
