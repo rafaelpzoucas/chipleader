@@ -31,13 +31,13 @@ export async function GET(request: Request) {
       },
     )
 
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+
     const {
       data: { user },
     } = await supabase.auth.getUser()
 
     if (user) {
-      console.log(user)
-
       const { error: insertUserError } = await supabase
         .from('users')
         .insert([{ id: user.id, user_metadata: user.user_metadata }])
@@ -46,8 +46,6 @@ export async function GET(request: Request) {
         NextResponse.redirect(`${origin}/auth/auth-code-error`)
       }
     }
-
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
       if (invite !== 'undefined' && buyin !== 'undefined') {
