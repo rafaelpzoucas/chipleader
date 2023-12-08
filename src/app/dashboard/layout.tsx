@@ -12,8 +12,8 @@ export default function DashboardLayout({
   history: React.ReactNode
 }) {
   return (
-    <main className="space-y-6 pb-10">
-      {userHeader}
+    <main className="space-y-6 pb-10 py-4">
+      {/* {userHeader} */}
 
       <section className="px-4">{active}</section>
 

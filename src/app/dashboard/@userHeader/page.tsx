@@ -16,6 +16,8 @@ export default async function UserHeader() {
   const userAvatarURL = user?.user_metadata.avatar_url
   const userInfo = await getUserInfo(user?.id)
 
+  console.log(user)
+
   return (
     <header className="flex flex-row items-end gap-4 w-full p-4">
       <Avatar>
