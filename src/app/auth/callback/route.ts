@@ -48,7 +48,7 @@ export async function GET(request: Request) {
     }
 
     if (!error) {
-      if (invite !== 'undefined' && invite !== 'null') {
+      if (invite) {
         return NextResponse.redirect(`${origin}${inviteURL}`)
       }
 

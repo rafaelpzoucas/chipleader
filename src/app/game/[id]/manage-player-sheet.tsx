@@ -47,6 +47,7 @@ export function ManagePlayerSheet({
   const buyInPrice = 25
   const isBusted = player.busted_at !== null
   const balance = player.amount_paid - player.amount_spent - expensesEach
+  const playerName = player?.users?.user_metadata?.name
 
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -138,15 +139,14 @@ export function ManagePlayerSheet({
         <Avatar>
           <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
           <AvatarFallback>
-            {player?.users?.name[0] ?? <User className="w-4 h-4" />}
+            {playerName[0] ?? <User className="w-4 h-4" />}
           </AvatarFallback>
         </Avatar>
 
         <div className="text-left">
-          <strong>{player.users.name}</strong>
-          {/* <p className="text-muted-foreground text-xs">
-            Ganhos {formatCurrencyBRL(player.users.cumulative_winnings)}
-          </p> */}
+          <strong>{`${playerName.split(' ')[0]} ${
+            playerName.split(' ')[playerName.split(' ').length - 1]
+          }`}</strong>
         </div>
 
         <strong className="ml-auto">{formatCurrencyBRL(balance)}</strong>
