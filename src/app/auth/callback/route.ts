@@ -48,7 +48,7 @@ export async function GET(request: Request) {
     }
 
     if (!error) {
-      if (invite !== 'undefined' && buyin !== 'undefined') {
+      if (invite !== 'undefined' && invite !== 'null') {
         return NextResponse.redirect(`${origin}${inviteURL}`)
       }
 
