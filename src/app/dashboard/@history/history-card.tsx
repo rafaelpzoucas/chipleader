@@ -33,7 +33,7 @@ export async function HistoryCard({ game }: { game: GameDataType }) {
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-baseline">
-                <strong>{player.users.name.split(' ')[0]}</strong>
+                <strong>{player.users.user_metadata.name.split(' ')[0]}</strong>
               </div>
             </div>
           ))}

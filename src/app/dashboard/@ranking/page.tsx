@@ -11,10 +11,10 @@ import { UserDataType } from '@/models/users'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ChevronRight, Spade, User } from 'lucide-react'
 import Link from 'next/link'
-import { getTop10UsersByRanking } from './actions'
+import { getTop5UsersByRanking } from './actions'
 
 export default async function Ranking() {
-  const users: UserDataType[] = await getTop10UsersByRanking()
+  const users: UserDataType[] = await getTop5UsersByRanking()
 
   const podiumPlayers = [users[1], users[0], users[2]]
 
@@ -22,7 +22,7 @@ export default async function Ranking() {
     <Link href="/ranking">
       <Card>
         <CardHeader>
-          <CardTitle>Ranking top 10</CardTitle>
+          <CardTitle>Ranking top 5</CardTitle>
         </CardHeader>
 
         <CardContent>

@@ -16,6 +16,7 @@ type PlayerCardSheetPropsType = {
   gameStatus: boolean
   payout: number
   index: number
+  placing: number
 }
 
 export function PodiumPlayerSheet({
@@ -25,22 +26,27 @@ export function PodiumPlayerSheet({
   gameStatus,
   payout,
   index,
+  placing,
 }: PlayerCardSheetPropsType) {
   const [amountSpent, setAmountSpent] = useState(player?.amount_spent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+  const playerName = player?.users?.user_metadata?.name
 
   const totalExpensesPrice = expenses.reduce((acc, expense) => {
     return acc + expense.price
   }, 0)
 
-  const totalExpensesEach = totalExpensesPrice / totalPlayers
+  const totalExpensesEach =
+    totalPlayers > 0 ? totalExpensesPrice / totalPlayers : 0
 
   function calculatePayout(index: number, amountSpent: number) {
     const percentages = [0.3, 0.5, 0.2]
     const percentage = percentages[index] || 0
-    const totalPayout = payout * percentage - amountSpent - totalExpensesEach
+    const balance =
+      payout * percentage + player.amount_paid - totalExpensesEach - amountSpent
 
-    return totalPayout
+    return balance
   }
 
   return (
@@ -53,24 +59,24 @@ export function PodiumPlayerSheet({
           <Avatar className={cn(index === 1 && 'w-16 h-16')}>
             <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
             <AvatarFallback>
-              {player?.users?.user_metadata?.name ? (
-                player?.users?.user_metadata?.name[0]
-              ) : (
-                <User className="w-4 h-4" />
-              )}
+              {playerName ? playerName[0] : <User className="w-4 h-4" />}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center justify-center">
-            <strong>{player?.users?.name.split(' ')[0]}</strong>
+            <strong>{playerName.split(' ')[0]}</strong>
             <strong
               className={cn(
                 calculatePayout(index, player?.amount_spent) < 0 &&
                   'text-destructive',
-                calculatePayout(index, player?.amount_spent) > 0 &&
+                calculatePayout(index, player?.amount_spent) >= 0 &&
                   'text-emerald-600',
               )}
             >
-              {formatCurrencyBRL(calculatePayout(index, player?.amount_spent))}
+              {calculatePayout(index, player?.amount_spent) !== 0
+                ? formatCurrencyBRL(
+                    calculatePayout(index, player?.amount_spent),
+                  )
+                : 'PAGO'}
             </strong>
           </div>
         </div>
@@ -84,6 +90,7 @@ export function PodiumPlayerSheet({
           setIsSheetOpen={setIsSheetOpen}
           gameStatus={gameStatus}
           payout={payout}
+          placing={placing}
         />
       </SheetContent>
     </Sheet>

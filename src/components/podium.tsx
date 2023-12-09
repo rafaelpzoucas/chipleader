@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { UserDataType } from '@/models/users'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { Spade, User } from 'lucide-react'
+import { User } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 
 type PodiumPropsType = {
@@ -10,7 +10,7 @@ type PodiumPropsType = {
 
 export function Podium({ podiumPlayers }: PodiumPropsType) {
   return (
-    <section className="flex flex-row items-center justify-center gap-10 p-4 py-8">
+    <section className="flex flex-row items-center justify-center gap-10 p-4 py-6">
       {podiumPlayers.map((player, index) => (
         <div key={player.id} className="flex flex-col items-center">
           <p className="text-muted-foreground text-xs mb-3">

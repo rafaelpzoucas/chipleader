@@ -16,6 +16,7 @@ type PlayerCardSheetPropsType = {
   totalPlayers: number
   gameStatus: boolean
   payout: number
+  placing: number
 }
 
 export function PlayerCardSheet({
@@ -24,6 +25,7 @@ export function PlayerCardSheet({
   totalPlayers,
   gameStatus,
   payout,
+  placing,
 }: PlayerCardSheetPropsType) {
   const [amountSpent, setAmountSpent] = useState(player.amount_spent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -35,6 +37,8 @@ export function PlayerCardSheet({
   }, 0)
 
   const totalExpensesEach = totalExpensesPrice / totalPlayers
+
+  const balance = player?.amount_paid - player?.amount_spent - totalExpensesEach
 
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -65,13 +69,11 @@ export function PlayerCardSheet({
             </div>
 
             <div className="flex flex-col ml-auto text-sm h-full text-right">
-              <strong>
-                {formatCurrencyBRL(
-                  player?.amount_paid -
-                    player?.amount_spent -
-                    totalExpensesEach,
-                )}
-              </strong>
+              {balance !== 0 ? (
+                <strong>{formatCurrencyBRL(balance)}</strong>
+              ) : (
+                <strong className="text-green-500 uppercase">pago</strong>
+              )}
             </div>
           </header>
         </Card>
@@ -85,6 +87,7 @@ export function PlayerCardSheet({
           setIsSheetOpen={setIsSheetOpen}
           gameStatus={gameStatus}
           payout={payout}
+          placing={placing}
         />
       </SheetContent>
     </Sheet>

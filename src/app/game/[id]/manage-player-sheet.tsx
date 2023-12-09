@@ -33,6 +33,7 @@ interface ManagePlayerSheetProps {
   setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
   gameStatus: boolean
   payout: number
+  placing: number
 }
 
 export function ManagePlayerSheet({
@@ -43,10 +44,20 @@ export function ManagePlayerSheet({
   setIsSheetOpen,
   gameStatus,
   payout,
+  placing,
 }: ManagePlayerSheetProps) {
+  const playerPayout =
+    placing < 3
+      ? placing === 1
+        ? payout * 0.5
+        : placing === 2
+          ? payout * 0.2
+          : payout * 0.3
+      : 0
   const buyInPrice = 25
   const isBusted = player.busted_at !== null
-  const balance = player.amount_paid - player.amount_spent - expensesEach
+  const balance =
+    player.amount_paid + playerPayout - player.amount_spent - expensesEach
   const playerName = player?.users?.user_metadata?.name
 
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
@@ -148,11 +159,23 @@ export function ManagePlayerSheet({
             playerName.split(' ')[playerName.split(' ').length - 1]
           }`}</strong>
         </div>
-
-        <strong className="ml-auto">{formatCurrencyBRL(balance)}</strong>
+        {balance !== 0 ? (
+          <strong className="ml-auto">{formatCurrencyBRL(balance)}</strong>
+        ) : (
+          <strong className="ml-auto uppercase text-green-500">Pago</strong>
+        )}
       </header>
 
       <section className="space-y-2">
+        {placing < 3 && (
+          <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+            <span>Premio:</span>
+            <strong className="ml-auto text-emerald-600">
+              {formatCurrencyBRL(playerPayout)}
+            </strong>
+          </div>
+        )}
+
         <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
           <span>Valor pago:</span>
           <strong className="ml-auto text-emerald-600">
@@ -181,7 +204,9 @@ export function ManagePlayerSheet({
             Voltar para o jogo
           </Button>
         ) : (
-          <Button onClick={handleUpdateAmountPaid}>Marcar como pago</Button>
+          balance !== 0 && (
+            <Button onClick={handleUpdateAmountPaid}>Marcar como pago</Button>
+          )
         )
       ) : (
         <>
@@ -198,7 +223,7 @@ export function ManagePlayerSheet({
               <SheetContent side="bottom">
                 <SheetHeader>
                   <SheetTitle className="text-left">
-                    Eliminar <strong>{player.users.name}</strong>?
+                    Eliminar <strong>{playerName.split(' ')[0]}</strong>?
                   </SheetTitle>
                 </SheetHeader>
 

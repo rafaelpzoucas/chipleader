@@ -43,7 +43,7 @@ export default async function RankingPage() {
 
       <Podium podiumPlayers={podiumPlayers} />
 
-      <ol>
+      <ol className="px-4">
         {users.length > 0 &&
           users.slice(3).map((user) => (
             <li
