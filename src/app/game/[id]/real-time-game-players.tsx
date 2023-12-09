@@ -49,7 +49,7 @@ export default function RealTimeGamePlayers({
 
   return (
     game.game_players.length > 0 &&
-    players.map((player) => (
+    players.map((player, index) => (
       <PlayerCardSheet
         key={player.id}
         player={player}
@@ -57,6 +57,7 @@ export default function RealTimeGamePlayers({
         totalPlayers={players.length}
         gameStatus={game.status}
         payout={totalPayout}
+        placing={index}
       />
     ))
   )
