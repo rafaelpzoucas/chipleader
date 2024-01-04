@@ -32,7 +32,13 @@ export function Podium({ podiumPlayers }: PodiumPropsType) {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center justify-center">
-            <strong>{player?.name?.split(' ')[0]}</strong>
+            <strong>
+              {player?.user_metadata.name
+                ? player?.user_metadata?.name.split(' ')[0]
+                : player?.name
+                  ? player?.name
+                  : ''}
+            </strong>
             <strong>{formatCurrencyBRL(player.cumulative_winnings)}</strong>
           </div>
         </div>
