@@ -64,8 +64,8 @@ export default async function RankingPage() {
               <div>
                 <strong>
                   {user && user?.user_metadata?.name
-                    ? user.user_metadata.name.split(' ')[0]
-                    : user.name.split(' ')[0]}
+                    ? user?.user_metadata?.name?.split(' ')[0]
+                    : user?.name?.split(' ')[0]}
                 </strong>
                 <p className="text-muted-foreground text-xs">
                   Ranking #{users.indexOf(user) + 1}

@@ -17,7 +17,7 @@ export default function DashboardLayout({
 
       <section className="px-4">{active}</section>
 
-      {/* <section className="px-4">{ranking}</section> */}
+      <section className="px-4">{ranking}</section>
 
       <section>
         <h1 className="ml-4 mb-3 font-bold">Últimos jogos</h1>
