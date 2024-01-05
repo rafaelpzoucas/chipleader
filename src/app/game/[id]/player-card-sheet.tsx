@@ -53,15 +53,19 @@ export function PlayerCardSheet({
             <Avatar className={cn(isBusted && 'opacity-50')}>
               <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
               <AvatarFallback>
-                {player?.users?.user_metadata.name[0] ?? (
+                {player?.users?.user_metadata?.name ? (
+                  player?.users?.user_metadata?.name[0]
+                ) : (
                   <User className="w-4 h-4" />
                 )}
               </AvatarFallback>
             </Avatar>
 
-            <div className="text-left">
-              <strong>
-                {player?.users?.user_metadata.name.split(' ')[0]}{' '}
+            <div className="text-left max-w-[160px] truncate">
+              <strong className="">
+                {player?.users?.user_metadata.name
+                  ? player?.users?.user_metadata.name.split(' ')[0]
+                  : 'Anônimo'}
               </strong>
               {/* <p className="text-muted-foreground text-xs">
                 Ganhos {formatCurrencyBRL(player?.users?.cumulative_winnings)}
