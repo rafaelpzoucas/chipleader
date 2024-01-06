@@ -18,7 +18,7 @@ async function getUsersByRanking(): Promise<UserDataType[]> {
     .from('users')
     .select()
     .order('cumulative_winnings', { ascending: false })
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: true })
 
   if (error) {
     throw error

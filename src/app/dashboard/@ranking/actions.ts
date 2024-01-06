@@ -9,7 +9,7 @@ export async function getTop5UsersByRanking() {
     .from('users')
     .select('*')
     .order('cumulative_winnings', { ascending: false })
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: true })
     .limit(5)
 
   if (error) {
