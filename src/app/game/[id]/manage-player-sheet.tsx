@@ -62,12 +62,13 @@ export function ManagePlayerSheet({
   const balance =
     gameWinnersAmount === 3
       ? player.amount_paid + playerPayout - player.amount_spent - expensesEach
-      : player.amount_paid +
-        playerPayout -
-        player.amount_spent -
-        expensesEach +
-        placings[placing]
-  console.log(placing)
+      : placing <= 4
+        ? player.amount_paid +
+          playerPayout -
+          player.amount_spent -
+          expensesEach +
+          placings[placing]
+        : 0
   const playerName = player?.users?.user_metadata?.name
 
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
