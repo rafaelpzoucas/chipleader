@@ -15,6 +15,7 @@ type PlayerCardSheetPropsType = {
   expenses: GameExpenseDataType[]
   totalPlayers: number
   gameStatus: boolean
+  gameWinnersAmount: 3 | 4
   payout: number
   placing: number
 }
@@ -24,6 +25,7 @@ export function PlayerCardSheet({
   expenses,
   totalPlayers,
   gameStatus,
+  gameWinnersAmount,
   payout,
   placing,
 }: PlayerCardSheetPropsType) {
@@ -38,7 +40,10 @@ export function PlayerCardSheet({
 
   const totalExpensesEach = totalExpensesPrice / totalPlayers
 
-  const balance = player?.amount_paid - player?.amount_spent - totalExpensesEach
+  const balance =
+    gameWinnersAmount === 4 && placing === 4
+      ? player?.amount_paid - player?.amount_spent - totalExpensesEach + 50
+      : player?.amount_paid - player?.amount_spent - totalExpensesEach
 
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -90,6 +95,7 @@ export function PlayerCardSheet({
           setAmountSpent={setAmountSpent}
           setIsSheetOpen={setIsSheetOpen}
           gameStatus={gameStatus}
+          gameWinnersAmount={gameWinnersAmount}
           payout={payout}
           placing={placing}
         />

@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { getExpensesByGame, getUsersByGame } from '../actions'
 import { CreateExpenseSheet } from './create-expense-sheet'
 import { GameExpense } from './game-expense'
+import { GameOptions } from './game-options'
 import { GameWinnings } from './game-winnings'
 import { InvitePlayersSheet } from './invite-players-sheet'
 import RealTimeGamePlayers from './real-time-game-players'
@@ -34,9 +35,11 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
           <ArrowLeft className="w-6 h-6" />
         </Link>
         <h1 className="text-lg font-bold">Jogo ativo agora</h1>
+
+        <GameOptions game={game} />
       </header>
 
-      <GameWinnings totalPayout={totalPayout} />
+      <GameWinnings winners={game.winners_amount} totalPayout={totalPayout} />
 
       <section className="space-y-2">
         <InvitePlayersSheet gameId={game.id} buyIn={game.buy_in} />

@@ -25,6 +25,7 @@ export type GameDataType = {
   payout: number
   status: boolean
   buy_in: number
+  winners_amount: 3 | 4
   game_players: GamePlayerDataType[]
   game_expenses: GameExpenseDataType[]
   created_at: string

@@ -46,6 +46,7 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
             expenses={expenses}
             totalPlayers={players.length}
             gameStatus={game.status}
+            gameWinnersAmount={game.winners_amount}
             payout={totalPayout}
             index={index}
             placing={index}
@@ -57,13 +58,14 @@ export async function InactiveGame({ game }: { game: GameDataType }) {
         {game.game_players.length > 0 &&
           players.slice(3).map((player, index) => (
             <div key={player.id} className="flex flex-row gap-4 items-center">
-              <strong>{index + 4}º</strong>
+              <strong className="w-10">{index + 4}º</strong>
 
               <PlayerCardSheet
                 player={player}
                 expenses={expenses}
                 totalPlayers={players.length}
                 gameStatus={game.status}
+                gameWinnersAmount={game.winners_amount}
                 payout={totalPayout}
                 placing={index + 4}
               />

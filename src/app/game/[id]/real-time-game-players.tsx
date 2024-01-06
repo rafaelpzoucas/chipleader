@@ -56,6 +56,7 @@ export default function RealTimeGamePlayers({
         expenses={expenses}
         totalPlayers={players.length}
         gameStatus={game.status}
+        gameWinnersAmount={game.winners_amount}
         payout={totalPayout}
         placing={index}
       />

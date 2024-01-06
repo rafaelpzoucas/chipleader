@@ -64,8 +64,8 @@ export async function getUsersByGame(id: string) {
     `,
     )
     .eq('game_id', id)
-    .order('created_at', { ascending: false })
     .order('busted_at', { ascending: false })
+    .order('created_at', { ascending: false })
 
   if (error) {
     throw error
@@ -310,6 +310,28 @@ export async function updateUserCumulativeWinnings(
     .from('users')
     .update({ cumulative_winnings: winning })
     .eq('id', userId)
+    .select()
+
+  if (error) {
+    throw error
+  }
+
+  revalidatePath('game')
+
+  return data || []
+}
+
+export async function updateWinnersAmount(
+  winnersAmount: number,
+  gameId: string,
+) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('games')
+    .update({ winners_amount: winnersAmount })
+    .eq('id', gameId)
     .select()
 
   if (error) {

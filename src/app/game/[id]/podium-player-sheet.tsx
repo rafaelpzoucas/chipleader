@@ -14,6 +14,7 @@ type PlayerCardSheetPropsType = {
   expenses: GameExpenseDataType[]
   totalPlayers: number
   gameStatus: boolean
+  gameWinnersAmount: 3 | 4
   payout: number
   index: number
   placing: number
@@ -24,6 +25,7 @@ export function PodiumPlayerSheet({
   expenses,
   totalPlayers,
   gameStatus,
+  gameWinnersAmount,
   payout,
   index,
   placing,
@@ -43,8 +45,19 @@ export function PodiumPlayerSheet({
   function calculatePayout(index: number, amountSpent: number) {
     const percentages = [0.3, 0.5, 0.2]
     const percentage = percentages[index] || 0
+    const fourthPlaceDiscounts = [15, 25, 10]
+    const fourthPlaceDiscount = fourthPlaceDiscounts[index]
     const balance =
-      payout * percentage + player.amount_paid - totalExpensesEach - amountSpent
+      gameWinnersAmount === 3
+        ? payout * percentage +
+          player.amount_paid -
+          totalExpensesEach -
+          amountSpent
+        : payout * percentage -
+          fourthPlaceDiscount +
+          player.amount_paid -
+          totalExpensesEach -
+          amountSpent
 
     return balance
   }
@@ -89,6 +102,7 @@ export function PodiumPlayerSheet({
           setAmountSpent={setAmountSpent}
           setIsSheetOpen={setIsSheetOpen}
           gameStatus={gameStatus}
+          gameWinnersAmount={gameWinnersAmount}
           payout={payout}
           placing={placing}
         />

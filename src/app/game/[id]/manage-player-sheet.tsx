@@ -32,6 +32,7 @@ interface ManagePlayerSheetProps {
   setAmountSpent: React.Dispatch<React.SetStateAction<number>>
   setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
   gameStatus: boolean
+  gameWinnersAmount: 3 | 4
   payout: number
   placing: number
 }
@@ -43,6 +44,7 @@ export function ManagePlayerSheet({
   setAmountSpent,
   setIsSheetOpen,
   gameStatus,
+  gameWinnersAmount,
   payout,
   placing,
 }: ManagePlayerSheetProps) {
@@ -56,8 +58,16 @@ export function ManagePlayerSheet({
       : 0
   const buyInPrice = 25
   const isBusted = player.busted_at !== null
+  const placings = [-15, -25, -10, 0, 50]
   const balance =
-    player.amount_paid + playerPayout - player.amount_spent - expensesEach
+    gameWinnersAmount === 3
+      ? player.amount_paid + playerPayout - player.amount_spent - expensesEach
+      : player.amount_paid +
+        playerPayout -
+        player.amount_spent -
+        expensesEach +
+        placings[placing]
+  console.log(placing)
   const playerName = player?.users?.user_metadata?.name
 
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
@@ -111,25 +121,55 @@ export function ManagePlayerSheet({
       }
     }
 
-    if (unbustedPlayers.length === 3) {
-      await bustPlayer(player.id)
-      await updateUserCumulativeWinnings(payout * 0.2, player.user_id)
+    if (gameWinnersAmount === 3) {
+      if (unbustedPlayers.length === 3) {
+        await bustPlayer(player.id)
+        await updateUserCumulativeWinnings(payout * 0.2, player.user_id)
+      }
+
+      if (unbustedPlayers.length === 2) {
+        await bustPlayer(player.id)
+        await updateUserCumulativeWinnings(payout * 0.3, player.user_id)
+
+        const unbustedPlayers: GamePlayerDataType[] =
+          await getUnbustedGamePlayers(player.game_id)
+
+        await bustPlayer(unbustedPlayers[0].id)
+        await updateUserCumulativeWinnings(
+          payout * 0.5,
+          unbustedPlayers[0].user_id,
+        )
+
+        await finishGame(player.game_id)
+      }
     }
 
-    if (unbustedPlayers.length === 2) {
-      await bustPlayer(player.id)
-      await updateUserCumulativeWinnings(payout * 0.3, player.user_id)
+    if (gameWinnersAmount === 4) {
+      if (unbustedPlayers.length === 4) {
+        await bustPlayer(player.id)
+        await updateUserCumulativeWinnings(50, player.user_id)
+      }
 
-      const unbustedPlayers: GamePlayerDataType[] =
-        await getUnbustedGamePlayers(player.game_id)
+      if (unbustedPlayers.length === 3) {
+        await bustPlayer(player.id)
+        await updateUserCumulativeWinnings(payout * 0.2 - 10, player.user_id)
+      }
 
-      await bustPlayer(unbustedPlayers[0].id)
-      await updateUserCumulativeWinnings(
-        payout * 0.5,
-        unbustedPlayers[0].user_id,
-      )
+      if (unbustedPlayers.length === 2) {
+        await bustPlayer(player.id)
+        await updateUserCumulativeWinnings(payout * 0.3 - 15, player.user_id)
 
-      await finishGame(player.game_id)
+        const unbustedPlayers: GamePlayerDataType[] =
+          await getUnbustedGamePlayers(player.game_id)
+
+        await bustPlayer(unbustedPlayers[0].id)
+        await updateUserCumulativeWinnings(
+          payout * 0.5 - 25,
+          unbustedPlayers[0].user_id,
+        )
+
+        await finishGame(player.game_id)
+      }
     }
 
     setIsEliminating(false)
