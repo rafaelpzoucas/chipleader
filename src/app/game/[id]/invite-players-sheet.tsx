@@ -61,7 +61,7 @@ export function InvitePlayersSheet({ gameId }: Props) {
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="bottom">
+      <SheetContent side="bottom" className="h-full sm:h-fit overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Adicionar jogador</SheetTitle>
 
@@ -95,7 +95,7 @@ export function InvitePlayersSheet({ gameId }: Props) {
               <p className="text-sm text-muted-foreground mb-2 text-left">
                 Jogadores salvos
               </p>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 pb-8">
                 {availablePlayers.map((player) => (
                   <div
                     key={player.id}
