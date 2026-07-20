@@ -1,6 +1,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+export type RegisteredPlayer = {
+  id: string
+  name: string
+}
+
 export type Player = {
   id: string
   name: string
@@ -29,7 +34,10 @@ export type Game = {
 
 type GameStore = {
   games: Game[]
+  registeredPlayers: RegisteredPlayer[]
   createGame: (buyIn: number) => string
+  registerPlayer: (name: string) => string
+  deleteRegisteredPlayer: (id: string) => void
   addPlayer: (gameId: string, name: string) => void
   updatePlayerAmountSpent: (gameId: string, playerId: string, amountSpent: number) => void
   increaseAmountPaid: (gameId: string, playerId: string, value: number) => void
@@ -53,6 +61,21 @@ export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
       games: [],
+      registeredPlayers: [],
+
+      registerPlayer: (name: string) => {
+        const id = genId()
+        set((state) => ({
+          registeredPlayers: [...state.registeredPlayers, { id, name }],
+        }))
+        return id
+      },
+
+      deleteRegisteredPlayer: (id: string) => {
+        set((state) => ({
+          registeredPlayers: state.registeredPlayers.filter((p) => p.id !== id),
+        }))
+      },
 
       createGame: (buyIn: number) => {
         const id = genId()

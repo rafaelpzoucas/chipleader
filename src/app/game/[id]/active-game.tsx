@@ -35,7 +35,7 @@ export default function ActiveGame({ game }: { game: Game }) {
       <GameWinnings winners={game.winnersAmount} totalPayout={totalPayout} />
 
       <section className="space-y-2">
-        <InvitePlayersSheet gameId={game.id} buyIn={game.buyIn} />
+        <InvitePlayersSheet gameId={game.id} />
 
         <RealTimeGamePlayers game={game} totalPayout={totalPayout} />
       </section>
