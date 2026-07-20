@@ -14,6 +14,13 @@ export type Player = {
   amountPaid: number
 }
 
+export type CaixaType = 'percentage' | 'fixed'
+
+export type PrizeItem = {
+  type: 'percentage' | 'fixed'
+  value: number
+}
+
 export type Expense = {
   id: string
   description: string
@@ -30,6 +37,10 @@ export type Game = {
   winnersAmount: 3 | 4
   players: Player[]
   expenses: Expense[]
+  prizeDistribution: PrizeItem[]
+  caixaType: CaixaType
+  caixaPercentage: number
+  caixaFixed: number
 }
 
 type GameStore = {
@@ -52,6 +63,10 @@ type GameStore = {
   finishGame: (gameId: string) => void
   updateWinnersAmount: (gameId: string, amount: 3 | 4) => void
   updateBuyIn: (gameId: string, buyIn: number) => void
+  updateCaixaPercentage: (gameId: string, percentage: number) => void
+  updateCaixaFixed: (gameId: string, value: number) => void
+  updateCaixaType: (gameId: string, type: CaixaType) => void
+  updatePrizeDistribution: (gameId: string, distribution: PrizeItem[]) => void
   getGame: (gameId: string) => Game | undefined
   deleteGame: (gameId: string) => void
 }
@@ -98,6 +113,14 @@ export const useGameStore = create<GameStore>()(
           winnersAmount: 3,
           players: [],
           expenses: [],
+          prizeDistribution: [
+            { type: 'percentage', value: 50 },
+            { type: 'percentage', value: 30 },
+            { type: 'percentage', value: 20 },
+          ],
+          caixaType: 'percentage',
+          caixaPercentage: 0,
+          caixaFixed: 0,
         }
         set((state) => ({ games: [...state.games, game] }))
         return id
@@ -275,17 +298,63 @@ export const useGameStore = create<GameStore>()(
       },
 
       updateWinnersAmount: (gameId: string, amount: 3 | 4) => {
+        const distribution: PrizeItem[] = amount === 3
+          ? [{ type: 'percentage', value: 50 }, { type: 'percentage', value: 30 }, { type: 'percentage', value: 20 }]
+          : [{ type: 'percentage', value: 50 }, { type: 'percentage', value: 30 }, { type: 'percentage', value: 20 }, { type: 'fixed', value: 50 }]
         set((state) => ({
           games: state.games.map((g) =>
-            g.id === gameId ? { ...g, winnersAmount: amount } : g,
+            g.id === gameId ? { ...g, winnersAmount: amount, prizeDistribution: distribution } : g,
           ),
         }))
       },
 
       updateBuyIn: (gameId: string, buyIn: number) => {
         set((state) => ({
+          games: state.games.map((g) => {
+            if (g.id !== gameId) return g
+            const oldBuyIn = g.buyIn
+            const ratio = oldBuyIn > 0 ? buyIn / oldBuyIn : 1
+            return {
+              ...g,
+              buyIn,
+              players: g.players.map((p) => ({
+                ...p,
+                amountSpent: Math.round(p.amountSpent * ratio),
+              })),
+            }
+          }),
+        }))
+      },
+
+      updateCaixaPercentage: (gameId: string, percentage: number) => {
+        const clamped = Math.max(0, Math.min(100, percentage))
+        set((state) => ({
           games: state.games.map((g) =>
-            g.id === gameId ? { ...g, buyIn } : g,
+            g.id === gameId ? { ...g, caixaPercentage: clamped } : g,
+          ),
+        }))
+      },
+
+      updateCaixaFixed: (gameId: string, value: number) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId ? { ...g, caixaFixed: Math.max(0, value) } : g,
+          ),
+        }))
+      },
+
+      updateCaixaType: (gameId: string, type: CaixaType) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId ? { ...g, caixaType: type } : g,
+          ),
+        }))
+      },
+
+      updatePrizeDistribution: (gameId: string, distribution: PrizeItem[]) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId ? { ...g, prizeDistribution: distribution } : g,
           ),
         }))
       },

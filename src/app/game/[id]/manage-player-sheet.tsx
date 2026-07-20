@@ -14,6 +14,7 @@ import {
 import type { Game, Player } from '@/store/game-store'
 import { useGameStore } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
+import { getCaixaAmount, getPrizeDistribution, getPrizeForPlacing } from '@/utils/prize'
 import { Minus, Plus, User } from 'lucide-react'
 import { useState } from 'react'
 
@@ -46,27 +47,16 @@ export function ManagePlayerSheet({
   const removePlayer = useGameStore((s) => s.removePlayer)
 
   const isFinished = game.status === 'finished'
-  const playerPayout =
-    isFinished && placing < 3
-      ? placing === 1
-        ? totalPayout * 0.5
-        : placing === 2
-          ? totalPayout * 0.2
-          : totalPayout * 0.3
-      : 0
-  const buyInPrice = 25
+  const distribution = getPrizeDistribution(game)
+  const caixaAmount = getCaixaAmount(totalPayout, game.caixaType, game.caixaPercentage, game.caixaFixed)
+  const effectiveTotal = totalPayout - caixaAmount
+  const playerPayout = isFinished
+    ? getPrizeForPlacing(placing, distribution, effectiveTotal)
+    : 0
+  const buyInPrice = game.buyIn
   const isBusted = player.bustedAt !== null
-  const placings = [-15, -25, -10, 0, 50]
-  const balance = isFinished
-    ? game.winnersAmount === 3
-      ? player.amountPaid + playerPayout - amountSpent - expensesEach
-      : placing <= 4
-        ? player.amountPaid +
-          playerPayout -
-          amountSpent -
-          expensesEach +
-          placings[placing]
-        : 0
+  const balance = isFinished && placing < distribution.length
+    ? player.amountPaid + playerPayout - amountSpent - expensesEach
     : player.amountPaid - amountSpent - expensesEach
 
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
@@ -102,44 +92,19 @@ export function ManagePlayerSheet({
       return
     }
 
-    if (game.winnersAmount === 3) {
-      if (unbustedPlayers.length === 3) {
-        bustPlayer(game.id, player.id)
-      }
-
-      if (unbustedPlayers.length === 2) {
-        bustPlayer(game.id, player.id)
-
-        const remaining = game.players.filter((p) => p.bustedAt === null && p.id !== player.id)
-        if (remaining.length > 0) {
-          bustPlayer(game.id, remaining[0].id)
-        }
-
-        finishGame(game.id)
-      }
+    if (unbustedPlayers.length > 2) {
+      bustPlayer(game.id, player.id)
+      setIsSheetOpen(false)
+      setIsBustPlayerSheetOpen(false)
+      return
     }
 
-    if (game.winnersAmount === 4) {
-      if (unbustedPlayers.length === 4) {
-        bustPlayer(game.id, player.id)
-      }
-
-      if (unbustedPlayers.length === 3) {
-        bustPlayer(game.id, player.id)
-      }
-
-      if (unbustedPlayers.length === 2) {
-        bustPlayer(game.id, player.id)
-
-        const remaining = game.players.filter((p) => p.bustedAt === null && p.id !== player.id)
-        if (remaining.length > 0) {
-          bustPlayer(game.id, remaining[0].id)
-        }
-
-        finishGame(game.id)
-      }
+    bustPlayer(game.id, player.id)
+    const remaining = game.players.filter((p) => p.bustedAt === null && p.id !== player.id)
+    if (remaining.length > 0) {
+      bustPlayer(game.id, remaining[0].id)
     }
-
+    finishGame(game.id)
     setIsSheetOpen(false)
     setIsBustPlayerSheetOpen(false)
   }

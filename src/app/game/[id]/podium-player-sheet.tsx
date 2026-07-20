@@ -5,8 +5,9 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 import type { Game, Player } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
+import { getCaixaAmount, getPrizeDistribution, getPrizeForPlacing } from '@/utils/prize'
 import { User } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ManagePlayerSheet } from './manage-player-sheet'
 
 type Props = {
@@ -27,29 +28,23 @@ export function PodiumPlayerSheet({
   const [amountSpent, setAmountSpent] = useState(player.amountSpent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
+  useEffect(() => {
+    setAmountSpent(player.amountSpent)
+  }, [player.amountSpent])
+
   const playerName = player.name
 
   const totalExpensesPrice = game.expenses.reduce((acc, e) => acc + e.price, 0)
   const totalExpensesEach =
     game.players.length > 0 ? totalExpensesPrice / game.players.length : 0
 
+  const distribution = getPrizeDistribution(game)
+  const caixaAmount = getCaixaAmount(totalPayout, game.caixaType, game.caixaPercentage, game.caixaFixed)
+  const effectiveTotal = totalPayout - caixaAmount
+
   function calculatePayout(idx: number, spent: number) {
-    const percentages = [0.3, 0.5, 0.2]
-    const percentage = percentages[idx] || 0
-    const fourthPlaceDiscounts = [15, 25, 10]
-    const fourthPlaceDiscount = fourthPlaceDiscounts[idx]
-    const balance =
-      game.winnersAmount === 3
-        ? totalPayout * percentage +
-          player.amountPaid -
-          totalExpensesEach -
-          spent
-        : totalPayout * percentage -
-          fourthPlaceDiscount +
-          player.amountPaid -
-          totalExpensesEach -
-          spent
-    return balance
+    const prize = getPrizeForPlacing(idx, distribution, effectiveTotal)
+    return prize + player.amountPaid - totalExpensesEach - spent
   }
 
   return (

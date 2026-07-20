@@ -6,8 +6,9 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 import type { Game, Player } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
+import { getCaixaAmount, getPrizeDistribution, getPrizeForPlacing } from '@/utils/prize'
 import { User } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ManagePlayerSheet } from './manage-player-sheet'
 
 type Props = {
@@ -26,16 +27,21 @@ export function PlayerCardSheet({
   const [amountSpent, setAmountSpent] = useState(player.amountSpent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
+  useEffect(() => {
+    setAmountSpent(player.amountSpent)
+  }, [player.amountSpent])
+
   const isBusted = player.bustedAt !== null && game.status === 'active'
 
   const totalExpensesPrice = game.expenses.reduce((acc, e) => acc + e.price, 0)
   const totalExpensesEach =
     game.players.length > 0 ? totalExpensesPrice / game.players.length : 0
 
-  const balance =
-    game.status === 'finished' && game.winnersAmount === 4 && placing === 4
-      ? player.amountPaid - amountSpent - totalExpensesEach + 50
-      : player.amountPaid - amountSpent - totalExpensesEach
+  const distribution = getPrizeDistribution(game)
+  const caixaAmount = getCaixaAmount(totalPayout, game.caixaType, game.caixaPercentage, game.caixaFixed)
+  const effectiveTotal = totalPayout - caixaAmount
+  const prize = game.status === 'finished' ? getPrizeForPlacing(placing, distribution, effectiveTotal) : 0
+  const balance = player.amountPaid + prize - player.amountSpent - totalExpensesEach
 
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
