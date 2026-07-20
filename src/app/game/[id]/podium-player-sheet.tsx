@@ -1,76 +1,65 @@
 'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
-import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
+import type { Game, Player } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { User } from 'lucide-react'
 import { useState } from 'react'
 import { ManagePlayerSheet } from './manage-player-sheet'
 
-type PlayerCardSheetPropsType = {
-  player: GamePlayerDataType
-  expenses: GameExpenseDataType[]
-  totalPlayers: number
-  gameStatus: boolean
-  gameWinnersAmount: 3 | 4
-  payout: number
+type Props = {
+  game: Game
+  player: Player
   index: number
   placing: number
+  totalPayout: number
 }
 
 export function PodiumPlayerSheet({
+  game,
   player,
-  expenses,
-  totalPlayers,
-  gameStatus,
-  gameWinnersAmount,
-  payout,
   index,
   placing,
-}: PlayerCardSheetPropsType) {
-  const [amountSpent, setAmountSpent] = useState(player?.amount_spent)
+  totalPayout,
+}: Props) {
+  const [amountSpent, setAmountSpent] = useState(player.amountSpent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
-  const playerName = player?.users?.user_metadata?.name
+  const playerName = player.name
 
-  const totalExpensesPrice = expenses.reduce((acc, expense) => {
-    return acc + expense.price
-  }, 0)
-
+  const totalExpensesPrice = game.expenses.reduce((acc, e) => acc + e.price, 0)
   const totalExpensesEach =
-    totalPlayers > 0 ? totalExpensesPrice / totalPlayers : 0
+    game.players.length > 0 ? totalExpensesPrice / game.players.length : 0
 
-  function calculatePayout(index: number, amountSpent: number) {
+  function calculatePayout(idx: number, spent: number) {
     const percentages = [0.3, 0.5, 0.2]
-    const percentage = percentages[index] || 0
+    const percentage = percentages[idx] || 0
     const fourthPlaceDiscounts = [15, 25, 10]
-    const fourthPlaceDiscount = fourthPlaceDiscounts[index]
+    const fourthPlaceDiscount = fourthPlaceDiscounts[idx]
     const balance =
-      gameWinnersAmount === 3
-        ? payout * percentage +
-          player.amount_paid -
+      game.winnersAmount === 3
+        ? totalPayout * percentage +
+          player.amountPaid -
           totalExpensesEach -
-          amountSpent
-        : payout * percentage -
+          spent
+        : totalPayout * percentage -
           fourthPlaceDiscount +
-          player.amount_paid -
+          player.amountPaid -
           totalExpensesEach -
-          amountSpent
-
+          spent
     return balance
   }
 
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger className="w-full" asChild>
-        <div key={player?.id} className="flex flex-col items-center">
+        <div className="flex flex-col items-center">
           <p className="text-muted-foreground text-xs mb-3">
             {index === 0 ? '2' : index === 1 ? '1' : '3'}º lugar
           </p>
           <Avatar className={cn(index === 1 && 'w-16 h-16')}>
-            <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
             <AvatarFallback>
               {playerName ? playerName[0] : <User className="w-4 h-4" />}
             </AvatarFallback>
@@ -79,15 +68,15 @@ export function PodiumPlayerSheet({
             <strong>{playerName.split(' ')[0]}</strong>
             <strong
               className={cn(
-                calculatePayout(index, player?.amount_spent) < 0 &&
+                calculatePayout(index, player.amountSpent) < 0 &&
                   'text-destructive',
-                calculatePayout(index, player?.amount_spent) >= 0 &&
+                calculatePayout(index, player.amountSpent) >= 0 &&
                   'text-emerald-600',
               )}
             >
-              {calculatePayout(index, player?.amount_spent) !== 0
+              {calculatePayout(index, player.amountSpent) !== 0
                 ? formatCurrencyBRL(
-                    calculatePayout(index, player?.amount_spent),
+                    calculatePayout(index, player.amountSpent),
                   )
                 : 'PAGO'}
             </strong>
@@ -96,15 +85,14 @@ export function PodiumPlayerSheet({
       </SheetTrigger>
       <SheetContent side="bottom" className="flex flex-col gap-5">
         <ManagePlayerSheet
+          game={game}
           player={player}
           amountSpent={amountSpent}
           expensesEach={totalExpensesEach}
           setAmountSpent={setAmountSpent}
           setIsSheetOpen={setIsSheetOpen}
-          gameStatus={gameStatus}
-          gameWinnersAmount={gameWinnersAmount}
-          payout={payout}
           placing={placing}
+          totalPayout={totalPayout}
         />
       </SheetContent>
     </Sheet>

@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Form,
   FormControl,
@@ -24,16 +24,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
-import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
+import type { Expense, Player } from '@/store/game-store'
+import { useGameStore } from '@/store/game-store'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { CurrencyInput } from 'react-currency-mask'
-import {
-  createExpense,
-  decreaseAmountPaid,
-  getCurrentAmountPaid,
-  increaseAmountPaid,
-  updateExpense,
-} from '../actions'
 
 export const expensesFormSchema = z.object({
   gamePlayerId: z.string().optional(),
@@ -41,11 +35,11 @@ export const expensesFormSchema = z.object({
   price: z.number(),
 })
 
-type ExpensesFormPropsType = {
-  players: GamePlayerDataType[]
+type Props = {
+  players: Player[]
   gameId: string
   expenseId?: string
-  defaultValues?: GameExpenseDataType
+  defaultValues?: Expense
   currentPlayerId?: string
   onOpenSheetChange?: Dispatch<SetStateAction<boolean>>
 }
@@ -57,8 +51,12 @@ export function ExpensesForm({
   defaultValues,
   currentPlayerId,
   onOpenSheetChange,
-}: ExpensesFormPropsType) {
+}: Props) {
   const { toast } = useToast()
+  const addExpense = useGameStore((s) => s.addExpense)
+  const updateExpense = useGameStore((s) => s.updateExpense)
+  const increaseAmountPaid = useGameStore((s) => s.increaseAmountPaid)
+  const decreaseAmountPaid = useGameStore((s) => s.decreaseAmountPaid)
 
   const [isCreatingExpense, setIsCreatingExpense] = useState(false)
   const [isSavingExpense, setIsSavingExpense] = useState(false)
@@ -68,31 +66,37 @@ export function ExpensesForm({
     defaultValues: {
       description: defaultValues?.description,
       price: defaultValues?.price,
-      gamePlayerId: defaultValues?.game_player_id,
+      gamePlayerId: defaultValues?.playerId ?? undefined,
     },
   })
 
-  async function onSubmit(values: z.infer<typeof expensesFormSchema>) {
+  function onSubmit(values: z.infer<typeof expensesFormSchema>) {
     if (defaultValues) {
       setIsSavingExpense(true)
 
-      await updateExpense(values, expenseId)
+      updateExpense(gameId, expenseId!, {
+        description: values.description,
+        price: values.price,
+        playerId: values.gamePlayerId ?? null,
+      })
 
       if (values.gamePlayerId) {
-        const gamePlayer = players.filter(
-          (player) => player.id === values.gamePlayerId,
-        )[0]
+        const gamePlayer = players.find(
+          (p) => p.id === values.gamePlayerId,
+        )
+        if (gamePlayer) {
+          const newIncreaseValue = gamePlayer.amountPaid + values.price
+          increaseAmountPaid(gameId, gamePlayer.id, newIncreaseValue)
 
-        const newIncreaseValue = gamePlayer.amount_paid + values.price
-
-        await increaseAmountPaid(newIncreaseValue, gamePlayer.id)
-
-        if (currentPlayerId) {
-          const currentPlayer = await getCurrentAmountPaid(currentPlayerId)
-
-          const newDecreaseValue = currentPlayer.amount_paid - values.price
-
-          await decreaseAmountPaid(newDecreaseValue, currentPlayerId)
+          if (currentPlayerId) {
+            const currentPlayer = players.find(
+              (p) => p.id === currentPlayerId,
+            )
+            if (currentPlayer) {
+              const newDecreaseValue = currentPlayer.amountPaid - values.price
+              decreaseAmountPaid(gameId, currentPlayerId, newDecreaseValue)
+            }
+          }
         }
       }
 
@@ -103,15 +107,16 @@ export function ExpensesForm({
     } else {
       setIsCreatingExpense(true)
 
-      await createExpense(gameId, values)
+      addExpense(gameId, values.description, values.price, values.gamePlayerId)
 
       if (values.gamePlayerId) {
-        const gamePlayer = players.filter(
-          (player) => player.id === values.gamePlayerId,
-        )[0]
-        const newValue = values.price + gamePlayer.amount_paid
-
-        await increaseAmountPaid(newValue, gamePlayer.id)
+        const gamePlayer = players.find(
+          (p) => p.id === values.gamePlayerId,
+        )
+        if (gamePlayer) {
+          const newValue = values.price + gamePlayer.amountPaid
+          increaseAmountPaid(gameId, gamePlayer.id, newValue)
+        }
       }
 
       form.reset({
@@ -147,22 +152,16 @@ export function ExpensesForm({
                       <SelectItem key={player.id} value={player.id}>
                         <header className="relative flex flex-row items-center gap-4 w-full">
                           <Avatar>
-                            <AvatarImage
-                              src={player?.users?.user_metadata?.avatar_url}
-                            />
                             <AvatarFallback>
-                              {player?.users?.user_metadata?.name ? (
-                                player?.users?.user_metadata?.name[0]
+                              {player.name ? (
+                                player.name[0]
                               ) : (
                                 <User className="w-4 h-4" />
                               )}
                             </AvatarFallback>
                           </Avatar>
-
                           <div className="text-left">
-                            <strong>
-                              {player?.users?.user_metadata?.name}{' '}
-                            </strong>
+                            <strong>{player.name}</strong>
                           </div>
                         </header>
                       </SelectItem>
@@ -206,33 +205,20 @@ export function ExpensesForm({
             </FormItem>
           )}
         />
-        {defaultValues ? (
-          <Button className="w-full" disabled={isCreatingExpense}>
-            {defaultValues ? (
-              'Salvar alterações'
-            ) : isCreatingExpense ? (
-              <>
-                <Loader className="w-4 h-4 mr-2 animate-spin" />
-                <span>Adicionando despesa...</span>
-              </>
-            ) : (
-              <span>Adicionar despesa</span>
-            )}
-          </Button>
-        ) : (
-          <Button className="w-full" disabled={isSavingExpense}>
-            {defaultValues ? (
-              'Salvar alterações'
-            ) : isCreatingExpense ? (
-              <>
-                <Loader className="w-4 h-4 mr-2 animate-spin" />
-                <span>Salvando alterações...</span>
-              </>
-            ) : (
-              <span>Salvar alterações</span>
-            )}
-          </Button>
-        )}
+        <Button className="w-full" disabled={isCreatingExpense || isSavingExpense}>
+          {defaultValues
+            ? 'Salvar alterações'
+            : isCreatingExpense
+              ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  <span>Adicionando despesa...</span>
+                </>
+              )
+              : (
+                <span>Adicionar despesa</span>
+              )}
+        </Button>
       </form>
     </Form>
   )

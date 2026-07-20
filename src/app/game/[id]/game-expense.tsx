@@ -1,3 +1,5 @@
+'use client'
+
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -12,63 +14,42 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
+import type { Game, Expense } from '@/store/game-store'
+import { useGameStore } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { createClient } from '@/utils/supabase/server'
 import { CircleDollarSign, MoreVertical, Pencil, Trash } from 'lucide-react'
-import { revalidatePath } from 'next/cache'
-import { cookies } from 'next/headers'
-import {
-  decreaseAmountPaid,
-  getCurrentAmountPaid,
-  getUsersByGame,
-} from '../actions'
 import { ExpensesForm } from './expenses-form'
-import { GameExpensePlayerAvatar } from './game-expense-player-avatar'
 
-type GameExpensePropsType = {
-  expense: GameExpenseDataType
+type GameExpenseProps = {
+  game: Game
+  expense: Expense
 }
 
-export async function GameExpense({ expense }: GameExpensePropsType) {
-  const players: GamePlayerDataType[] = await getUsersByGame(expense.game_id)
+export function GameExpense({ game, expense }: GameExpenseProps) {
+  const removeExpense = useGameStore((s) => s.removeExpense)
+  const decreaseAmountPaid = useGameStore((s) => s.decreaseAmountPaid)
+  const player = game.players.find((p) => p.id === expense.playerId)
 
-  async function handleRemoveExpense() {
-    'use server'
+  function handleRemoveExpense() {
+    removeExpense(game.id, expense.id)
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const { data, error } = await supabase
-      .from('game_expenses')
-      .delete()
-      .eq('id', expense.id)
-      .select()
-
-    if (error) {
-      throw error
+    if (expense.playerId) {
+      const currentPlayer = game.players.find(
+        (p) => p.id === expense.playerId,
+      )
+      if (currentPlayer) {
+        const newValue = currentPlayer.amountPaid - expense.price
+        decreaseAmountPaid(game.id, expense.playerId, newValue)
+      }
     }
-
-    if (expense.game_player_id) {
-      const currentPlayer = await getCurrentAmountPaid(expense.game_player_id)
-
-      const newDecreaseValue = currentPlayer.amount_paid - expense.price
-
-      await decreaseAmountPaid(newDecreaseValue, expense.game_player_id)
-    }
-
-    revalidatePath('game')
-
-    return data || []
   }
 
   return (
-    <div
-      key={expense.id}
-      className="flex flex-row items-center justify-between py-3 border-t"
-    >
-      {expense.game_player_id ? (
-        <GameExpensePlayerAvatar expenseGamePlayerId={expense.game_player_id} />
+    <div className="flex flex-row items-center justify-between py-3 border-t">
+      {expense.playerId && player ? (
+        <Avatar className="w-8 h-8 mr-3">
+          <AvatarFallback>{player.name[0]}</AvatarFallback>
+        </Avatar>
       ) : (
         <Avatar className="w-8 h-8 mr-3">
           <AvatarFallback>
@@ -96,14 +77,13 @@ export async function GameExpense({ expense }: GameExpensePropsType) {
             </DropdownMenuItem>
 
             <DropdownMenuItem>
-              <form action={handleRemoveExpense}>
-                <button
-                  type="submit"
-                  className="flex flex-row items-center gap-2"
-                >
-                  <Trash className="w-4 h-4" /> Excluir
-                </button>
-              </form>
+              <button
+                type="button"
+                onClick={handleRemoveExpense}
+                className="flex flex-row items-center gap-2"
+              >
+                <Trash className="w-4 h-4" /> Excluir
+              </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -114,11 +94,11 @@ export async function GameExpense({ expense }: GameExpensePropsType) {
           </SheetHeader>
 
           <ExpensesForm
-            players={players}
-            gameId={expense.game_id}
+            players={game.players}
+            gameId={game.id}
             expenseId={expense.id}
             defaultValues={expense}
-            currentPlayerId={expense.game_player_id}
+            currentPlayerId={expense.playerId ?? undefined}
           />
         </SheetContent>
       </Sheet>

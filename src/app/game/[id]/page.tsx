@@ -1,17 +1,22 @@
-import { GameDataType } from '@/models/games'
-import { getGameById } from '../actions'
+'use client'
+
+import { useGameStore } from '@/store/game-store'
+import { useParams } from 'next/navigation'
 import ActiveGame from './active-game'
 import { InactiveGame } from './inactive-game'
 
-export default async function Game({ params }: { params: { id: string } }) {
-  const game: GameDataType[] = await getGameById(params.id)
+export default function Game() {
+  const { id } = useParams<{ id: string }>()
+  const game = useGameStore((s) => s.games.find((g) => g.id === id))
+
+  if (!game) return null
 
   return (
     <main className="p-4 pb-10">
-      {game[0]?.status ? (
-        <ActiveGame game={game[0]} />
+      {game.status === 'active' ? (
+        <ActiveGame game={game} />
       ) : (
-        <InactiveGame game={game[0]} />
+        <InactiveGame game={game} />
       )}
     </main>
   )

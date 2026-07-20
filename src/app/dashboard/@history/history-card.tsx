@@ -1,49 +1,45 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getUsersByGame } from '@/controllers/game_players'
-import { GameDataType, GamePlayerDataType } from '@/models/games'
+'use client'
 
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import type { Game } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { formatDate } from '@/utils/formatDate'
 import { User } from 'lucide-react'
 import Link from 'next/link'
 
-export async function HistoryCard({ game }: { game: GameDataType }) {
-  const players: GamePlayerDataType[] = await getUsersByGame(game.id)
+export function HistoryCard({ game }: { game: Game }) {
+  const top3 = game.players.slice(0, 3)
 
   return (
     <Link href={`/game/${game.id}`}>
-      <div
-        key={game.id}
-        className="flex flex-row justify-between gap-3 p-4 border-t"
-      >
+      <div className="flex flex-row justify-between gap-3 p-4 border-t">
         <section className="grid grid-cols-3 items-center justify-center gap-8">
-          {players.slice(0, 3).map((player, index) => (
+          {top3.map((player, index) => (
             <div key={player.id} className="flex flex-col items-center">
               <p className="text-muted-foreground text-xs mb-2">
                 {index + 1}º lugar
               </p>
               <Avatar className="w-8 h-8">
-                <AvatarImage src={player.users?.user_metadata?.avatar_url} />
                 <AvatarFallback>
-                  {player?.users?.user_metadata?.name ? (
-                    player?.users?.user_metadata.name[0]
+                  {player.name ? (
+                    player.name[0]
                   ) : (
                     <User className="w-4 h-4" />
                   )}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-baseline">
-                <strong>{player.users.user_metadata.name.split(' ')[0]}</strong>
+                <strong>{player.name.split(' ')[0]}</strong>
               </div>
             </div>
           ))}
         </section>
         <aside className="flex flex-col gap-1 items-end justify-between text-xs text-right">
-          <span>{formatDate(game.created_at, 'dd/MM/yyyy')}</span>
+          <span>{formatDate(game.createdAt, 'dd/MM/yyyy')}</span>
           <span>
             <span className="text-muted-foreground">Buy-in:</span>
             <br />
-            <strong>{formatCurrencyBRL(game.buy_in)}</strong>
+            <strong>{formatCurrencyBRL(game.buyIn)}</strong>
           </span>
         </aside>
       </div>

@@ -1,10 +1,12 @@
-import { getFinishedGames } from '@/controllers/games'
-import { GameDataType } from '@/models/games'
+'use client'
+
+import { useGameStore } from '@/store/game-store'
 import { Spade } from 'lucide-react'
 import { HistoryCard } from './history-card'
 
-export default async function History() {
-  const games: GameDataType[] = await getFinishedGames()
+export default function History() {
+  const allGames = useGameStore((s) => s.games)
+  const games = [...allGames.filter((g) => g.status === 'finished')].reverse()
 
   return (
     <>

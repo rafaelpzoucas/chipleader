@@ -24,7 +24,7 @@ import { useState } from 'react'
 import { CurrencyInput } from 'react-currency-mask'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { createGame } from '../game/actions'
+import { useGameStore } from '@/store/game-store'
 
 const newGameFormSchema = z.object({
   buyin: z.number(),
@@ -32,6 +32,7 @@ const newGameFormSchema = z.object({
 
 export function NewGameForm() {
   const router = useRouter()
+  const createGame = useGameStore((s) => s.createGame)
   const [isCreatingGame, setIsCreatingGame] = useState(false)
 
   const newGameForm = useForm<z.infer<typeof newGameFormSchema>>({
@@ -41,16 +42,10 @@ export function NewGameForm() {
     },
   })
 
-  async function handleCreateGame(values: z.infer<typeof newGameFormSchema>) {
+  function handleCreateGame(values: z.infer<typeof newGameFormSchema>) {
     setIsCreatingGame(true)
-
-    const response = await createGame(values.buyin)
-
-    if (response) {
-      router.push(
-        `/api/invite/game?code=${response[0].id}&buyin=${values.buyin}`,
-      )
-    }
+    const id = createGame(values.buyin)
+    router.push(`/game/${id}`)
   }
 
   return (

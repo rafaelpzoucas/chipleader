@@ -8,11 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { GameDataType } from '@/models/games'
+import type { Game } from '@/store/game-store'
+import { useGameStore } from '@/store/game-store'
 import { MoreVertical } from 'lucide-react'
-import { updateWinnersAmount } from '../actions'
 
-export function GameOptions({ game }: { game: GameDataType }) {
+export function GameOptions({ game }: { game: Game }) {
+  const updateWinnersAmount = useGameStore((s) => s.updateWinnersAmount)
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="ml-auto">
@@ -21,12 +23,12 @@ export function GameOptions({ game }: { game: GameDataType }) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Opções</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {game.winners_amount === 3 ? (
-          <DropdownMenuItem onClick={() => updateWinnersAmount(4, game.id)}>
+        {game.winnersAmount === 3 ? (
+          <DropdownMenuItem onClick={() => updateWinnersAmount(game.id, 4)}>
             Adicionar 4º lugar
           </DropdownMenuItem>
         ) : (
-          <DropdownMenuItem onClick={() => updateWinnersAmount(3, game.id)}>
+          <DropdownMenuItem onClick={() => updateWinnersAmount(game.id, 3)}>
             Remover 4º lugar
           </DropdownMenuItem>
         )}

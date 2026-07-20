@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
@@ -8,43 +7,37 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { GameExpenseDataType, GamePlayerDataType } from '@/models/games'
-import { Plus } from 'lucide-react'
+import type { Expense, Player } from '@/store/game-store'
 import { useState } from 'react'
 import { ExpensesForm } from './expenses-form'
 
-type EditExpenseSheetPropsType = {
-  players: GamePlayerDataType[]
-  expense: GameExpenseDataType
+type Props = {
+  players: Player[]
+  expense: Expense
+  gameId: string
 }
 
-export function EditExpenseSheet({
-  players,
-  expense,
-}: EditExpenseSheetPropsType) {
+export function EditExpenseSheet({ players, expense, gameId }: Props) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="w-full mt-4">
-          <Plus className="w-4 h-4 mr-2" />
-          Editar despesa
-        </Button>
+        <span>Editar</span>
       </SheetTrigger>
 
       <SheetContent side="bottom" className="h-full sm:h-fit">
         <SheetHeader>
-          <SheetTitle>Nova despesa</SheetTitle>
+          <SheetTitle>Editar despesa</SheetTitle>
         </SheetHeader>
 
         <ExpensesForm
           onOpenSheetChange={setIsOpen}
           players={players}
-          gameId={expense.game_id}
+          gameId={gameId}
           expenseId={expense.id}
           defaultValues={expense}
-          currentPlayerId={expense.game_player_id}
+          currentPlayerId={expense.playerId ?? undefined}
         />
       </SheetContent>
     </Sheet>

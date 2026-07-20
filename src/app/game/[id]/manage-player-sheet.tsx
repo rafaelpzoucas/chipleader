@@ -1,6 +1,6 @@
 'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import {
@@ -11,194 +11,154 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { updateAmountSpent } from '@/controllers/game_players'
-import { GamePlayerDataType } from '@/models/games'
+import type { Game, Player } from '@/store/game-store'
+import { useGameStore } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { Loader, Minus, Plus, User } from 'lucide-react'
+import { Minus, Plus, User } from 'lucide-react'
 import { useState } from 'react'
-import {
-  bustPlayer,
-  finishGame,
-  getUnbustedGamePlayers,
-  increaseAmountPaid,
-  unbustPlayer,
-  updateUserCumulativeWinnings,
-} from '../actions'
 
-interface ManagePlayerSheetProps {
-  player: GamePlayerDataType
+interface Props {
+  game: Game
+  player: Player
   amountSpent: number
   expensesEach: number
   setAmountSpent: React.Dispatch<React.SetStateAction<number>>
   setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
-  gameStatus: boolean
-  gameWinnersAmount: 3 | 4
-  payout: number
   placing: number
+  totalPayout: number
 }
 
 export function ManagePlayerSheet({
+  game,
   player,
   amountSpent,
   expensesEach,
   setAmountSpent,
   setIsSheetOpen,
-  gameStatus,
-  gameWinnersAmount,
-  payout,
   placing,
-}: ManagePlayerSheetProps) {
+  totalPayout,
+}: Props) {
+  const bustPlayer = useGameStore((s) => s.bustPlayer)
+  const unbustPlayer = useGameStore((s) => s.unbustPlayer)
+  const updatePlayerAmountSpent = useGameStore((s) => s.updatePlayerAmountSpent)
+  const increaseAmountPaid = useGameStore((s) => s.increaseAmountPaid)
+  const finishGame = useGameStore((s) => s.finishGame)
+
+  const isFinished = game.status === 'finished'
   const playerPayout =
-    placing < 3
+    isFinished && placing < 3
       ? placing === 1
-        ? payout * 0.5
+        ? totalPayout * 0.5
         : placing === 2
-          ? payout * 0.2
-          : payout * 0.3
+          ? totalPayout * 0.2
+          : totalPayout * 0.3
       : 0
   const buyInPrice = 25
-  const isBusted = player.busted_at !== null
+  const isBusted = player.bustedAt !== null
   const placings = [-15, -25, -10, 0, 50]
-  const balance =
-    gameWinnersAmount === 3
-      ? player.amount_paid + playerPayout - player.amount_spent - expensesEach
+  const balance = isFinished
+    ? game.winnersAmount === 3
+      ? player.amountPaid + playerPayout - amountSpent - expensesEach
       : placing <= 4
-        ? player.amount_paid +
+        ? player.amountPaid +
           playerPayout -
-          player.amount_spent -
+          amountSpent -
           expensesEach +
           placings[placing]
         : 0
-  const playerName = player?.users?.user_metadata?.name
+    : player.amountPaid - amountSpent - expensesEach
 
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [isEliminating, setIsEliminating] = useState(false)
 
-  function subBuyIn(buyInPrice: number) {
+  function subBuyIn() {
     if (amountSpent > 0) {
       setAmountSpent((state) => state - buyInPrice)
     }
   }
 
-  function addBuyIn(buyInPrice: number) {
+  function addBuyIn() {
     setAmountSpent((state) => state + buyInPrice)
   }
 
-  async function handleUpdateAmountSpent() {
-    setIsSaving(true)
-
-    const response = await updateAmountSpent(player.id, amountSpent)
-
-    if (response) {
-      setIsSheetOpen(false)
-    }
-
-    setIsSaving(false)
+  function handleUpdateAmountSpent() {
+    updatePlayerAmountSpent(game.id, player.id, amountSpent)
+    setIsSheetOpen(false)
   }
 
-  async function handleUpdateAmountPaid() {
-    const response = await increaseAmountPaid(
-      player.amount_paid + balance * -1,
-      player.id,
-    )
-
-    if (response) {
-      setIsSheetOpen(false)
-    }
+  function handleUpdateAmountPaid() {
+    increaseAmountPaid(game.id, player.id, balance * -1)
+    setIsSheetOpen(false)
   }
 
-  async function handleBustPlayer() {
-    setIsEliminating(true)
-
-    const unbustedPlayers = await getUnbustedGamePlayers(player.game_id)
+  function handleBustPlayer() {
+    const unbustedPlayers = game.players.filter((p) => p.bustedAt === null)
 
     if (unbustedPlayers.length > 3) {
-      const response = await bustPlayer(player.id)
-
-      if (response) {
-        setIsSheetOpen(false)
-        setIsBustPlayerSheetOpen(false)
-      }
-    }
-
-    if (gameWinnersAmount === 3) {
-      if (unbustedPlayers.length === 3) {
-        await bustPlayer(player.id)
-        await updateUserCumulativeWinnings(payout * 0.2, player.user_id)
-      }
-
-      if (unbustedPlayers.length === 2) {
-        await bustPlayer(player.id)
-        await updateUserCumulativeWinnings(payout * 0.3, player.user_id)
-
-        const unbustedPlayers: GamePlayerDataType[] =
-          await getUnbustedGamePlayers(player.game_id)
-
-        await bustPlayer(unbustedPlayers[0].id)
-        await updateUserCumulativeWinnings(
-          payout * 0.5,
-          unbustedPlayers[0].user_id,
-        )
-
-        await finishGame(player.game_id)
-      }
-    }
-
-    if (gameWinnersAmount === 4) {
-      if (unbustedPlayers.length === 4) {
-        await bustPlayer(player.id)
-        await updateUserCumulativeWinnings(50, player.user_id)
-      }
-
-      if (unbustedPlayers.length === 3) {
-        await bustPlayer(player.id)
-        await updateUserCumulativeWinnings(payout * 0.2 - 10, player.user_id)
-      }
-
-      if (unbustedPlayers.length === 2) {
-        await bustPlayer(player.id)
-        await updateUserCumulativeWinnings(payout * 0.3 - 15, player.user_id)
-
-        const unbustedPlayers: GamePlayerDataType[] =
-          await getUnbustedGamePlayers(player.game_id)
-
-        await bustPlayer(unbustedPlayers[0].id)
-        await updateUserCumulativeWinnings(
-          payout * 0.5 - 25,
-          unbustedPlayers[0].user_id,
-        )
-
-        await finishGame(player.game_id)
-      }
-    }
-
-    setIsEliminating(false)
-  }
-
-  async function handleUnbustPlayer() {
-    const response = await unbustPlayer(player.id)
-
-    if (response) {
+      bustPlayer(game.id, player.id)
       setIsSheetOpen(false)
       setIsBustPlayerSheetOpen(false)
+      return
     }
+
+    if (game.winnersAmount === 3) {
+      if (unbustedPlayers.length === 3) {
+        bustPlayer(game.id, player.id)
+      }
+
+      if (unbustedPlayers.length === 2) {
+        bustPlayer(game.id, player.id)
+
+        const remaining = game.players.filter((p) => p.bustedAt === null && p.id !== player.id)
+        if (remaining.length > 0) {
+          bustPlayer(game.id, remaining[0].id)
+        }
+
+        finishGame(game.id)
+      }
+    }
+
+    if (game.winnersAmount === 4) {
+      if (unbustedPlayers.length === 4) {
+        bustPlayer(game.id, player.id)
+      }
+
+      if (unbustedPlayers.length === 3) {
+        bustPlayer(game.id, player.id)
+      }
+
+      if (unbustedPlayers.length === 2) {
+        bustPlayer(game.id, player.id)
+
+        const remaining = game.players.filter((p) => p.bustedAt === null && p.id !== player.id)
+        if (remaining.length > 0) {
+          bustPlayer(game.id, remaining[0].id)
+        }
+
+        finishGame(game.id)
+      }
+    }
+
+    setIsSheetOpen(false)
+    setIsBustPlayerSheetOpen(false)
+  }
+
+  function handleUnbustPlayer() {
+    unbustPlayer(game.id, player.id)
+    setIsSheetOpen(false)
+    setIsBustPlayerSheetOpen(false)
   }
 
   return (
     <>
       <header className="flex flex-row items-center gap-4 w-full">
         <Avatar>
-          <AvatarImage src={player?.users?.user_metadata?.avatar_url} />
           <AvatarFallback>
-            {playerName[0] ?? <User className="w-4 h-4" />}
+            {player.name[0] ?? <User className="w-4 h-4" />}
           </AvatarFallback>
         </Avatar>
 
         <div className="text-left">
-          <strong>{`${playerName.split(' ')[0]} ${
-            playerName.split(' ')[playerName.split(' ').length - 1]
-          }`}</strong>
+          <strong>{player.name}</strong>
         </div>
         {balance !== 0 ? (
           <strong className="ml-auto">{formatCurrencyBRL(balance)}</strong>
@@ -208,7 +168,7 @@ export function ManagePlayerSheet({
       </header>
 
       <section className="space-y-2">
-        {placing < 3 && (
+        {isFinished && placing < 3 && (
           <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
             <span>Premio:</span>
             <strong className="ml-auto text-emerald-600">
@@ -220,14 +180,14 @@ export function ManagePlayerSheet({
         <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
           <span>Valor pago:</span>
           <strong className="ml-auto text-emerald-600">
-            {formatCurrencyBRL(player.amount_paid)}
+            {formatCurrencyBRL(player.amountPaid)}
           </strong>
         </div>
 
         <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
           <span>Buy-ins:</span>
           <strong className="ml-auto text-destructive">
-            {formatCurrencyBRL(player.amount_spent * -1)}
+            {formatCurrencyBRL(amountSpent * -1)}
           </strong>
         </div>
 
@@ -240,7 +200,7 @@ export function ManagePlayerSheet({
       </section>
 
       {isBusted ? (
-        gameStatus === true ? (
+        game.status === 'active' ? (
           <Button className="w-full" onClick={handleUnbustPlayer}>
             Voltar para o jogo
           </Button>
@@ -264,7 +224,7 @@ export function ManagePlayerSheet({
               <SheetContent side="bottom">
                 <SheetHeader>
                   <SheetTitle className="text-left">
-                    Eliminar <strong>{playerName.split(' ')[0]}</strong>?
+                    Eliminar <strong>{player.name.split(' ')[0]}</strong>?
                   </SheetTitle>
                 </SheetHeader>
 
@@ -273,16 +233,8 @@ export function ManagePlayerSheet({
                     variant="destructive"
                     className="w-full"
                     onClick={handleBustPlayer}
-                    disabled={isEliminating}
                   >
-                    {isEliminating ? (
-                      <>
-                        <Loader className="w-4 h-4 mr-2 animate-spin" />
-                        <span>Eliminando jogador...</span>
-                      </>
-                    ) : (
-                      <span>Sim, eliminar</span>
-                    )}
+                    <span>Sim, eliminar</span>
                   </Button>
                   <SheetClose asChild>
                     <Button variant="outline" className="w-full">
@@ -297,7 +249,7 @@ export function ManagePlayerSheet({
                 variant="ghost"
                 size="icon"
                 disabled={!amountSpent}
-                onClick={() => subBuyIn(buyInPrice)}
+                onClick={subBuyIn}
               >
                 <Minus className="w-4 h-4" />
               </Button>
@@ -305,7 +257,7 @@ export function ManagePlayerSheet({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => addBuyIn(buyInPrice)}
+                onClick={addBuyIn}
               >
                 <Plus className="w-4 h-4" />
               </Button>
@@ -315,16 +267,8 @@ export function ManagePlayerSheet({
             <Button
               className="w-full"
               onClick={handleUpdateAmountSpent}
-              disabled={isSaving}
             >
-              {isSaving ? (
-                <>
-                  <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  <span>Salvando alterações...</span>
-                </>
-              ) : (
-                <span>Salvar</span>
-              )}
+              <span>Salvar</span>
             </Button>
           </footer>
         </>

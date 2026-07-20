@@ -1,32 +1,25 @@
-import {
-  GameDataType,
-  GameExpenseDataType,
-  GamePlayerDataType,
-} from '@/models/games'
+'use client'
+
+import type { Game } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { getExpensesByGame, getUsersByGame } from '../actions'
 import { CreateExpenseSheet } from './create-expense-sheet'
-import { GameExpense } from './game-expense'
+import { GameExpenseList } from './game-expense-list'
 import { GameOptions } from './game-options'
 import { GameWinnings } from './game-winnings'
 import { InvitePlayersSheet } from './invite-players-sheet'
 import RealTimeGamePlayers from './real-time-game-players'
 
-export default async function ActiveGame({ game }: { game: GameDataType }) {
-  const players: GamePlayerDataType[] = await getUsersByGame(game.id)
-  const expenses: GameExpenseDataType[] = await getExpensesByGame(game.id)
+export default function ActiveGame({ game }: { game: Game }) {
+  const totalPayout = game.players.reduce((acc, p) => acc + p.amountSpent, 0)
 
-  const totalPayout = players.reduce((acc, player) => {
-    return acc + player.amount_spent
-  }, 0)
+  const totalExpensesPrice = game.expenses.reduce((acc, e) => acc + e.price, 0)
 
-  const totalExpensesPrice = expenses.reduce((acc, expense) => {
-    return acc + expense.price
-  }, 0)
-
-  const totalExpensesEach = totalExpensesPrice / players.length
+  const totalExpensesEach =
+    game.players.length > 0
+      ? totalExpensesPrice / game.players.length
+      : 0
 
   return (
     <div className="space-y-8">
@@ -39,17 +32,12 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
         <GameOptions game={game} />
       </header>
 
-      <GameWinnings winners={game.winners_amount} totalPayout={totalPayout} />
+      <GameWinnings winners={game.winnersAmount} totalPayout={totalPayout} />
 
       <section className="space-y-2">
-        <InvitePlayersSheet gameId={game.id} buyIn={game.buy_in} />
+        <InvitePlayersSheet gameId={game.id} buyIn={game.buyIn} />
 
-        <RealTimeGamePlayers
-          game={game}
-          players={players}
-          expenses={expenses}
-          totalPayout={totalPayout}
-        />
+        <RealTimeGamePlayers game={game} totalPayout={totalPayout} />
       </section>
 
       <section className="space-y-3">
@@ -64,11 +52,9 @@ export default async function ActiveGame({ game }: { game: GameDataType }) {
         </header>
 
         <div>
-          {expenses.map((expense) => (
-            <GameExpense key={expense.id} expense={expense} />
-          ))}
+          <GameExpenseList game={game} />
 
-          <CreateExpenseSheet players={players} game={game} />
+          <CreateExpenseSheet players={game.players} game={game} />
         </div>
       </section>
     </div>

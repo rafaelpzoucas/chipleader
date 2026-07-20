@@ -8,20 +8,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { GameDataType, GamePlayerDataType } from '@/models/games'
+import type { Game, Player } from '@/store/game-store'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { ExpensesForm } from './expenses-form'
 
-type CreateExpenseSheetPropsType = {
-  players: GamePlayerDataType[]
-  game: GameDataType
+type Props = {
+  players: Player[]
+  game: Game
 }
 
-export function CreateExpenseSheet({
-  players,
-  game,
-}: CreateExpenseSheetPropsType) {
+export function CreateExpenseSheet({ players, game }: Props) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (

@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import {
   Sheet,
   SheetContent,
@@ -9,28 +8,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { copyToClipboard } from '@/utils/copyToClipboard'
-import { Check, Copy, Plus } from 'lucide-react'
+import { useGameStore } from '@/store/game-store'
+import { Check, Plus } from 'lucide-react'
 import { useState } from 'react'
 
-type InvitePlayersSheetProps = {
+type Props = {
   gameId: string
   buyIn: number
 }
 
-export function InvitePlayersSheet({ gameId, buyIn }: InvitePlayersSheetProps) {
-  const [isCopied, setIsCopied] = useState(false)
+export function InvitePlayersSheet({ gameId }: Props) {
+  const addPlayer = useGameStore((s) => s.addPlayer)
+  const [name, setName] = useState('')
+  const [added, setAdded] = useState(false)
 
-  const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/invite/game?code=${gameId}&buyin=${buyIn}`
-
-  function handleCopy() {
-    copyToClipboard(inviteLink)
-
-    setIsCopied((state) => !state)
-
-    setTimeout(() => {
-      setIsCopied((state) => !state)
-    }, 3000)
+  function handleAdd() {
+    if (name.trim()) {
+      addPlayer(gameId, name.trim())
+      setName('')
+      setAdded(true)
+      setTimeout(() => setAdded(false), 2000)
+    }
   }
 
   return (
@@ -38,31 +36,31 @@ export function InvitePlayersSheet({ gameId, buyIn }: InvitePlayersSheetProps) {
       <SheetTrigger asChild>
         <Button variant="outline" className="w-full">
           <Plus className="w-4 h-4 mr-2" />
-          Convidar jogadores
+          Adicionar jogador
         </Button>
       </SheetTrigger>
 
       <SheetContent side="bottom">
         <SheetHeader>
-          <SheetTitle>Compartilhar link</SheetTitle>
-
-          <div className="flex flex-row gap-3">
-            <Card className="flex items-center px-4 w-full truncate text-muted-foreground bg-secondary">
-              <span className="w-full truncate">{inviteLink}</span>
-            </Card>
-            <Button
-              variant={isCopied ? 'default' : 'outline'}
-              onClick={handleCopy}
-            >
-              {isCopied ? (
+          <SheetTitle>Adicionar jogador</SheetTitle>
+          <div className="flex flex-row gap-3 pt-4">
+            <input
+              type="text"
+              placeholder="Nome do jogador"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+            <Button onClick={handleAdd}>
+              {added ? (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  Copiado
+                  Adicionado
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copiar
+                  <Plus className="w-4 h-4 mr-2" />
+                  Adicionar
                 </>
               )}
             </Button>

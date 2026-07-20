@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { User } from 'lucide-react'
+import { Spade } from 'lucide-react'
 
 export function GameWinnings({
   winners,
@@ -15,7 +15,7 @@ export function GameWinnings({
         <p className="text-muted-foreground text-xs mb-3">2º lugar</p>
         <Avatar className="w-12 h-12">
           <AvatarFallback>
-            <User className="w-4 h-4" />
+            <Spade className="w-4 h-4" />
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-center justify-center mt-2">
@@ -30,7 +30,7 @@ export function GameWinnings({
         <p className="text-muted-foreground text-xs mb-3">1º lugar</p>
         <Avatar className="w-16 h-16">
           <AvatarFallback>
-            <User className="w-5 h-5" />
+            <Spade className="w-5 h-5" />
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-center justify-center mt-2">
@@ -45,7 +45,7 @@ export function GameWinnings({
         <p className="text-muted-foreground text-xs mb-3">3º lugar</p>
         <Avatar>
           <AvatarFallback>
-            <User className="w-4 h-4" />
+            <Spade className="w-4 h-4" />
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-center justify-center mt-2">
@@ -61,7 +61,7 @@ export function GameWinnings({
           <p className="text-muted-foreground text-xs mb-3">4º lugar</p>
           <Avatar className="w-8 h-8">
             <AvatarFallback>
-              <User className="w-3 h-3" />
+              <Spade className="w-3 h-3" />
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center justify-center mt-2">
