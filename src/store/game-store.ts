@@ -40,6 +40,7 @@ type GameStore = {
   deleteRegisteredPlayer: (id: string) => void
   updateRegisteredPlayer: (id: string, name: string) => void
   addPlayer: (gameId: string, name: string) => void
+  removePlayer: (gameId: string, playerId: string) => void
   updatePlayerAmountSpent: (gameId: string, playerId: string, amountSpent: number) => void
   increaseAmountPaid: (gameId: string, playerId: string, value: number) => void
   decreaseAmountPaid: (gameId: string, playerId: string, value: number) => void
@@ -101,7 +102,23 @@ export const useGameStore = create<GameStore>()(
         return id
       },
 
-      addPlayer: (gameId: string, name: string) => {
+      removePlayer: (gameId: string, playerId: string) => {
+    set((state) => ({
+      games: state.games.map((g) =>
+        g.id === gameId
+          ? {
+              ...g,
+              players: g.players.filter((p) => p.id !== playerId),
+              expenses: g.expenses.map((e) =>
+                e.playerId === playerId ? { ...e, playerId: null } : e,
+              ),
+            }
+          : g,
+      ),
+    }))
+  },
+
+  addPlayer: (gameId: string, name: string) => {
         set((state) => ({
           games: state.games.map((g) =>
             g.id === gameId

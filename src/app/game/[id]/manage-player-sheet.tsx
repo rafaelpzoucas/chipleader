@@ -43,6 +43,7 @@ export function ManagePlayerSheet({
   const updatePlayerAmountSpent = useGameStore((s) => s.updatePlayerAmountSpent)
   const increaseAmountPaid = useGameStore((s) => s.increaseAmountPaid)
   const finishGame = useGameStore((s) => s.finishGame)
+  const removePlayer = useGameStore((s) => s.removePlayer)
 
   const isFinished = game.status === 'finished'
   const playerPayout =
@@ -69,6 +70,7 @@ export function ManagePlayerSheet({
     : player.amountPaid - amountSpent - expensesEach
 
   const [isBustPlayerSheetOpen, setIsBustPlayerSheetOpen] = useState(false)
+  const [isRemovePlayerSheetOpen, setIsRemovePlayerSheetOpen] = useState(false)
 
   function subBuyIn() {
     if (amountSpent > 0) {
@@ -146,6 +148,12 @@ export function ManagePlayerSheet({
     unbustPlayer(game.id, player.id)
     setIsSheetOpen(false)
     setIsBustPlayerSheetOpen(false)
+  }
+
+  function handleRemovePlayer() {
+    removePlayer(game.id, player.id)
+    setIsSheetOpen(false)
+    setIsRemovePlayerSheetOpen(false)
   }
 
   return (
@@ -273,6 +281,46 @@ export function ManagePlayerSheet({
           </footer>
         </>
       )}
+
+      <div className="pt-4">
+        <Sheet
+          open={isRemovePlayerSheetOpen}
+          onOpenChange={setIsRemovePlayerSheetOpen}
+        >
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-full text-muted-foreground hover:text-destructive">
+              Remover do jogo
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom">
+            <SheetHeader>
+              <SheetTitle className="text-left">
+                Remover <strong>{player.name.split(' ')[0]}</strong> do jogo?
+              </SheetTitle>
+            </SheetHeader>
+
+            <p className="text-sm text-muted-foreground mt-2">
+              Essa ação não pode ser desfeita. As despesas vinculadas a esse
+              jogador serão desvinculadas.
+            </p>
+
+            <div className="flex flex-col gap-2 mt-4">
+              <Button
+                variant="destructive"
+                className="w-full"
+                onClick={handleRemovePlayer}
+              >
+                <span>Sim, remover</span>
+              </Button>
+              <SheetClose asChild>
+                <Button variant="outline" className="w-full">
+                  Não, cancelar
+                </Button>
+              </SheetClose>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
     </>
   )
 }
