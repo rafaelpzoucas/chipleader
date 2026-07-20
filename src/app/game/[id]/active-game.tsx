@@ -57,6 +57,11 @@ export default function ActiveGame({ game }: { game: Game }) {
 
       <section className="space-y-2">
         <InvitePlayersSheet gameId={game.id} />
+        <div className="flex">
+          <Badge variant="outline" className="ml-auto">
+            Total {formatCurrencyBRL(totalPayout)}
+          </Badge>
+        </div>
         <RealTimeGamePlayers game={game} totalPayout={totalPayout} />
       </section>
 
