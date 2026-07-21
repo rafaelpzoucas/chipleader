@@ -21,6 +21,7 @@ import { GameOptions } from './game-options'
 import { GameWinnings } from './game-winnings'
 import { InvitePlayersSheet } from './invite-players-sheet'
 import RealTimeGamePlayers from './real-time-game-players'
+import { BlindTimerFloating } from './blind-timer-floating'
 
 export default function ActiveGame({ game }: { game: Game }) {
   const totalPayout = game.players.reduce((acc, p) => acc + p.amountSpent, 0)
@@ -31,8 +32,8 @@ export default function ActiveGame({ game }: { game: Game }) {
   const caixaAmount = getCaixaAmount(totalPayout, game.caixaType, game.caixaPercentage, game.caixaFixed)
 
   return (
-    <div className="space-y-8">
-      <header className="flex flex-row items-center">
+      <div className={`space-y-8${game.gameMode === 'tournament' ? ' pb-20' : ''}`}>
+        <header className="flex flex-row items-center">
         <Link href="/dashboard" className="p-3">
           <ArrowLeft className="w-6 h-6" />
         </Link>
@@ -46,6 +47,10 @@ export default function ActiveGame({ game }: { game: Game }) {
           <Badge variant="outline">Caixa {formatCurrencyBRL(caixaAmount)}</Badge>
         )}
       </div>
+
+      {game.gameMode === 'tournament' && (
+        <BlindTimerFloating gameId={game.id} />
+      )}
 
       <GameWinnings
         totalPayout={totalPayout}

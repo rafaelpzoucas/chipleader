@@ -18,6 +18,7 @@ export default function RealTimeGamePlayers({ game, totalPayout }: Props) {
         player={player}
         placing={index}
         totalPayout={totalPayout}
+        prizeSplit={game.prizeSplit}
       />
     ))
   )

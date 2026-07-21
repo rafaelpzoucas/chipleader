@@ -14,7 +14,7 @@ import {
 import type { Game, Player } from '@/store/game-store'
 import { useGameStore } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { getCaixaAmount, getPrizeDistribution, getPrizeForPlacing } from '@/utils/prize'
+import { getCaixaAmount, getDistIdx, getPrizeDistribution, getPrizeForPlacing } from '@/utils/prize'
 import { Minus, Plus, User } from 'lucide-react'
 import { useState } from 'react'
 
@@ -27,6 +27,7 @@ interface Props {
   setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
   placing: number
   totalPayout: number
+  prizeSplit?: boolean
 }
 
 export function ManagePlayerSheet({
@@ -50,12 +51,13 @@ export function ManagePlayerSheet({
   const distribution = getPrizeDistribution(game)
   const caixaAmount = getCaixaAmount(totalPayout, game.caixaType, game.caixaPercentage, game.caixaFixed)
   const effectiveTotal = totalPayout - caixaAmount
+  const prizeSplit = game.prizeSplit
   const playerPayout = isFinished
-    ? getPrizeForPlacing(placing, distribution, effectiveTotal)
+    ? getPrizeForPlacing(placing, distribution, effectiveTotal, prizeSplit)
     : 0
   const buyInPrice = game.buyIn
   const isBusted = player.bustedAt !== null
-  const balance = isFinished && placing < distribution.length
+  const balance = isFinished && getDistIdx(placing) < distribution.length
     ? player.amountPaid + playerPayout - amountSpent - expensesEach
     : player.amountPaid - amountSpent - expensesEach
 
@@ -141,35 +143,65 @@ export function ManagePlayerSheet({
       </header>
 
       <section className="space-y-2">
-        {isFinished && placing < 3 && (
-          <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
-            <span>Premio:</span>
-            <strong className="ml-auto text-emerald-600">
-              {formatCurrencyBRL(playerPayout)}
-            </strong>
-          </div>
+        {isFinished && placing < 3 ? (
+          <>
+            <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+              <span>Prêmio total:</span>
+              <strong className="ml-auto text-emerald-600">
+                {formatCurrencyBRL(playerPayout)}
+              </strong>
+            </div>
+            <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+              <span>Valor gasto:</span>
+              <strong className="ml-auto text-destructive">
+                {formatCurrencyBRL(amountSpent * -1)}
+              </strong>
+            </div>
+            {expensesEach > 0 && (
+              <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+                <span>Despesas:</span>
+                <strong className="ml-auto text-destructive">
+                  {formatCurrencyBRL(expensesEach * -1)}
+                </strong>
+              </div>
+            )}
+            <div className="flex flex-row items-center justify-between text-xs">
+              <span>Prêmio líquido:</span>
+              <strong className={`ml-auto ${balance < 0 ? 'text-destructive' : 'text-emerald-600'}`}>
+                {formatCurrencyBRL(balance)}
+              </strong>
+            </div>
+            {balance < 0 && (
+              <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+                <span>Valor pago:</span>
+                <strong className="ml-auto text-emerald-600">
+                  {formatCurrencyBRL(player.amountPaid)}
+                </strong>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+              <span>Valor pago:</span>
+              <strong className="ml-auto text-emerald-600">
+                {formatCurrencyBRL(player.amountPaid)}
+              </strong>
+            </div>
+            <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+              <span>Buy-ins:</span>
+              <strong className="ml-auto text-destructive">
+                {formatCurrencyBRL(amountSpent * -1)}
+              </strong>
+            </div>
+            <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
+              <span>Despesas:</span>
+              <strong className="ml-auto text-destructive">
+                {formatCurrencyBRL(expensesEach * -1)}
+              </strong>
+            </div>
+          </>
         )}
-
-        <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
-          <span>Valor pago:</span>
-          <strong className="ml-auto text-emerald-600">
-            {formatCurrencyBRL(player.amountPaid)}
-          </strong>
-        </div>
-
-        <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
-          <span>Buy-ins:</span>
-          <strong className="ml-auto text-destructive">
-            {formatCurrencyBRL(amountSpent * -1)}
-          </strong>
-        </div>
-
-        <div className="flex flex-row items-center justify-between text-xs text-muted-foreground">
-          <span>Despesas:</span>
-          <strong className="ml-auto text-destructive">
-            {formatCurrencyBRL(expensesEach * -1)}
-          </strong>
-        </div>
       </section>
 
       {isBusted ? (

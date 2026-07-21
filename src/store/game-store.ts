@@ -1,5 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { DEFAULT_BLIND_STRUCTURE, generateBlindLevels, type BlindLevel } from '@/data/blind-structure'
+
+export type GameMode = 'cash' | 'tournament'
 
 export type RegisteredPlayer = {
   id: string
@@ -29,6 +32,14 @@ export type Expense = {
   createdAt: string
 }
 
+export type BlindTimerState = {
+  currentLevel: number
+  isRunning: boolean
+  levelStartedAt: number | null
+  pausedAt: number | null
+  totalPausedMs: number
+}
+
 export type Game = {
   id: string
   createdAt: string
@@ -41,6 +52,11 @@ export type Game = {
   caixaType: CaixaType
   caixaPercentage: number
   caixaFixed: number
+  gameMode: GameMode
+  blindInterval: number
+  blindLevels: BlindLevel[]
+  blindTimer: BlindTimerState
+  prizeSplit: boolean
 }
 
 type GameStore = {
@@ -69,6 +85,18 @@ type GameStore = {
   updatePrizeDistribution: (gameId: string, distribution: PrizeItem[]) => void
   getGame: (gameId: string) => Game | undefined
   deleteGame: (gameId: string) => void
+  createTournamentGame: (buyIn: number, blindInterval: number) => string
+  setGameMode: (gameId: string, mode: GameMode) => void
+  setBlindInterval: (gameId: string, interval: number) => void
+  setBlindLevels: (gameId: string, levels: BlindLevel[]) => void
+  updateBlindLevel: (gameId: string, index: number, data: Partial<BlindLevel>) => void
+  startBlindTimer: (gameId: string) => void
+  pauseBlindTimer: (gameId: string) => void
+  resumeBlindTimer: (gameId: string) => void
+  advanceBlindLevel: (gameId: string) => void
+  previousBlindLevel: (gameId: string) => void
+  resetBlindTimer: (gameId: string) => void
+  togglePrizeSplit: (gameId: string) => void
 }
 
 function genId() {
@@ -121,6 +149,51 @@ export const useGameStore = create<GameStore>()(
           caixaType: 'percentage',
           caixaPercentage: 0,
           caixaFixed: 0,
+          gameMode: 'cash',
+          blindInterval: 900,
+          blindLevels: generateBlindLevels(DEFAULT_BLIND_STRUCTURE.length),
+          blindTimer: {
+            currentLevel: 0,
+            isRunning: false,
+            levelStartedAt: null,
+            pausedAt: null,
+            totalPausedMs: 0,
+          },
+          prizeSplit: false,
+        }
+        set((state) => ({ games: [...state.games, game] }))
+        return id
+      },
+
+      createTournamentGame: (buyIn: number, blindInterval: number) => {
+        const id = genId()
+        const game: Game = {
+          id,
+          createdAt: new Date().toISOString(),
+          status: 'active',
+          buyIn,
+          winnersAmount: 3,
+          players: [],
+          expenses: [],
+          prizeDistribution: [
+            { type: 'percentage', value: 50 },
+            { type: 'percentage', value: 30 },
+            { type: 'percentage', value: 20 },
+          ],
+          caixaType: 'percentage',
+          caixaPercentage: 0,
+          caixaFixed: 0,
+          gameMode: 'tournament',
+          blindInterval,
+          blindLevels: generateBlindLevels(DEFAULT_BLIND_STRUCTURE.length),
+          blindTimer: {
+            currentLevel: 0,
+            isRunning: false,
+            levelStartedAt: null,
+            pausedAt: null,
+            totalPausedMs: 0,
+          },
+          prizeSplit: false,
         }
         set((state) => ({ games: [...state.games, game] }))
         return id
@@ -359,8 +432,167 @@ export const useGameStore = create<GameStore>()(
         }))
       },
 
+      setGameMode: (gameId: string, mode: GameMode) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId ? { ...g, gameMode: mode } : g,
+          ),
+        }))
+      },
+
+      setBlindInterval: (gameId: string, interval: number) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId ? { ...g, blindInterval: interval } : g,
+          ),
+        }))
+      },
+
+      setBlindLevels: (gameId: string, levels: BlindLevel[]) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId ? { ...g, blindLevels: levels } : g,
+          ),
+        }))
+      },
+
+      updateBlindLevel: (gameId: string, index: number, data: Partial<BlindLevel>) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId
+              ? {
+                  ...g,
+                  blindLevels: g.blindLevels.map((level, i) =>
+                    i === index ? { ...level, ...data } : level,
+                  ),
+                }
+              : g,
+          ),
+        }))
+      },
+
+      startBlindTimer: (gameId: string) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId
+              ? {
+                  ...g,
+                  blindTimer: {
+                    currentLevel: 0,
+                    isRunning: true,
+                    levelStartedAt: Date.now(),
+                    pausedAt: null,
+                    totalPausedMs: 0,
+                  },
+                }
+              : g,
+          ),
+        }))
+      },
+
+      pauseBlindTimer: (gameId: string) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId && g.blindTimer.isRunning
+              ? {
+                  ...g,
+                  blindTimer: {
+                    ...g.blindTimer,
+                    isRunning: false,
+                    pausedAt: Date.now(),
+                  },
+                }
+              : g,
+          ),
+        }))
+      },
+
+      resumeBlindTimer: (gameId: string) => {
+        set((state) => ({
+          games: state.games.map((g) => {
+            if (g.id !== gameId || g.blindTimer.pausedAt === null) return g
+            const pausedDuration = Date.now() - g.blindTimer.pausedAt
+            return {
+              ...g,
+              blindTimer: {
+                ...g.blindTimer,
+                isRunning: true,
+                pausedAt: null,
+                totalPausedMs: g.blindTimer.totalPausedMs + pausedDuration,
+              },
+            }
+          }),
+        }))
+      },
+
+      advanceBlindLevel: (gameId: string) => {
+        set((state) => ({
+          games: state.games.map((g) => {
+            if (g.id !== gameId) return g
+            const nextLevel = g.blindTimer.currentLevel + 1
+            const maxLevel = (g.blindLevels?.length ?? DEFAULT_BLIND_STRUCTURE.length) - 1
+            return {
+              ...g,
+              blindTimer: {
+                currentLevel: Math.min(nextLevel, maxLevel),
+                isRunning: nextLevel > maxLevel ? false : g.blindTimer.isRunning,
+                levelStartedAt: nextLevel > maxLevel ? null : Date.now(),
+                pausedAt: null,
+                totalPausedMs: 0,
+              },
+            }
+          }),
+        }))
+      },
+
+      previousBlindLevel: (gameId: string) => {
+        set((state) => ({
+          games: state.games.map((g) => {
+            if (g.id !== gameId) return g
+            const prevLevel = Math.max(0, g.blindTimer.currentLevel - 1)
+            return {
+              ...g,
+              blindTimer: {
+                ...g.blindTimer,
+                currentLevel: prevLevel,
+                levelStartedAt: Date.now(),
+                pausedAt: null,
+                totalPausedMs: 0,
+              },
+            }
+          }),
+        }))
+      },
+
+      resetBlindTimer: (gameId: string) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId
+              ? {
+                  ...g,
+                  blindTimer: {
+                    currentLevel: 0,
+                    isRunning: false,
+                    levelStartedAt: null,
+                    pausedAt: null,
+                    totalPausedMs: 0,
+                  },
+                }
+              : g,
+          ),
+        }))
+      },
+
       getGame: (gameId: string) => {
         return get().games.find((g) => g.id === gameId)
+      },
+
+      togglePrizeSplit: (gameId: string) => {
+        set((state) => ({
+          games: state.games.map((g) =>
+            g.id === gameId ? { ...g, prizeSplit: !g.prizeSplit } : g,
+          ),
+        }))
       },
 
       deleteGame: (gameId: string) => {
@@ -372,6 +604,24 @@ export const useGameStore = create<GameStore>()(
     {
       name: 'chipleader-games',
       skipHydration: true,
+      merge: (persisted: unknown, current) => {
+        const merged = { ...current, ...(persisted as typeof current) }
+        merged.games = merged.games.map((game) => ({
+          ...game,
+          gameMode: game.gameMode ?? ('cash' as const),
+          blindInterval: game.blindInterval ?? 900,
+          blindLevels: game.blindLevels ?? generateBlindLevels(DEFAULT_BLIND_STRUCTURE.length),
+          blindTimer: game.blindTimer ?? {
+            currentLevel: 0,
+            isRunning: false,
+            levelStartedAt: null,
+            pausedAt: null,
+            totalPausedMs: 0,
+          },
+          prizeSplit: game.prizeSplit ?? false,
+        }))
+        return merged
+      },
     },
   ),
 )

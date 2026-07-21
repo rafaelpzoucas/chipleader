@@ -16,6 +16,7 @@ type Props = {
   index: number
   placing: number
   totalPayout: number
+  prizeSplit: boolean
 }
 
 export function PodiumPlayerSheet({
@@ -24,6 +25,7 @@ export function PodiumPlayerSheet({
   index,
   placing,
   totalPayout,
+  prizeSplit,
 }: Props) {
   const [amountSpent, setAmountSpent] = useState(player.amountSpent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -42,10 +44,8 @@ export function PodiumPlayerSheet({
   const caixaAmount = getCaixaAmount(totalPayout, game.caixaType, game.caixaPercentage, game.caixaFixed)
   const effectiveTotal = totalPayout - caixaAmount
 
-  function calculatePayout(idx: number, spent: number) {
-    const prize = getPrizeForPlacing(idx, distribution, effectiveTotal)
-    return prize + player.amountPaid - totalExpensesEach - spent
-  }
+  const netPrize = getPrizeForPlacing(index, distribution, effectiveTotal, prizeSplit)
+    + player.amountPaid - player.amountSpent - totalExpensesEach
 
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -63,16 +63,12 @@ export function PodiumPlayerSheet({
             <strong>{playerName.split(' ')[0]}</strong>
             <strong
               className={cn(
-                calculatePayout(index, player.amountSpent) < 0 &&
-                  'text-destructive',
-                calculatePayout(index, player.amountSpent) >= 0 &&
-                  'text-emerald-600',
+                netPrize < 0 && 'text-destructive',
+                netPrize >= 0 && 'text-emerald-600',
               )}
             >
-              {calculatePayout(index, player.amountSpent) !== 0
-                ? formatCurrencyBRL(
-                    calculatePayout(index, player.amountSpent),
-                  )
+              {netPrize !== 0
+                ? formatCurrencyBRL(netPrize)
                 : 'PAGO'}
             </strong>
           </div>
@@ -88,6 +84,7 @@ export function PodiumPlayerSheet({
           setIsSheetOpen={setIsSheetOpen}
           placing={placing}
           totalPayout={totalPayout}
+          prizeSplit={prizeSplit}
         />
       </SheetContent>
     </Sheet>

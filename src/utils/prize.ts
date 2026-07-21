@@ -48,7 +48,16 @@ export function getPrizeForPlacing(
   placing: number,
   distribution: PrizeItem[],
   totalPayout: number,
+  prizeSplit?: boolean,
 ): number {
+  if (prizeSplit && (placing === 0 || placing === 1)) {
+    const getRaw = (p: number) => {
+      const idx = getDistIdx(p)
+      const item = distribution[idx]
+      return item?.type === 'percentage' ? totalPayout * item.value / 100 : (item?.value ?? 0)
+    }
+    return (getRaw(0) + getRaw(1)) / 2
+  }
   const idx = getDistIdx(placing)
   const item = distribution[idx]
   if (!item) return 0

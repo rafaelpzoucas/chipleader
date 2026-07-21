@@ -16,6 +16,7 @@ type Props = {
   player: Player
   placing: number
   totalPayout: number
+  prizeSplit: boolean
 }
 
 export function PlayerCardSheet({
@@ -23,6 +24,7 @@ export function PlayerCardSheet({
   player,
   placing,
   totalPayout,
+  prizeSplit,
 }: Props) {
   const [amountSpent, setAmountSpent] = useState(player.amountSpent)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -40,8 +42,9 @@ export function PlayerCardSheet({
   const distribution = getPrizeDistribution(game)
   const caixaAmount = getCaixaAmount(totalPayout, game.caixaType, game.caixaPercentage, game.caixaFixed)
   const effectiveTotal = totalPayout - caixaAmount
-  const prize = game.status === 'finished' ? getPrizeForPlacing(placing, distribution, effectiveTotal) : 0
+  const prize = game.status === 'finished' ? getPrizeForPlacing(placing, distribution, effectiveTotal, prizeSplit) : 0
   const balance = player.amountPaid + prize - player.amountSpent - totalExpensesEach
+  const totalSpent = player.amountSpent + totalExpensesEach
 
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -63,17 +66,20 @@ export function PlayerCardSheet({
               </AvatarFallback>
             </Avatar>
 
-            <div className="text-left max-w-[160px] truncate">
+            <div className="text-left max-w-[140px] truncate">
               <strong>
                 {player.name.split(' ')[0] || 'Anônimo'}
               </strong>
             </div>
 
-            <div className="flex flex-col ml-auto text-sm h-full text-right">
+            <div className="flex flex-col ml-auto text-xs text-right">
+              <span className="text-muted-foreground">
+                {formatCurrencyBRL(totalSpent * -1)}
+              </span>
               {balance !== 0 ? (
-                <strong>{formatCurrencyBRL(balance)}</strong>
+                <strong className="text-sm">{formatCurrencyBRL(balance)}</strong>
               ) : (
-                <strong className="text-green-500 uppercase">pago</strong>
+                <strong className="text-sm text-green-500 uppercase">pago</strong>
               )}
             </div>
           </header>
@@ -89,6 +95,7 @@ export function PlayerCardSheet({
           setIsSheetOpen={setIsSheetOpen}
           placing={placing}
           totalPayout={totalPayout}
+          prizeSplit={prizeSplit}
         />
       </SheetContent>
     </Sheet>
