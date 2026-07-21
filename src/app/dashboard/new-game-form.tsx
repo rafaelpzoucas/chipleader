@@ -58,7 +58,7 @@ export function NewGameForm() {
     defaultValues: {
       buyin: 25,
       gameMode: 'cash',
-      blindInterval: 600,
+      blindInterval: 900,
     },
   })
 
