@@ -20,12 +20,23 @@ import { useGameStore } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
 import { getCaixaAmount, getPrizeDistribution } from '@/utils/prize'
 import { Minus, MoreVertical, Plus, Trash2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { CurrencyInput } from 'react-currency-mask'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 type Props = { game: Game }
 
 export function GameOptions({ game }: Props) {
+  const router = useRouter()
+  const deleteGame = useGameStore((s) => s.deleteGame)
   const updateBuyIn = useGameStore((s) => s.updateBuyIn)
   const updateCaixaPercentage = useGameStore((s) => s.updateCaixaPercentage)
   const updateCaixaFixed = useGameStore((s) => s.updateCaixaFixed)
@@ -33,6 +44,7 @@ export function GameOptions({ game }: Props) {
   const updatePrizeDistribution = useGameStore((s) => s.updatePrizeDistribution)
 
   const [openSheet, setOpenSheet] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const totalPayout = game.players.reduce((acc, p) => acc + p.amountSpent, 0)
   const distribution = getPrizeDistribution(game)
@@ -58,6 +70,14 @@ export function GameOptions({ game }: Props) {
               : game.caixaType === 'fixed' && game.caixaFixed > 0
                 ? `Alterar caixa (${formatCurrencyBRL(game.caixaFixed)})`
                 : 'Definir caixa'}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            onClick={() => setConfirmDelete(true)}
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Excluir jogo
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -92,6 +112,36 @@ export function GameOptions({ game }: Props) {
           />
         </SheetContent>
       </Sheet>
+
+      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Excluir jogo</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir este jogo? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row gap-2">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setConfirmDelete(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              className="flex-1"
+              onClick={() => {
+                deleteGame(game.id)
+                router.push('/dashboard')
+              }}
+            >
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
