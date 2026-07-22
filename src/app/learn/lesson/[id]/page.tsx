@@ -10,7 +10,7 @@ import { useLearningStore } from '@/store/learning-store'
 import { getLessonById } from '@/data/lessons'
 import { categoryInfo } from '@/data/lessons'
 import type { Lesson, LessonCategory } from '@/models/learning'
-import { ArrowLeft, Check, X, ChevronRight, Sparkles, BookOpen, RotateCcw } from 'lucide-react'
+import { ArrowLeft, Check, X, ChevronRight, Sparkles, BookOpen, RotateCcw, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 function categoryBadgeClass(category: LessonCategory): string {
@@ -51,28 +51,19 @@ function QuizQuestion({
   question,
   questionIndex,
   total,
-  onAnswer,
+  answered,
+  selectedIndex,
+  isCorrect,
+  onSelect,
 }: {
   question: Lesson['questions'][0]
   questionIndex: number
   total: number
-  onAnswer: (correct: boolean) => void
+  answered: boolean
+  selectedIndex: number | null
+  isCorrect: boolean
+  onSelect: (index: number) => void
 }) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
-  const [answered, setAnswered] = useState(false)
-
-  function handleSelect(index: number) {
-    if (answered) return
-    setSelectedIndex(index)
-    setAnswered(true)
-    const correct = index === question.correctIndex
-    setTimeout(() => {
-      onAnswer(correct)
-    }, 1500)
-  }
-
-  const isCorrect = selectedIndex === question.correctIndex
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -100,8 +91,6 @@ function QuizQuestion({
             } else {
               className += ' opacity-50'
             }
-          } else if (selectedIndex === i) {
-            variant = 'default'
           }
 
           return (
@@ -109,7 +98,7 @@ function QuizQuestion({
               key={i}
               variant={variant}
               className={className}
-              onClick={() => handleSelect(i)}
+              onClick={() => onSelect(i)}
               disabled={answered}
             >
               <span className="flex items-center gap-3">
@@ -143,6 +132,8 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [correctCount, setCorrectCount] = useState(0)
   const [quizStarted, setQuizStarted] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const [answered, setAnswered] = useState(false)
 
   if (!lesson) { notFound(); return null }
   const lessonData = lesson
@@ -151,14 +142,24 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const allAnswered = currentQuestion >= lessonData.questions.length
   const questions = lessonData.questions
 
-  function handleAnswer(correct: boolean) {
-    if (correct) setCorrectCount((c) => c + 1)
+  function handleSelect(index: number) {
+    if (answered) return
+    setSelectedIndex(index)
+    setAnswered(true)
+    if (index === questions[currentQuestion].correctIndex) {
+      setCorrectCount((c) => c + 1)
+    }
+  }
+
+  function handleNext() {
     const next = currentQuestion + 1
     if (next >= questions.length) {
-      completeLesson(lessonData.id, correct ? correctCount + 1 : correctCount, questions.length, lessonData.xpReward)
-      setTimeout(() => setStep('result'), 500)
+      completeLesson(lessonData.id, correctCount, questions.length, lessonData.xpReward)
+      setStep('result')
     } else {
       setCurrentQuestion(next)
+      setSelectedIndex(null)
+      setAnswered(false)
     }
   }
 
@@ -167,6 +168,8 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setCurrentQuestion(0)
     setCorrectCount(0)
     setQuizStarted(false)
+    setSelectedIndex(null)
+    setAnswered(false)
   }
 
   return (
@@ -270,14 +273,25 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
       {(step === 'quiz' || step === 'result') && step !== 'result' && (
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-4 space-y-4">
             {currentQuestion < questions.length && (
-              <QuizQuestion
-                question={questions[currentQuestion]}
-                questionIndex={currentQuestion}
-                total={questions.length}
-                onAnswer={handleAnswer}
-              />
+              <>
+                <QuizQuestion
+                  question={questions[currentQuestion]}
+                  questionIndex={currentQuestion}
+                  total={questions.length}
+                  answered={answered}
+                  selectedIndex={selectedIndex}
+                  isCorrect={selectedIndex === questions[currentQuestion].correctIndex}
+                  onSelect={handleSelect}
+                />
+                {answered && (
+                  <Button className="w-full" onClick={handleNext}>
+                    {currentQuestion + 1 >= questions.length ? 'Ver resultado' : 'Próxima'}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
