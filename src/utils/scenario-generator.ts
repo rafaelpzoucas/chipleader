@@ -2,8 +2,7 @@ import type { Scenario, Card, CardRank, CardSuit } from '@/models/learning'
 
 const RANKS: CardRank[] = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
 const SUITS: CardSuit[] = ['s', 'h', 'd', 'c']
-const SUIT_NAMES: Record<CardSuit, string> = { s: '♠', h: '♥', d: '♦', c: '♣' }
-const RANK_LABELS: Record<CardRank, string> = { A: 'Ás', K: 'Rei', Q: 'Dama', J: 'Valete', T: '10', '9': '9', '8': '8', '7': '7', '6': '6', '5': '5', '4': '4', '3': '3', '2': '2' }
+const SUIT_NAMES: Record<CardSuit, string> = { s: 'E', h: 'C', d: 'O', c: 'P' }
 
 const POSITIONS = ['UTG', 'MP', 'CO', 'BTN', 'SB', 'BB']
 const FLOP_POSITIONS = ['UTG', 'MP', 'CO', 'BTN', 'SB', 'BB']
@@ -37,13 +36,17 @@ function pickCards(count: number, exclude: string[] = []): Card[] {
 }
 
 function cardKey(c: Card): string { return `${c.rank}${c.suit}` }
-function cardStr(c: Card): string { return `${c.rank}${SUIT_NAMES[c.suit]}` }
+
+const CARD_DISPLAY: Record<string, string> = {
+  A: 'A', K: 'K', Q: 'Q', J: 'J', T: '10',
+  '9': '9', '8': '8', '7': '7', '6': '6',
+  '5': '5', '4': '4', '3': '3', '2': '2',
+}
+
+function cardStr(c: Card): string { return `${CARD_DISPLAY[c.rank] ?? c.rank}${SUIT_NAMES[c.suit]}` }
 
 function heroHandStr(cards: [Card, Card]): string {
-  const [a, b] = cards
-  const suited = a.suit === b.suit
-  const labels = [`${RANK_LABELS[a.rank]}${SUIT_NAMES[a.suit]}`, `${RANK_LABELS[b.rank]}${SUIT_NAMES[b.suit]}`].sort((x, y) => RANKS.indexOf(a.rank as CardRank) - RANKS.indexOf(b.rank as CardRank))
-  return `${labels[0]} ${labels[1]}${suited ? ' suited' : ' offsuit'}`
+  return `${cardStr(cards[0])} ${cardStr(cards[1])}`
 }
 
 function boardStr(cards: Card[]): string {
@@ -100,7 +103,7 @@ function genFlushDraw(): Scenario {
     heroCards,
     board,
     heroPosition: heroPos,
-    villainAction: `${vilPos} aposta R$ ${Math.round(betSize)} no pote de R$ ${potSize}`,
+    villainAction: `${vilPos} aposta ${Math.round(betSize)} no pote de ${potSize}`,
     potSize: Math.round(totalAfterCall),
     question: `${heroLabel} no board ${boardLabel}. Você está no ${heroPos}. ${vilPos} apostou. Sua ação?`,
     options: ['Fold', 'Call', 'Raise', 'All-in'],
@@ -150,14 +153,14 @@ function genTopPair(): Scenario {
     heroCards,
     board,
     heroPosition: heroPos,
-    villainAction: `${vilPos} aposta R$ ${Math.round(betSize)} no flop (pote R$ ${potSize})`,
+    villainAction: `${vilPos} aposta ${Math.round(betSize)} no flop (pote ${potSize})`,
     potSize: Math.round(potSize + betSize * 2),
     question: `Board: ${boardLabel}. Você tem ${heroLabel} no ${heroPos} e acertou top pair. ${vilPos} apostou. Sua ação?`,
     options: ['Fold', 'Call', 'Raise'],
     correctIndex: correctIdx,
     explanation: isStrongKicker
-      ? `✅ Raise! Você tem top pair com bom kicker (${RANK_LABELS[heroRank]}${RANK_LABELS[kicker as CardRank]}). Está na frente de A-x pior, draws e blefes. Raise para extrair valor e proteger contra draws.`
-      : `✅ Call é a jogada correta. Você tem top pair mas o kicker (${RANK_LABELS[kicker as CardRank]}) é médio. Raise só isola contra mãos melhores. Call mantém o pote controlado.`,
+      ? `Raise! Voce tem top pair com bom kicker (${CARD_DISPLAY[heroRank]}${CARD_DISPLAY[kicker]}). Esta na frente de A-x pior, draws e blefes. Raise para extrair valor e proteger contra draws.`
+      : `Call e a jogada correta. Voce tem top pair mas o kicker (${CARD_DISPLAY[kicker]}) e medio. Raise so isola contra maos melhores. Call mantem o pote controlado.`,
     alternativeAnalysis: isStrongKicker
       ? `Fold seria muito passivo - você está na frente do range do vilão na maioria das vezes. Call também é ok se você quiser slowplay, mas raise maximiza o valor.`
       : `Raise arriscado: se o vilão tem A-melhor kicker, você perde muito. Fold é cedo demais - você pode estar na frente contra draws e blefes.`,
@@ -200,7 +203,7 @@ function genOESD(): Scenario {
     heroCards,
     board,
     heroPosition: heroPos,
-    villainAction: `${vilPos} aposta R$ ${Math.round(betSize)} (pote R$ ${potSize})`,
+    villainAction: `${vilPos} aposta ${Math.round(betSize)} (pote ${potSize})`,
     potSize: Math.round(totalAfter),
     question: `Board: ${boardLabel} (abertura de straight). Você tem ${heroLabel} no ${heroPos}. ${vilPos} apostou. ${isProfitable ? `Pot odds ~${potOdds}%.` : `Pot odds ~${potOdds}% — alta.`} Sua ação?`,
     options: ['Fold', 'Call', 'Raise'],
@@ -247,7 +250,7 @@ function genOverpair(): Scenario {
     heroCards,
     board,
     heroPosition: heroPos,
-    villainAction: `${vilPos} aposta R$ ${Math.round(potSize * 0.4)} no flop (pote R$ ${potSize})`,
+    villainAction: `${vilPos} aposta ${Math.round(potSize * 0.4)} no flop (pote ${potSize})`,
     potSize: Math.round(potSize + potSize * 0.4 * 2),
     question: `Pré-flop: você deu raise com ${heroLabel}. ${vilPos} pagou. Flop: ${boardLabel}. ${vilPos} aposta. Você tem overpair no ${heroPos}. Sua ação?`,
     options: ['Fold', 'Call', 'Raise'],
@@ -295,7 +298,7 @@ function genGutshot(): Scenario {
     heroCards,
     board,
     heroPosition: heroPos,
-    villainAction: `${vilPos} aposta R$ ${Math.round(betSize)} (pote R$ ${potSize})`,
+    villainAction: `${vilPos} aposta ${Math.round(betSize)} (pote ${potSize})`,
     potSize: Math.round(totalAfter),
     question: `Board: ${boardLabel}. Você tem ${heroLabel}. Posição: ${heroPos}. ${vilPos} apostou. Você tem um gutshot (4 outs) + overcards (mais 6 outs). Pot odds ~${potOdds}%. Sua ação?`,
     options: ['Fold', 'Call', 'Raise'],

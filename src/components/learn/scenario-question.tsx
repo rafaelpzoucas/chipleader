@@ -7,12 +7,19 @@ import { Check, X, Swords, MapPin, Banknote, HelpCircle } from 'lucide-react'
 import type { Scenario, Card, CardSuit } from '@/models/learning'
 
 const positionGlossary: Record<string, string> = {
-  UTG: 'Under the Gun - age primeiro (posição mais inicial)',
-  MP: 'Middle Position (posição média)',
-  CO: 'Cut-Off (antes do botão)',
-  BTN: 'Botão/Dealer - melhor posição (age por último)',
-  SB: 'Small Blind ($ cego menor)',
-  BB: 'Big Blind ($ cego maior)',
+  UTG: 'Under the Gun  - age primeiro (inicial)',
+  MP:  'Middle Position  - posição média',
+  CO:  'Cut-Off  - antes do botão',
+  BTN: 'Botão  - melhor posição (age por último)',
+  SB:  'Small Blind  - aposta menor obrigatória',
+  BB:  'Big Blind  - aposta maior obrigatória',
+}
+
+const suitGlossary: Record<string, string> = {
+  E: 'Espadas',
+  C: 'Copas',
+  O: 'Ouros',
+  P: 'Paus',
 }
 
 const termGlossary: Record<string, string> = {
@@ -37,10 +44,10 @@ const termGlossary: Record<string, string> = {
 }
 
 const suitSymbol: Record<CardSuit, string> = {
-  s: '♠',
-  h: '♥',
-  d: '♦',
-  c: '♣',
+  s: 'E',
+  h: 'C',
+  d: 'O',
+  c: 'P',
 }
 
 const suitColor: Record<CardSuit, string> = {
@@ -147,8 +154,15 @@ export function ScenarioQuestion({
                 <span className="text-muted-foreground">{val}</span>
               </div>
             ))}
+            <p className="font-semibold mt-3 mb-2">Naipes das Cartas</p>
+            {Object.entries(suitGlossary).map(([key, val]) => (
+              <div key={key} className="flex gap-2">
+                <span className="font-mono font-bold shrink-0">{key}</span>
+                <span className="text-muted-foreground">{val}</span>
+              </div>
+            ))}
             <p className="font-semibold mt-3 mb-2">Termos de Poker</p>
-            {Object.entries(termGlossary).slice(0, 10).map(([key, val]) => (
+            {Object.entries(termGlossary).map(([key, val]) => (
               <div key={key} className="flex gap-2">
                 <span className="font-mono font-bold shrink-0">{key}</span>
                 <span className="text-muted-foreground">{val}</span>
