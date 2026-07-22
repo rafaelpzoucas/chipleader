@@ -77,7 +77,7 @@ export function ScenarioQuestion({
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">
-          Mão {scenarioIndex + 1} de {total}
+          {Number.isFinite(total) ? `Mão ${scenarioIndex + 1} de ${total}` : `Mão #${scenarioIndex + 1}`}
         </span>
         {answered && (
           <Badge variant="outline" className={isCorrect ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}>
@@ -165,7 +165,7 @@ export function ScenarioQuestion({
             </div>
           )}
           <Button className="w-full" onClick={() => onComplete(isCorrect)}>
-            {scenarioIndex + 1 >= total ? 'Ver resultado final' : 'Próxima mão'}
+            {Number.isFinite(total) && scenarioIndex + 1 >= total ? 'Ver resultado final' : 'Próxima mão'}
           </Button>
         </div>
       )}

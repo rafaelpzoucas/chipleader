@@ -76,6 +76,26 @@ export default function LearnPage() {
         </Card>
       </section>
 
+      <section className="px-4">
+        <Link href="/learn/infinite">
+          <Card className="bg-gradient-to-br from-orange-500/10 to-amber-500/5 border-orange-500/20 cursor-pointer hover:opacity-80 transition-opacity">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Gamepad2 className="w-5 h-5 text-orange-400" />
+                <CardTitle className="text-base">Prática Infinita</CardTitle>
+              </div>
+              <CardDescription>Mãos aleatórias infinitas para treinar decisões</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Gamepad2 className="w-4 h-4" />
+                <span>Estatísticas em tempo real: acertos, precisão, streak</span>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      </section>
+
       <section className="px-4 space-y-4">
         <h2 className="font-semibold text-lg">Categorias</h2>
         {categories.map(([category, info]) => {
