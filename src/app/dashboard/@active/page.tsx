@@ -3,7 +3,7 @@
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useGameStore } from '@/store/game-store'
 import { formatCurrencyBRL } from '@/utils/formatCurrency'
-import { ChevronRight, Users } from 'lucide-react'
+import { ChevronRight, Users, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 import { NewGameForm } from '../new-game-form'
 
@@ -36,7 +36,23 @@ export default function Active() {
           </Link>
         ))
       ) : (
-        <NewGameForm />
+        <div className="space-y-3">
+          <NewGameForm />
+          <Link href="/learn">
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 cursor-pointer hover:opacity-80 transition-opacity">
+              <CardHeader className="flex flex-row w-full items-center gap-2">
+                <BookOpen className="w-5 h-5 text-primary" />
+                <CardTitle className="text-base">Poker Academy</CardTitle>
+                <ChevronRight className="w-4 h-4 ml-auto text-muted-foreground" />
+              </CardHeader>
+              <CardFooter>
+                <p className="text-xs text-muted-foreground">
+                  Aprenda poker com lições interativas
+                </p>
+              </CardFooter>
+            </Card>
+          </Link>
+        </div>
       )}
     </>
   )
