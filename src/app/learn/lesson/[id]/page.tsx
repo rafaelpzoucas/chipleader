@@ -313,6 +313,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           <CardContent className="p-4">
             {currentQuestion < totalItems && (
               <ScenarioQuestion
+                key={currentQuestion}
                 scenario={scenarios[currentQuestion]}
                 scenarioIndex={currentQuestion}
                 total={totalItems}
