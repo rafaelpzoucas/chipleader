@@ -10,7 +10,8 @@ import { useLearningStore } from '@/store/learning-store'
 import { getLessonById } from '@/data/lessons'
 import { categoryInfo } from '@/data/lessons'
 import type { Lesson, LessonCategory } from '@/models/learning'
-import { ArrowLeft, Check, X, ChevronRight, Sparkles, BookOpen, RotateCcw, ArrowRight } from 'lucide-react'
+import { ArrowLeft, Check, X, ChevronRight, Sparkles, BookOpen, RotateCcw, ArrowRight, Gamepad2 } from 'lucide-react'
+import { ScenarioQuestion } from '@/components/learn/scenario-question'
 import Link from 'next/link'
 
 function categoryBadgeClass(category: LessonCategory): string {
@@ -18,6 +19,7 @@ function categoryBadgeClass(category: LessonCategory): string {
     hands: 'bg-green-500/10 text-green-400',
     odds: 'bg-blue-500/10 text-blue-400',
     position: 'bg-purple-500/10 text-purple-400',
+    practice: 'bg-orange-500/10 text-orange-400',
   }
   return map[category]
 }
@@ -138,9 +140,13 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   if (!lesson) { notFound(); return null }
   const lessonData = lesson
 
-  const progress = completedLessons[lessonData.id]
-  const allAnswered = currentQuestion >= lessonData.questions.length
+  const isScenario = (lessonData.scenarios?.length ?? 0) > 0
   const questions = lessonData.questions
+  const scenarios = lessonData.scenarios ?? []
+  const totalItems = isScenario ? scenarios.length : questions.length
+  const hasContent = lessonData.content.length > 0
+
+  const progress = completedLessons[lessonData.id]
 
   function handleSelect(index: number) {
     if (answered) return
@@ -151,10 +157,23 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     }
   }
 
+  function handleScenarioComplete(correct: boolean) {
+    if (correct) setCorrectCount((c) => c + 1)
+    const next = currentQuestion + 1
+    if (next >= totalItems) {
+      completeLesson(lessonData.id, correct ? correctCount + 1 : correctCount, totalItems, lessonData.xpReward)
+      setStep('result')
+    } else {
+      setCurrentQuestion(next)
+      setSelectedIndex(null)
+      setAnswered(false)
+    }
+  }
+
   function handleNext() {
     const next = currentQuestion + 1
-    if (next >= questions.length) {
-      completeLesson(lessonData.id, correctCount, questions.length, lessonData.xpReward)
+    if (next >= totalItems) {
+      completeLesson(lessonData.id, correctCount, totalItems, lessonData.xpReward)
       setStep('result')
     } else {
       setCurrentQuestion(next)
@@ -164,7 +183,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   }
 
   function handleRestart() {
-    setStep('content')
+    setStep(hasContent ? 'content' : 'quiz')
     setCurrentQuestion(0)
     setCorrectCount(0)
     setQuizStarted(false)
@@ -192,17 +211,17 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         <Card className="border-primary/20">
           <CardContent className="p-8 text-center space-y-4">
             <div className="flex justify-center">
-              {correctCount === questions.length ? (
+              {correctCount === totalItems ? (
                 <Sparkles className="w-12 h-12 text-yellow-400" />
               ) : (
                 <BookOpen className="w-12 h-12 text-primary" />
               )}
             </div>
             <h2 className="text-xl font-bold">
-              {correctCount === questions.length ? 'Perfeito!' : 'Bom treino!'}
+              {correctCount === totalItems ? 'Perfeito!' : correctCount >= totalItems / 2 ? 'Bom trabalho!' : 'Continue treinando!'}
             </h2>
             <p className="text-muted-foreground">
-              Você acertou {correctCount} de {questions.length} perguntas
+              Você acertou {correctCount} de {totalItems} {isScenario ? 'mãos' : 'perguntas'}
             </p>
             <div className="flex items-center justify-center gap-2">
               <span className="text-2xl font-bold text-yellow-400">+{lessonData.xpReward} XP</span>
@@ -223,7 +242,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         </Card>
       )}
 
-      {step === 'content' && !progress && (
+      {step === 'content' && hasContent && !progress && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Conteúdo</CardTitle>
@@ -239,14 +258,14 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 setQuizStarted(true)
               }}
             >
-              Começar Quiz
+              {isScenario ? 'Começar Prática' : 'Começar Quiz'}
               <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
           </CardFooter>
         </Card>
       )}
 
-      {step === 'content' && progress && (
+      {step === 'content' && hasContent && progress && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Conteúdo</CardTitle>
@@ -271,15 +290,48 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         </Card>
       )}
 
-      {(step === 'quiz' || step === 'result') && step !== 'result' && (
+      {step === 'content' && !hasContent && (
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-muted-foreground mb-4">Pronto para praticar?</p>
+            <Button
+              className="w-full"
+              onClick={() => {
+                setStep('quiz')
+                setQuizStarted(true)
+              }}
+            >
+              {isScenario ? 'Começar Prática' : 'Começar Quiz'}
+              <Gamepad2 className="w-4 h-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {step === 'quiz' && isScenario && (
+        <Card>
+          <CardContent className="p-4">
+            {currentQuestion < totalItems && (
+              <ScenarioQuestion
+                scenario={scenarios[currentQuestion]}
+                scenarioIndex={currentQuestion}
+                total={totalItems}
+                onComplete={handleScenarioComplete}
+              />
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {step === 'quiz' && !isScenario && (
         <Card>
           <CardContent className="p-4 space-y-4">
-            {currentQuestion < questions.length && (
+            {currentQuestion < totalItems && (
               <>
                 <QuizQuestion
                   question={questions[currentQuestion]}
                   questionIndex={currentQuestion}
-                  total={questions.length}
+                  total={totalItems}
                   answered={answered}
                   selectedIndex={selectedIndex}
                   isCorrect={selectedIndex === questions[currentQuestion].correctIndex}
@@ -287,7 +339,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 />
                 {answered && (
                   <Button className="w-full" onClick={handleNext}>
-                    {currentQuestion + 1 >= questions.length ? 'Ver resultado' : 'Próxima'}
+                    {currentQuestion + 1 >= totalItems ? 'Ver resultado' : 'Próxima'}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 )}

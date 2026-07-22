@@ -1,32 +1,33 @@
 'use client'
 
-import { useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { useLearningStore } from '@/store/learning-store'
 import { allLessons, categoryInfo } from '@/data/lessons'
 import type { LessonCategory } from '@/models/learning'
-import { BookOpen, Brain, TrendingUp, Zap, Flame, Target, ChevronRight, Sparkles, Trophy } from 'lucide-react'
+import { BookOpen, Brain, TrendingUp, Flame, Target, ChevronRight, Sparkles, Trophy, Gamepad2 } from 'lucide-react'
 import Link from 'next/link'
 
 const categoryIcons: Record<LessonCategory, React.ReactNode> = {
   hands: <Brain className="w-5 h-5" />,
   odds: <TrendingUp className="w-5 h-5" />,
   position: <Target className="w-5 h-5" />,
+  practice: <Gamepad2 className="w-5 h-5" />,
 }
 
 const categoryColors: Record<LessonCategory, string> = {
   hands: 'from-green-500/10 to-emerald-500/5 border-green-500/20',
   odds: 'from-blue-500/10 to-cyan-500/5 border-blue-500/20',
   position: 'from-purple-500/10 to-pink-500/5 border-purple-500/20',
+  practice: 'from-orange-500/10 to-amber-500/5 border-orange-500/20',
 }
 
 const categoryBadge: Record<LessonCategory, string> = {
   hands: 'bg-green-500/10 text-green-400',
   odds: 'bg-blue-500/10 text-blue-400',
   position: 'bg-purple-500/10 text-purple-400',
+  practice: 'bg-orange-500/10 text-orange-400',
 }
 
 export default function LearnPage() {
