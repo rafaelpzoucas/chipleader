@@ -2,7 +2,7 @@ import type { Scenario, Card, CardRank, CardSuit } from '@/models/learning'
 
 const RANKS: CardRank[] = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
 const SUITS: CardSuit[] = ['s', 'h', 'd', 'c']
-const SUIT_NAMES: Record<CardSuit, string> = { s: 'E', h: 'C', d: 'O', c: 'P' }
+const SUIT_NAMES: Record<CardSuit, string> = { s: '♠', h: '♥', d: '♦', c: '♣' }
 
 const POSITIONS = ['UTG', 'MP', 'CO', 'BTN', 'SB', 'BB']
 const FLOP_POSITIONS = ['UTG', 'MP', 'CO', 'BTN', 'SB', 'BB']

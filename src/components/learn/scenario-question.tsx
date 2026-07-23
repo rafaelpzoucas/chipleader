@@ -36,38 +36,11 @@ const termGlossary: Record<string, string> = {
   'semibluff': 'Apostar com um draw que pode virar a melhor mao',
 }
 
-function SuitIcon({ suit, size = 14 }: { suit: CardSuit; size?: number }) {
-  const s = size
-  switch (suit) {
-    case 's':
-      return (
-        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" className="text-gray-200">
-          <path d="M12 2C12 2 4 10 4 15c0 3 2 5 5 5 1.5 0 3-1 3-1s1.5 1 3 1c3 0 5-2 5-5 0-5-8-13-8-13z" />
-          <rect x="11" y="17" width="2" height="5" />
-        </svg>
-      )
-    case 'h':
-      return (
-        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" className="text-red-400">
-          <path d="M12 22C12 22 4 14 4 9c0-3 2-5 5-5 2 0 3 1 3 1s1-1 3-1c3 0 5 2 5 5 0 5-8 13-8 13z" />
-        </svg>
-      )
-    case 'd':
-      return (
-        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" className="text-blue-400">
-          <rect x="9" y="2" width="6" height="20" rx="1" transform="rotate(45 12 12)" />
-        </svg>
-      )
-    case 'c':
-      return (
-        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" className="text-green-400">
-          <circle cx="12" cy="8" r="5" />
-          <circle cx="5" cy="17" r="4" />
-          <circle cx="19" cy="17" r="4" />
-          <rect x="11" y="11" width="2" height="6" />
-        </svg>
-      )
-  }
+const suitSymbol: Record<CardSuit, string> = {
+  s: '♠',
+  h: '♥',
+  d: '♦',
+  c: '♣',
 }
 
 const suitColor: Record<CardSuit, string> = {
@@ -89,7 +62,7 @@ function CardView({ card }: { card: Card }) {
     <div className={`inline-flex items-center justify-center w-10 h-14 rounded-lg border border-border bg-card ${suitColor[card.suit]}`}>
       <div className="text-center leading-tight">
         <div className="text-sm font-bold">{rankDisplay[card.rank] ?? card.rank}</div>
-        <SuitIcon suit={card.suit} size={12} />
+        <div className="text-xs">{suitSymbol[card.suit]}</div>
       </div>
     </div>
   )
