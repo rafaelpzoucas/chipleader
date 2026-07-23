@@ -8,46 +8,66 @@ import type { Scenario, Card, CardSuit } from '@/models/learning'
 
 const positionGlossary: Record<string, string> = {
   UTG: 'Under the Gun  - age primeiro (inicial)',
-  MP:  'Middle Position  - posição média',
-  CO:  'Cut-Off  - antes do botão',
-  BTN: 'Botão  - melhor posição (age por último)',
-  SB:  'Small Blind  - aposta menor obrigatória',
-  BB:  'Big Blind  - aposta maior obrigatória',
-}
-
-const suitGlossary: Record<string, string> = {
-  E: 'Espadas',
-  C: 'Copas',
-  O: 'Ouros',
-  P: 'Paus',
+  MP:  'Middle Position  - posicao media',
+  CO:  'Cut-Off  - antes do botao',
+  BTN: 'Botao  - melhor posicao (age por ultimo)',
+  SB:  'Small Blind  - aposta menor obrigatoria',
+  BB:  'Big Blind  - aposta maior obrigatoria',
 }
 
 const termGlossary: Record<string, string> = {
-  'fold': 'Desistir da mão',
+  'fold': 'Desistir da mao',
   'call': 'Pagar a aposta',
   'raise': 'Aumentar a aposta',
   'check': 'Passar a vez (sem pagar)',
-  'pot odds': 'Relação entre o valor do call e o pote total',
-  'outs': 'Cartas que melhoram sua mão',
-  'equity': 'Chance de vencer a mão',
+  'pot odds': 'Relacao entre o valor do call e o pote total',
+  'outs': 'Cartas que melhoram sua mao',
+  'equity': 'Chance de vencer a mao',
   'flush draw': '4 cartas do mesmo naipe, precisa de 1 para flush',
-  'straight draw': 'Sequência incompleta',
-  'gutshot': 'Sequência de 4 cartas (abertura interna)',
+  'straight draw': 'Sequencia incompleta',
+  'gutshot': 'Sequencia de 4 cartas (abertura interna)',
   'overcards': 'Cartas maiores que qualquer carta do board',
   'overpair': 'Par maior que qualquer carta no board',
   'implied odds': 'Ganhos futuros esperados se acertar o draw',
-  'c-bet': 'Continuação da aposta (quem deu raise pré-flop aposta no flop)',
-  'range': 'Conjunto de mãos que o oponente pode ter',
-  'value': 'Apostar para ser pago por mãos piores',
-  'bluff': 'Apostar para fazer o oponente foldar mão melhor',
-  'semibluff': 'Apostar com um draw que pode virar a melhor mão',
+  'c-bet': 'Continuacao da aposta (quem deu raise pre-flop aposta no flop)',
+  'range': 'Conjunto de maos que o oponente pode ter',
+  'value': 'Apostar para ser pago por maos piores',
+  'bluff': 'Apostar para fazer o oponente foldar mao melhor',
+  'semibluff': 'Apostar com um draw que pode virar a melhor mao',
 }
 
-const suitSymbol: Record<CardSuit, string> = {
-  s: 'E',
-  h: 'C',
-  d: 'O',
-  c: 'P',
+function SuitIcon({ suit, size = 14 }: { suit: CardSuit; size?: number }) {
+  const s = size
+  switch (suit) {
+    case 's':
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" className="text-gray-200">
+          <path d="M12 2C12 2 4 10 4 15c0 3 2 5 5 5 1.5 0 3-1 3-1s1.5 1 3 1c3 0 5-2 5-5 0-5-8-13-8-13z" />
+          <rect x="11" y="17" width="2" height="5" />
+        </svg>
+      )
+    case 'h':
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" className="text-red-400">
+          <path d="M12 22C12 22 4 14 4 9c0-3 2-5 5-5 2 0 3 1 3 1s1-1 3-1c3 0 5 2 5 5 0 5-8 13-8 13z" />
+        </svg>
+      )
+    case 'd':
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" className="text-blue-400">
+          <rect x="9" y="2" width="6" height="20" rx="1" transform="rotate(45 12 12)" />
+        </svg>
+      )
+    case 'c':
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor" className="text-green-400">
+          <circle cx="12" cy="8" r="5" />
+          <circle cx="5" cy="17" r="4" />
+          <circle cx="19" cy="17" r="4" />
+          <rect x="11" y="11" width="2" height="6" />
+        </svg>
+      )
+  }
 }
 
 const suitColor: Record<CardSuit, string> = {
@@ -69,7 +89,7 @@ function CardView({ card }: { card: Card }) {
     <div className={`inline-flex items-center justify-center w-10 h-14 rounded-lg border border-border bg-card ${suitColor[card.suit]}`}>
       <div className="text-center leading-tight">
         <div className="text-sm font-bold">{rankDisplay[card.rank] ?? card.rank}</div>
-        <div className="text-xs">{suitSymbol[card.suit]}</div>
+        <SuitIcon suit={card.suit} size={12} />
       </div>
     </div>
   )
@@ -149,13 +169,6 @@ export function ScenarioQuestion({
           <div className="space-y-2 text-xs bg-background rounded-lg p-3 border">
             <p className="font-semibold mb-2">Glossário de Posições</p>
             {Object.entries(positionGlossary).map(([key, val]) => (
-              <div key={key} className="flex gap-2">
-                <span className="font-mono font-bold shrink-0">{key}</span>
-                <span className="text-muted-foreground">{val}</span>
-              </div>
-            ))}
-            <p className="font-semibold mt-3 mb-2">Naipes das Cartas</p>
-            {Object.entries(suitGlossary).map(([key, val]) => (
               <div key={key} className="flex gap-2">
                 <span className="font-mono font-bold shrink-0">{key}</span>
                 <span className="text-muted-foreground">{val}</span>
