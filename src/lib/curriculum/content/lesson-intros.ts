@@ -60,13 +60,13 @@ export const lessonIntros: Record<string, LessonIntro> = {
 
   // ── Unit 3: Pot Odds ──
   'm1-u3-l1': {
-    explanation: "Pot Odds responde: 'Vale a pena pagar esta aposta?'\n\nFórmula: Pot Odds = call ÷ (pote + call + call).\n\nNa prática, decore os padrões mais comuns:\n\n- 1/3 do pote → pot odds ≈ 20%\n- 1/2 do pote → pot odds ≈ 25%\n- 2/3 do pote → pot odds ≈ 30%\n- Pote cheio → pot odds ≈ 33%\n\nExemplo: pote R$ 100, aposta R$ 50 (metade do pote). Pot odds ≈ 25%. Precisa de 25%+ de chance para pagar.",
+    explanation: "Pot Odds responde: 'Vale a pena pagar esta aposta?'\n\nFórmula: Pot Odds = call ÷ (pote + call + call).\n\nNa prática, decore os padrões mais comuns:\n\n- 1/3 do pote → pot odds ≈ 20%\n- 1/2 do pote → pot odds ≈ 25%\n- 2/3 do pote → pot odds ≈ 30%\n- Pote cheio → pot odds ≈ 33%\n\nExemplo na mesa: pote R$ 100, vilão aposta R$ 50. Você: 'apostou metade = 25% de pot odds. Meu flush draw tem ~36% de equidade. 36% > 25%, então call lucrativo.'",
     howToAnswer: "Calcule: call / (pote + call + call). Ou veja a fração da aposta e lembre do % correspondente.",
     visualType: 'pot_odds',
     tip: "Decore: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%. Esses 4 valores cobrem 90% dos casos.",
   },
   'm1-u3-l2': {
-    explanation: "Vamos praticar pot odds em situações reais.\n\nPot Odds = call ÷ (pote + call + call).\n\nPote R$ 100, aposta R$ 50 (metade). Pot odds = 50 / (100+50+50) = 50/200 = 25%.\n\nPrecisa de pelo menos 25% de chance de ganhar para o call ser lucrativo.\n\nDecore os padrões: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%.",
+    explanation: "Vamos praticar pot odds em situações reais.\n\nPot Odds = call ÷ (pote + call + call).\n\nPote R$ 100, aposta R$ 50 (metade). Pot odds = 50 / (100+50+50) = 50/200 = 25%.\n\nNa mesa você pensa: 'apostou metade = 25% de pot odds. Minha mão tem X% de equidade. Se equidade > 25%, call.'\n\nDecore os padrões: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%.",
     howToAnswer: "Divida o call pelo total. Ou: identifique a fração, lembre do %.",
     visualType: 'pot_odds',
     tip: "Decore: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%.",
