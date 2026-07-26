@@ -60,28 +60,28 @@ export const lessonIntros: Record<string, LessonIntro> = {
 
   // ── Unit 3: Pot Odds ──
   'm1-u3-l1': {
-    explanation: "Pot Odds responde: 'Vale a pena pagar esta aposta?'\n\nFórmula: Pot Odds = call ÷ (pote + call + call).\n\nNa prática, decore os padrões mais comuns:\n\n- 1/3 do pote → pot odds ≈ 20%\n- 1/2 do pote → pot odds ≈ 25%\n- 2/3 do pote → pot odds ≈ 30%\n- Pote cheio → pot odds ≈ 33%\n\nExemplo na mesa: pote R$ 100, vilão aposta R$ 50. Você: 'apostou metade = 25% de pot odds. Meu flush draw tem ~36% de equidade. 36% > 25%, então call lucrativo.'",
-    howToAnswer: "Calcule: call / (pote + call + call). Ou veja a fração da aposta e lembre do % correspondente.",
+    explanation: "Pot Odds responde a uma pergunta simples: 'Vale a pena pagar pra continuar?'\n\nA conta: Pot Odds = valor do call ÷ pote total depois de pagar.\n\nExemplo: pote R$ 20. Vilão aposta R$ 10 (metade do pote).\nVocê paga R$ 10. O pote total fica R$ 40.\nPot odds = 10 ÷ 40 = 25%.\n\nSó isso! Na próxima lição vamos ver outros valores.",
+    howToAnswer: "Divida o valor do call pelo total do pote após seu call. Resultado em %.",
     visualType: 'pot_odds',
-    tip: "Decore: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%. Esses 4 valores cobrem 90% dos casos.",
+    tip: "Decore: metade do pote ≈ 25%. Esse é o mais comum.",
   },
   'm1-u3-l2': {
-    explanation: "Vamos praticar pot odds em situações reais.\n\nPot Odds = call ÷ (pote + call + call).\n\nPote R$ 100, aposta R$ 50 (metade). Pot odds = 50 / (100+50+50) = 50/200 = 25%.\n\nNa mesa você pensa: 'apostou metade = 25% de pot odds. Minha mão tem X% de equidade. Se equidade > 25%, call.'\n\nDecore os padrões: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%.",
-    howToAnswer: "Divida o call pelo total. Ou: identifique a fração, lembre do %.",
+    explanation: "Vamos aprender 4 padrões que você vai usar sempre no poker.\n\nCada aposta é uma fração do pote, e cada fração tem um pot odds fixo:\n\n- Aposta de 1/3 do pote (ex: pote 30, aposta 10) → pot odds ≈ 20%\n- Aposta de 1/2 do pote (ex: pote 20, aposta 10) → pot odds ≈ 25%\n- Aposta de 2/3 do pote (ex: pote 30, aposta 20) → pot odds ≈ 30%\n- Aposta do pote todo (ex: pote 20, aposta 20) → pot odds ≈ 33%\n\nVocê não precisa calcular na hora — é só reconhecer a fração e lembrar do %.",
+    howToAnswer: "Veja a aposta como fração do pote. Lembre qual % corresponde a cada fração.",
     visualType: 'pot_odds',
-    tip: "Decore: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%.",
+    tip: "Decore: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%. Esses 4 são os que mais aparecem.",
   },
   'm1-u3-l3': {
-    explanation: "Equidade é sua chance real de vencer a mão (%). Pot odds é o preço para continuar.\n\nSe equidade > pot odds → call lucrativo\nSe equidade < pot odds → fold correto\n\nExemplo: flush draw tem ~36% de equidade. Aposta de metade do pote ≈ 25%. 36% > 25% → call lucrativo.\n\nSaber os padrões de pot odds ajuda a comparar rápido com a equidade.",
-    howToAnswer: "Equidade > Pot Odds → Call. Equidade < Pot Odds → Fold.",
+    explanation: "Equidade é sua chance de vencer (%). Pot odds é quanto custa continuar.\n\nRegra: se equidade > pot odds → pode pagar. Se menor → melhor desistir.\n\nExemplo: pote 30, aposta 10 (1/3 do pote = 20% pot odds). Você tem 40% de chance de vencer. 40% > 20% → vale pagar.\n\nPense como uma balança: de um lado o que você paga, do outro sua chance de ganhar.",
+    howToAnswer: "Compare: equidade > pot odds → Call. equidade < pot odds → Fold.",
     visualType: 'pot_odds',
-    tip: "Flush draw (~36%): pague até 2/3 do pote (~30%). Straight draw (~32%): pague até metade (~25%).",
+    tip: "Quanto maior sua equidade em relação ao pot odds, melhor o negócio.",
   },
   'm1-u3-l4': {
-    explanation: "Decisão completa:\n\n1. Identifique a fração do pote (1/3, 1/2, 2/3…)\n2. Lembre o pot odds correspondente\n3. Compare com sua equidade\n4. Equidade maior → Call\n\nNa prática: 'apostou metade = ~25%, tenho 40% de equidade, call fácil'.",
-    howToAnswer: "Fração → pot odds % → compara com equidade → decide.",
+    explanation: "Hora de juntar tudo. O passo a passo mental:\n\n1. Olhe a aposta: é 1/3, 1/2, 2/3 ou o pote todo?\n2. Lembre o pot odds: 20%, 25%, 30% ou 33%\n3. Compare com sua chance de vencer (equidade)\n4. Se equidade maior → Call. Menor → Fold.\n\nNa mesa você pensa rápido: 'apostou metade = 25%, tenho 40% de vencer, 40 > 25, call fácil.'",
+    howToAnswer: "1) fração → 2) % pot odds → 3) compara com equidade → 4) decide Call ou Fold.",
     visualType: 'pot_odds',
-    tip: "Raciocínio rápido: 1) fração → 2) % pot odds → 3) equidade > %? → 4) Call/Fold. Com prática, leva segundos.",
+    tip: "É como uma receita: seguir os passos na ordem. Com prática, você faz em 2 segundos.",
   },
 
   // ── Unit 4: Terminology ──
