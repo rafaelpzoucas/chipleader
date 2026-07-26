@@ -11,7 +11,7 @@ import { useProgress } from '@/lib/curriculum/useProgress'
 import { getLesson, getUnit } from '@/lib/curriculum/content'
 import { lessonIntros } from '@/lib/curriculum/content/lesson-intros'
 import { generators } from '@/lib/curriculum/generators'
-import { ArrowLeft, Sparkles, RotateCcw, Heart } from 'lucide-react'
+import { ArrowLeft, Sparkles, RotateCcw } from 'lucide-react'
 import Link from 'next/link'
 import type { Exercise, SkillTag } from '@/lib/curriculum/types'
 
@@ -86,10 +86,7 @@ export default function LessonPage({ params }: { params: Promise<{ lessonId: str
             <h1 className="text-lg font-bold truncate">{lesson.title}</h1>
             {unit && <p className="text-xs text-muted-foreground">{unit.title}</p>}
           </div>
-          <div className="flex items-center gap-1 text-sm text-red-400">
-            <Heart className="w-4 h-4" />
-            <span>{progress.hearts}</span>
-          </div>
+
         </div>
 
         <Card className="border-primary/20">
@@ -120,7 +117,6 @@ export default function LessonPage({ params }: { params: Promise<{ lessonId: str
         }}
         lessonTitle={lesson.title}
         unitTitle={unit?.title}
-        hearts={progress.hearts}
         onStart={generateExercises}
       />
     )

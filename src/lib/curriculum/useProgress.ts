@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { UserProgress, SkillTag } from './types'
 import { loadProgress, saveProgress } from './storage'
-import { updateStreak, regenHearts, completeLesson, loseHeart, computeUnlockedUnits } from './engine'
+import { updateStreak, completeLesson, computeUnlockedUnits } from './engine'
 
 export function useProgress() {
   const [progress, setProgress] = useState<UserProgress | null>(null)
@@ -11,7 +11,6 @@ export function useProgress() {
   useEffect(() => {
     let p = loadProgress()
     p = updateStreak(p)
-    p = regenHearts(p)
     p = { ...p, unlockedUnits: computeUnlockedUnits(p.completedLessons) }
     saveProgress(p)
     setProgress(p)
@@ -32,14 +31,7 @@ export function useProgress() {
     total: number,
     skillTags: SkillTag[],
   ) => {
-    update(prev => {
-      let p = completeLesson(prev, lessonId, correct, total, skillTags)
-      const errors = total - correct
-      for (let i = 0; i < errors; i++) {
-        p = loseHeart(p)
-      }
-      return p
-    })
+    update(prev => completeLesson(prev, lessonId, correct, total, skillTags))
   }, [update])
 
   return { progress, update, finishLesson }

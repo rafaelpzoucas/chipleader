@@ -46,13 +46,11 @@ export interface UserProgress {
   xp: number
   streak: number
   lastActiveDate: string | null
-  hearts: number
-  maxHearts: number
+
   completedLessons: string[]
   lessonScores: Record<string, LessonScore>
   skillStrength: Record<string, number>
   unlockedUnits: string[]
-  lastHeartRegenAt: string | null
 }
 
 export type SkillTag = 'hand_ranking' | 'position' | 'pot_odds' | 'terminology'

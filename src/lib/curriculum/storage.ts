@@ -8,13 +8,10 @@ export function createInitialProgress(): UserProgress {
     xp: 0,
     streak: 0,
     lastActiveDate: null,
-    hearts: 5,
-    maxHearts: 5,
     completedLessons: [],
     lessonScores: {},
     skillStrength: {},
     unlockedUnits: [],
-    lastHeartRegenAt: null,
   }
 }
 

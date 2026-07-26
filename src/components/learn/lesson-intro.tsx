@@ -3,7 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Lightbulb, Play, Heart } from 'lucide-react'
+import { Lightbulb, Play } from 'lucide-react'
 import type { LessonIntro } from '@/lib/curriculum/content/lesson-intros'
 
 const suitSymbol: Record<string, string> = {
@@ -153,13 +153,11 @@ export function LessonIntroScreen({
   intro,
   lessonTitle,
   unitTitle,
-  hearts,
   onStart,
 }: {
   intro: LessonIntro
   lessonTitle: string
   unitTitle?: string
-  hearts: number
   onStart: () => void
 }) {
   return (
@@ -168,10 +166,6 @@ export function LessonIntroScreen({
         <div className="flex-1 min-w-0">
           <h1 className="text-lg font-bold truncate">{lessonTitle}</h1>
           {unitTitle && <p className="text-xs text-muted-foreground">{unitTitle}</p>}
-        </div>
-        <div className="flex items-center gap-1 text-sm text-red-400">
-          <Heart className="w-4 h-4" />
-          <span>{hearts}</span>
         </div>
       </div>
 

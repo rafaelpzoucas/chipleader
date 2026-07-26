@@ -123,43 +123,6 @@ export function updateStreak(progress: UserProgress): UserProgress {
   }
 }
 
-export function loseHeart(progress: UserProgress): UserProgress {
-  if (progress.hearts <= 0) return progress
-  const newHearts = progress.hearts - 1
-  return {
-    ...progress,
-    hearts: newHearts,
-    lastHeartRegenAt: newHearts < progress.maxHearts
-      ? (progress.lastHeartRegenAt ?? new Date().toISOString())
-      : progress.lastHeartRegenAt,
-  }
-}
 
-export function regenHearts(progress: UserProgress): UserProgress {
-  if (progress.hearts >= progress.maxHearts) return progress
-
-  const now = Date.now()
-  const lastRegen = progress.lastHeartRegenAt
-    ? new Date(progress.lastHeartRegenAt).getTime()
-    : now
-
-  const elapsed = now - lastRegen
-  const regenCount = Math.floor(elapsed / (4 * 60 * 60 * 1000))
-
-  if (regenCount <= 0) return progress
-
-  const newHearts = Math.min(progress.maxHearts, progress.hearts + regenCount)
-  const actualRegen = newHearts - progress.hearts
-
-  const newLastRegen = actualRegen > 0
-    ? new Date(lastRegen + actualRegen * 4 * 60 * 60 * 1000).toISOString()
-    : progress.lastHeartRegenAt
-
-  return {
-    ...progress,
-    hearts: newHearts,
-    lastHeartRegenAt: newLastRegen,
-  }
-}
 
 

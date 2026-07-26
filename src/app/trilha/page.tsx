@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
-import { Flame, Heart, Sparkles, Lock, CheckCircle, ChevronRight, BookOpen, Play } from 'lucide-react'
+import { Flame, Sparkles, Lock, CheckCircle, ChevronRight, BookOpen, Play } from 'lucide-react'
 import Link from 'next/link'
 
 function getUnitStatus(unitId: string, completedLessons: string[], unlockedUnits: string[]): 'locked' | 'unlocked' | 'in_progress' | 'done' {
@@ -60,16 +60,7 @@ export default function TrilhaPage() {
           </p>
           <p className="text-lg font-bold">{progress.streak}d</p>
         </div>
-        <div className="flex-1 bg-muted rounded-xl p-3 text-center">
-          <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-            <Heart className="w-3 h-3 text-red-400" /> Vidas
-          </p>
-          <p className="text-lg font-bold">
-            {Array(progress.maxHearts).fill(null).map((_, i) => (
-              <span key={i} className={i < progress.hearts ? 'text-red-400' : 'text-muted-foreground/30'}>{'♥'}</span>
-            ))}
-          </p>
-        </div>
+
       </div>
 
       {accuracy > 0 && (
