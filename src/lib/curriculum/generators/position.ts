@@ -25,6 +25,7 @@ function randInt(min: number, max: number): number {
 }
 
 let counter = 0
+let lastType = -1
 
 type PositionQuestion = {
   prompt: string
@@ -97,7 +98,9 @@ function generateAdvantageQuestion(): PositionQuestion {
 
 export function generate(): Exercise {
   counter++
-  const type = randInt(0, 2)
+  const available = [0, 1, 2].filter(t => t !== lastType)
+  const type = available[randInt(0, available.length - 1)]
+  lastType = type
   const q: PositionQuestion = type === 0
     ? generateIdentifyQuestion()
     : type === 1

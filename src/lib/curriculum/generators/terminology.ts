@@ -12,17 +12,16 @@ function shuffle<T>(arr: T[]): T[] {
   return copy
 }
 
-function pick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
-
 let counter = 0
+let lastTermIndex = -1
 
 export function generate(): Exercise {
   counter++
-  const shuffled = shuffle(GLOSSARY)
-  const target = shuffled[0]
-  const distractors = shuffled.slice(1, 4)
+  const available = GLOSSARY.map((_, i) => i).filter(i => i !== lastTermIndex)
+  const targetIdx = available[Math.floor(Math.random() * available.length)]
+  lastTermIndex = targetIdx
+  const target = GLOSSARY[targetIdx]
+  const distractors = shuffle(GLOSSARY.filter((_, i) => i !== targetIdx)).slice(0, 3)
 
   // Ask for definition of a term
   const defs = shuffle([
