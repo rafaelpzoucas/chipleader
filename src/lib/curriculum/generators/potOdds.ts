@@ -26,9 +26,9 @@ type PotOddsQuestion = {
   data: Record<string, unknown>
 }
 
-// Cálculo mental: pot odds % = call / (pote + call + call)
-// Atalho: aposta de 1/N do pote → pot odds ≈ 1/(N+2)
-// 1/4→17%, 1/3→20%, 1/2→25%, 2/3→29%, 3/4→30%, pote cheio→33%
+// Pot odds % = call / (pote + call + call)
+// Padrões comuns pra decorar:
+// 1/3 do pote → 20% | 1/2 → 25% | 2/3 → ~30% | pote cheio → 33%
 const COMMON_FRACTIONS = [
   { fraction: '1/4', pct: 17, desc: 'um quarto do pote' },
   { fraction: '1/3', pct: 20, desc: 'um terço do pote' },
@@ -60,7 +60,7 @@ function genFractionQuestion(): PotOddsQuestion {
     prompt: `Pote: R$ ${potSize}. Vilão aposta R$ ${betSize}. A aposta é aproximadamente que fração do pote?`,
     options: allOpts.map(f => `${f.fraction} (${f.desc})`),
     correctAnswer: allOpts.findIndex(f => f.fraction === entry.fraction),
-    explanation: `${betSize} de ${potSize} ≈ ${entry.fraction}. ${entry.desc}. Dica mental: se a aposta é 1/N do pote, o pot odds ≈ 1/(N+2). Então ${entry.fraction} → ${entry.pct}%.`,
+    explanation: `${betSize} de ${potSize} ≈ ${entry.fraction} do pote. Pot odds ≈ ${entry.pct}%. Decore os padrões: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%.`,
     data: { potSize, betSize, fraction: entry.fraction },
   }
 }
@@ -78,7 +78,7 @@ function genPatternQuestion(): PotOddsQuestion {
     prompt: `Se a aposta é ${entry.fraction} do pote (${entry.desc}), qual é aproximadamente o pot odds?`,
     options: allOpts,
     correctAnswer: allOpts.indexOf(correctStr),
-    explanation: `Aposta de ${entry.fraction} do pote ≈ ${entry.pct}% de pot odds. Atalho mental: aposta de 1/N do pote → pot odds ≈ 1/(N+2). Ex: 1/3 → 1/5 = 20%. Decore: 1/4→17%, 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%.`,
+    explanation: `Aposta de ${entry.fraction} do pote ≈ ${entry.pct}% de pot odds. Decore: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%.`,
     data: { fraction: entry.fraction, pct: entry.pct },
   }
 }
@@ -105,7 +105,7 @@ function genCalcQuestion(): PotOddsQuestion {
     prompt: `Pote: R$ ${potSize}. Vilão aposta R$ ${betSize}. Qual o pot odds?`,
     options,
     correctAnswer: options.indexOf(correctStr),
-    explanation: `Pot odds = call / (pote + call + call) = ${betSize} / (${potSize} + ${betSize} + ${betSize}) = ${betSize}/${totalAfterCall} ≈ ${potOdds}%. Cálculo mental rápido: veja se a aposta é 1/3, 1/2 ou 2/3 do pote e use os atalhos. Precisa de ${potOdds}%+ de equidade para o call ser lucrativo.`,
+    explanation: `Pot odds = call / (pote + call + call) = ${betSize} / (${potSize} + ${betSize} + ${betSize}) = ${betSize}/${totalAfterCall} ≈ ${potOdds}%. Precisa de ${potOdds}%+ de equidade para o call ser lucrativo.`,
     data: { potSize, betSize, totalAfterCall, potOdds },
   }
 }
@@ -135,8 +135,8 @@ function genDecisionQuestion(): PotOddsQuestion {
     options: ['Fold', 'Call'],
     correctAnswer: shouldCall ? 1 : 0,
     explanation: shouldCall
-      ? `Call! Pot odds ≈ ${entry.pct}% (aposta de ${entry.fraction} do pote). Sua equidade (${equity}%) > pot odds (${entry.pct}%). A longo prazo, essa decisão dá lucro. Dica: compare equidade com os pot odds decorados para decidir rápido.`
-      : `Fold! Pot odds ≈ ${entry.pct}% (aposta de ${entry.fraction} do pote). Sua equidade (${equity}%) < pot odds (${entry.pct}%). Pagar sai caro. Espere odds melhores.`,
+      ? `Call! Pot odds ≈ ${entry.pct}% (aposta de ${entry.fraction} do pote). Sua equidade (${equity}%) > ${entry.pct}% → call lucrativo.`
+      : `Fold! Pot odds ≈ ${entry.pct}% (aposta de ${entry.fraction} do pote). Sua equidade (${equity}%) < ${entry.pct}% → pagar caro demais.`,
     data: { potSize, betSize, equity, potOdds: entry.pct, shouldCall },
   }
 }

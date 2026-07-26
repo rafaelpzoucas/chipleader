@@ -1,7 +1,10 @@
 import type { UserProgress } from './types'
+import { allLessons } from './content'
 
 const STORAGE_KEY = 'chipleader:progress'
 const OLD_STORAGE_KEY = 'chipleader-learning'
+
+const validLessonIds = new Set(allLessons.map(l => l.id))
 
 export function createInitialProgress(): UserProgress {
   return {
@@ -31,6 +34,7 @@ function migrateOldData(): UserProgress | null {
 
     if (state.completedLessons) {
       for (const [lessonId, lp] of Object.entries(state.completedLessons)) {
+        if (!validLessonIds.has(lessonId)) continue
         const lpAny = lp as any
         progress.completedLessons.push(lessonId)
         progress.lessonScores[lessonId] = {
