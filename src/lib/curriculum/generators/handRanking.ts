@@ -28,11 +28,60 @@ function toCardDisplay(cardStr: string): CardDisplay {
   return { rank: cardStr[0], suit: cardStr[1] as CardDisplay['suit'] }
 }
 
-// Map pokersolver internal value to display rank
-const rankToDisplay: Record<string, string> = {
+const RANK_VALUES: Record<string, string> = {
   'A': 'A', 'K': 'K', 'Q': 'Q', 'J': 'J', 'T': '10',
   '9': '9', '8': '8', '7': '7', '6': '6',
   '5': '5', '4': '4', '3': '3', '2': '2',
+}
+
+function buildHandDescription(hand: any): string {
+  const pool = hand.cardPool.filter((c: any) => c.suit)
+  const name = hand.name
+
+  switch (name) {
+    case 'HighCard': {
+      const top = pool[0]
+      return `Carta Alta ${RANK_VALUES[top.value] || top.value}`
+    }
+    case 'Pair': {
+      const pairRank = RANK_VALUES[pool[0].value] || pool[0].value
+      const kickers = pool.slice(2, 5).map((c: any) => RANK_VALUES[c.value] || c.value).join(' ')
+      return `Par de ${pairRank}s (${kickers})`
+    }
+    case 'TwoPair': {
+      const high = RANK_VALUES[pool[0].value] || pool[0].value
+      const low = RANK_VALUES[pool[2].value] || pool[2].value
+      const kicker = RANK_VALUES[pool[4].value] || pool[4].value
+      return `Dois Pares ${high}s e ${low}s (kicker ${kicker})`
+    }
+    case 'ThreeOfAKind': {
+      const rank = RANK_VALUES[pool[0].value] || pool[0].value
+      return `Trinca de ${rank}s`
+    }
+    case 'Straight': {
+      const high = RANK_VALUES[pool[0].value] || pool[0].value
+      return `Sequência ${high} high`
+    }
+    case 'Flush': {
+      const high = RANK_VALUES[pool[0].value] || pool[0].value
+      return `Flush ${high} high`
+    }
+    case 'FullHouse': {
+      const trio = RANK_VALUES[pool[0].value] || pool[0].value
+      const pair = RANK_VALUES[pool[3].value] || pool[3].value
+      return `Full House ${trio}s cheio de ${pair}s`
+    }
+    case 'FourOfAKind': {
+      const rank = RANK_VALUES[pool[0].value] || pool[0].value
+      return `Quadra de ${rank}s`
+    }
+    case 'StraightFlush': {
+      const high = RANK_VALUES[pool[0].value] || pool[0].value
+      return `Straight Flush ${high} high`
+    }
+    default:
+      return hand.descr
+  }
 }
 
 let counter = 0
@@ -63,8 +112,8 @@ export function generate(): Exercise {
   const heroBoardUsed = board.map(c => heroBestRaw.includes(c))
   const villainBoardUsed = board.map(c => villainBestRaw.includes(c))
 
-  const heroDesc = heroHand.descr
-  const villainDesc = villainHand.descr
+  const heroDesc = buildHandDescription(heroHand)
+  const villainDesc = buildHandDescription(villainHand)
 
   const winners = Hand.winners([heroHand, villainHand])
 
