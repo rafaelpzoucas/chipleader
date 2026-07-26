@@ -117,4 +117,92 @@ export const lessonIntros: Record<string, LessonIntro> = {
     visualType: 'pot_odds',
     tip: "Decore: metade = 25%, flush draw = 36%. Esses dois números já resolvem 80% das decisões de pot odds.",
   },
+
+  // ── Module 3: Bluff & Range ──
+
+  // Unit 1: Fundamentos do Bluff
+  'm3-u1-l1': {
+    explanation: "Bluff é apostar ou aumentar com uma mão fraca para fazer o oponente foldar uma mão melhor. É a arma mais poderosa do poker — sem bluff, o jogo vira mero sorteio de cartas.\n\nChave do bluff: seu oponente precisa ACREDITAR que você tem uma mão forte. A história que você conta (suas ações) precisa ser coerente. Se você representou força pré-flop e o flop vem com cartas altas, suas ações combinam com a história.\n\nBluff funciona melhor contra oponentes que sabem foldar. Nunca blefe contra quem paga tudo — eles não vão foldar, e seu bluff falha.",
+    howToAnswer: "Identifique se a situação pede bluff: oponente que folda + história crível = bom bluff.",
+    visualType: 'terminology',
+    tip: "Bluff funciona contra jogadores que foldam. Contra 'payoff wizards', só value bet.",
+  },
+  'm3-u1-l2': {
+    explanation: "Três condições ideais para bluff:\n\n1. POUCOS OPONENTES — Quanto mais gente na mão, maior a chance de alguém ter acertado. Bluff 1vs1 é muito mais eficaz.\n\n2. BOARD FAVORÁVEL — Boards que não acertam o range do oponente são ótimos para bluff. Ex: A-K-7 rainbow vs range de call do BB.\n\n3. HISTÓRIA CRÍVEL — Sua ação precisa combinar com a mão que você quer representar. Se você deu raise pré-flop e o flop tem Ás, pode representar Ás.\n\nFaltando qualquer uma dessas, o bluff perde muito valor.",
+    howToAnswer: "Avalie: poucos oponentes? Board seco? História crível? Sim pra todas = bluff.",
+    visualType: 'terminology',
+    tip: "Bluff no flop é mais barato (aposta menor). Bluff no river é mais caro, mas faz foldar mãos mais fortes.",
+  },
+  'm3-u1-l3': {
+    explanation: "Você não pode blefar sempre — precisa de equilíbrio. Se blefa demais, oponentes percebem e passam a te pagar. Se blefa de menos, perde valor.\n\nProporção clássica: 2 value bets para 1 bluff (2:1). Isso significa ~33% das suas apostas são bluff.\n\nEm boards secos, você pode aumentar a frequência de bluff. Em boards molhados, reduza.\n\nQuanto maior a aposta, menos vezes você precisa blefar — apostas grandes fazem foldar mais.",
+    howToAnswer: "Calcule: bluffs / (bluffs + values) = frequência ideal. 1:2 = 33%, 1:1 = 50%, 1:3 = 25%.",
+    visualType: 'terminology',
+    tip: "No flop pode blefar mais (~40-50% das apostas). No river, reduza (~25-33%).",
+  },
+  'm3-u1-l4': {
+    explanation: "Value bet = apostar com mão forte esperando ser pago por mãos piores. Bluff = apostar com mão fraca esperando fazer foldar mãos melhores.\n\nDiferença: no value bet, você QUER que paguem. No bluff, você QUER que foldem.\n\nMisturar os dois é essencial. Se só dá value bet quando tem mão forte, é fácil de ler. Se só blefa quando está fraco, também.\n\nO equilíbrio confunde o oponente: ele nunca sabe se sua aposta é valor ou bluff.",
+    howToAnswer: "Value bet = quer ser pago (mão forte). Bluff = quer que foldem (mão fraca).",
+    visualType: 'terminology',
+    tip: "Se você nunca blefa, está perdendo valor. Se blefa demais, perde credibilidade. Equilíbrio é a chave.",
+  },
+
+  // Unit 2: C-Bet e Continuation
+  'm3-u2-l1': {
+    explanation: "C-Bet (Continuation Bet) é quando você deu raise pré-flop e aposta no flop. É chamada 'continuation' porque continua a história de que você tem mão forte.\n\nC-Bet é a aposta mais comum do poker. Funciona porque o oponente erra o flop ~70% das vezes. Se você foi o agressor pré-flop e aposta no flop, o oponente precisa ter acertado algo para pagar.\n\nC-Bet de 1/3 a 1/2 do pote é o padrão. Apostas menores funcionam bem em boards secos.",
+    howToAnswer: "Você deu raise pré-flop e aposta no flop = C-Bet. Padrão: 1/3 a 1/2 do pote.",
+    visualType: 'terminology',
+    tip: "C-Bet de 1/3 do pote em board seco funciona tão bem quanto meia aposta, mas arrisca menos.",
+  },
+  'm3-u2-l2': {
+    explanation: "Board Texture decide se C-Bet é boa ideia:\n\nBOARDS SECOS (ex: K-8-2 rainbow) — ótimos para C-Bet. Quase nenhum draw possível. O oponente só acertou se tiver K ou par médio. C-Bet baixo (1/3) faz foldar a maioria.\n\nBOARDS MOLHADOS (ex: 9-8-6 com dois naipes) — C-Bet arriscado. Muitos draws, oponente pode ter acertado. Prefira check ou C-Bet maior (2/3).\n\nBOARDS MÉDIOS (ex: J-T-3) — depende do oponente. Contra tight, C-Bet funciona. Contra loose, cuidado.",
+    howToAnswer: "Board seco → C-Bet pequeno. Board molhado → check ou C-Bet grande. Board médio → depende do oponente.",
+    visualType: 'terminology',
+    tip: "Quanto mais draws possíveis no board, menos eficaz é o C-Bet. Ajuste o tamanho: seco=1/3, molhado=2/3+.",
+  },
+  'm3-u2-l3': {
+    explanation: "Double Barrel = apostar no flop E no turn. Triple Barrel = apostar no flop, turn E river.\n\nCada barrel conta uma história mais forte. Um C-Bet no flop é comum. Um double barrel no turn diz: 'ainda estou forte'. Um triple barrel no river diz: 'tenho mão muito forte'.\n\nDouble barrel funciona quando o turn card é 'bom para o range do agressor' (carta alta, carta do naipe que você representa).\n\nTriple barrel é poderoso mas caro. Use quando tem pouca dúvida que o oponente vai foldar.",
+    howToAnswer: "Flop = C-Bet. Turn = Double Barrel. River = Triple Barrel. Mais barrels = mais força representa.",
+    visualType: 'terminology',
+    tip: "Turn que completa draw que você pode ter (ex: terceira carta de um naipe) é excelente para double barrel bluff.",
+  },
+  'm3-u2-l4': {
+    explanation: "Check-Raise: você passa (check), oponente aposta, e você aumenta (raise). Representa muita força — como se tivesse 'acordado' com uma mão forte.\n\nFloat: dar call no flok com intenção de roubar no turn. Você paga o C-Bet e, se o oponente passar no turn, você aposta e leva o pote.\n\nCheck-Raise é uma jogada poderosa mas cara (você coloca mais fichas). Use com moderação.\n\nFloat funciona melhor contra oponentes que fazem muito C-Bet mas desistem no turn se não acertaram.",
+    howToAnswer: "Check-Raise = força (espera aposta e aumenta). Float = pagar no flop pra roubar no turn.",
+    visualType: 'terminology',
+    tip: "Check-Raise no flop funciona bem em boards molhados — você representa ter acertado o draw.",
+  },
+
+  // Unit 3: Leitura de Range
+  'm3-u3-l1': {
+    explanation: "Range é o conjunto de todas as mãos que um jogador pode ter em uma situação específica. Você nunca sabe a mão exata do oponente, mas pode estimar o range dele.\n\nExemplo: se alguém deu raise do UTG, o range dele é forte (AA, KK, QQ, AK, AQs). Se deu call no BTN, o range é mais amplo (pares baixos, suited connectors, Ax).\n\nPensar em range (em vez de 'qual mão ele tem?') é o que separa iniciantes de avançados. Você não precisa acertar a mão exata — precisa saber se seu range ganha do range dele.",
+    howToAnswer: "Range = conjunto de mãos possíveis. Cada ação do oponente restringe o range dele.",
+    visualType: 'terminology',
+    tip: "Ação = informação. UTG raise = range forte. BTN call = range amplo. Cada ação narrows o range.",
+  },
+  'm3-u3-l2': {
+    explanation: "A cada ação do oponente, o range dele se reduz (narrows).\n\nPré-flop: range inicial (todas as 1326 combos)\nApós call: range de mãos que pagam\nApós raise: range de mãos que aumentam\nApós C-Bet: range de mãos que apostam no flop\nApós call no flop: range de mãos que acertaram algo\n\nExemplo: UTG abre, você dá call no BTN. Flop A-7-2. UTG aposta. O range dele agora é: AQ+, AK, sets, talvez AA. Você pode foldar mãos médias porque o range dele é muito forte.\n\nNarrowing é o processo de eliminar mãos que o oponente NÃO pode ter com base nas ações.",
+    howToAnswer: "Cada ação elimina mãos que não combinam com ela. Quanto mais ações, mais narrowed o range.",
+    visualType: 'terminology',
+    tip: "Tight players narrow rápido (poucas mãos passam). Loose players narrow devagar (muitas mãos possíveis).",
+  },
+  'm3-u3-l3': {
+    explanation: "A diferença entre 'qual mão ele tem?' e 'qual o range dele?' é sutil mas fundamental.\n\nPensar em mão específica: 'Ele tem AK?' — se você acertar, joga bem. Se errar, joga mal.\n\nPensar em range: 'O range dele é AQ+, sets, e alguns bluffs. Meu par de KK ganha de AQ e perde pra sets. Contra o range todo, tenho ~55% de equidade.'\n\nCom ranges, você toma decisões lucrativas no longo prazo, mesmo errando a mão exata de vez em quando.",
+    howToAnswer: "Range > mão específica. Pense em conjuntos, não em adivinhação.",
+    visualType: 'terminology',
+    tip: "Errar a mão exata não importa se sua decisão contra o range era correta. O lucro vem do longo prazo.",
+  },
+  'm3-u3-l4': {
+    explanation: "Explorar = ajustar seu jogo contra oponentes específicos.\n\nOponente TIGHT (folda muito): blefe mais, value bet menos. Ele folda suas mãos médias, então bluff funciona.\n\nOponente LOOSE (paga muito): value bet mais, blefe menos. Ele paga com mãos fracas, então value bet lucra. Bluff contra ele é desperdício.\n\nOponente AGGRESSIVE (aposta muito): dê check-raise com mãos fortes, deixe ele apostar por você.\n\nOponente PASSIVE (check/call): aposte você mesmo, ele não vai apostar por você.",
+    howToAnswer: "Identifique o tipo: tight/loose, aggressive/passive. Ajuste: bluff vs tight, value vs loose.",
+    visualType: 'terminology',
+    tip: "Contra tight: bluff mais. Contra loose: value mais. Contra agg: check-raise. Contra passive: aposta direta.",
+  },
+
+  // Unit 4: Checkpoint
+  'm3-u4-l1': {
+    explanation: "Checkpoint do Módulo 3 — Bluff & Range. Esta lição testa tudo: fundamentos do bluff, C-Bet, leitura de range.\n\nSe passar com 80% ou mais, você domina os conceitos de jogo psicológico.\n\nLembre-se: bluff é ferramenta, não regra. Use com inteligência.",
+    howToAnswer: "Aplique tudo que aprendeu: frequência de bluff, C-Bet decisions e leitura de range.",
+    visualType: 'terminology',
+    tip: "Revise: 2:1 value:bluff, C-Bet em board seco, range narrow a cada ação.",
+  },
 }

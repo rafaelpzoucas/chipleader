@@ -53,7 +53,7 @@ export interface UserProgress {
   unlockedUnits: string[]
 }
 
-export type SkillTag = 'hand_ranking' | 'position' | 'pot_odds' | 'terminology'
+export type SkillTag = 'hand_ranking' | 'position' | 'pot_odds' | 'terminology' | 'bluff_range'
 
 export interface CardDisplay {
   rank: string
