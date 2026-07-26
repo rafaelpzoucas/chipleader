@@ -97,26 +97,43 @@ function PositionExample() {
 
 function PotOddsExample() {
   return (
-    <div className="bg-background/60 rounded-xl p-4 border border-border space-y-2">
-      <p className="text-xs text-center text-muted-foreground">Exemplo</p>
-      <div className="flex items-center justify-center gap-4 text-sm">
-        <div className="text-center">
-          <p className="text-muted-foreground">Pote</p>
-          <p className="text-lg font-bold text-yellow-400">R$ 100</p>
+    <div className="bg-background/60 rounded-xl p-4 border border-border space-y-3">
+      <p className="text-xs text-center text-muted-foreground">Exemplo prático</p>
+
+      <div className="flex items-center justify-center gap-3">
+        <div className="text-center bg-muted rounded-lg p-3 flex-1">
+          <p className="text-xs text-muted-foreground mb-1">Pote</p>
+          <p className="text-xl font-bold text-yellow-400">R$ 20</p>
         </div>
-        <span className="text-2xl text-muted-foreground">+</span>
-        <div className="text-center">
-          <p className="text-muted-foreground">Aposta</p>
-          <p className="text-lg font-bold text-red-400">R$ 50</p>
-        </div>
-        <span className="text-2xl text-muted-foreground">=</span>
-        <div className="text-center">
-          <p className="text-muted-foreground">Total</p>
-          <p className="text-lg font-bold">R$ 200</p>
+        <span className="text-red-400 text-2xl font-bold">+</span>
+        <div className="text-center bg-muted rounded-lg p-3 flex-1">
+          <p className="text-xs text-muted-foreground mb-1">Aposta</p>
+          <p className="text-xl font-bold text-red-400">R$ 10</p>
         </div>
       </div>
-      <div className="text-center text-xs text-muted-foreground bg-muted rounded-lg p-2">
-        Pot Odds = 50 ÷ 200 = <strong className="text-foreground">25%</strong>
+
+      <div className="text-center text-sm bg-muted rounded-lg p-2 leading-relaxed">
+        Pot odds = 10 ÷ (20+10+10) = 10 ÷ 40 = <strong className="text-primary">25%</strong>
+      </div>
+
+      <div className="bg-background rounded-xl p-3 border border-border/50 space-y-2">
+        <p className="text-xs font-medium text-center">Vale a pena pagar?</p>
+        <div className="flex items-center justify-center gap-4 text-xs">
+          <div className="text-center">
+            <p className="text-muted-foreground">Preço (pot odds)</p>
+            <p className="text-lg font-bold text-red-400">25%</p>
+          </div>
+          <span className="text-muted-foreground text-lg">×</span>
+          <div className="text-center">
+            <p className="text-muted-foreground">Valor (equidade)</p>
+            <p className="text-lg font-bold text-green-400">36%</p>
+          </div>
+          <span className="text-muted-foreground text-lg">→</span>
+          <div className="text-center">
+            <p className="text-green-400 font-bold">CALL</p>
+            <p className="text-muted-foreground">(36% &gt; 25%)</p>
+          </div>
+        </div>
       </div>
     </div>
   )
