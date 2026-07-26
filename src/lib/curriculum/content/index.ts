@@ -1,16 +1,20 @@
 import type { Module, Unit, Lesson } from '../types'
 import { module1, module1Units, module1Lessons } from './module-1-fundamentos'
+import { module2, module2Units, module2Lessons } from './module-2-pot-odds'
 
 export const allModules: Module[] = [
   module1,
+  module2,
 ]
 
 export const allUnits: Unit[] = [
   ...module1Units,
+  ...module2Units,
 ]
 
 export const allLessons: Lesson[] = [
   ...module1Lessons,
+  ...module2Lessons,
 ]
 
 const moduleMap: Record<string, Module> = {}

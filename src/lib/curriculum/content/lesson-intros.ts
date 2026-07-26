@@ -58,63 +58,63 @@ export const lessonIntros: Record<string, LessonIntro> = {
     tip: "Expanda seu range de UTG até BTN. Contraia de BTN até SB.",
   },
 
-  // ── Unit 3: Pot Odds ──
+  // ── Unit 3: Terminology (renumbered) ──
   'm1-u3-l1': {
-    explanation: "Pot Odds responde a uma pergunta simples: 'Vale a pena pagar pra continuar?'\n\nA conta: Pot Odds = valor do call ÷ pote total depois de pagar.\n\nExemplo: pote R$ 20. Vilão aposta R$ 10 (metade do pote).\nVocê paga R$ 10. O pote total fica R$ 40.\nPot odds = 10 ÷ 40 = 25%.\n\nSó isso! Na próxima lição vamos ver outros valores.",
-    howToAnswer: "Divida o valor do call pelo total do pote após seu call. Resultado em %.",
-    visualType: 'pot_odds',
-    tip: "Decore: metade do pote ≈ 25%. Esse é o mais comum.",
-  },
-  'm1-u3-l2': {
-    explanation: "Vamos aprender 4 padrões que você vai usar sempre no poker.\n\nCada aposta é uma fração do pote, e cada fração tem um pot odds fixo:\n\n- Aposta de 1/3 do pote (ex: pote 30, aposta 10) → pot odds ≈ 20%\n- Aposta de 1/2 do pote (ex: pote 20, aposta 10) → pot odds ≈ 25%\n- Aposta de 2/3 do pote (ex: pote 30, aposta 20) → pot odds ≈ 30%\n- Aposta do pote todo (ex: pote 20, aposta 20) → pot odds ≈ 33%\n\nVocê não precisa calcular na hora — é só reconhecer a fração e lembrar do %.",
-    howToAnswer: "Veja a aposta como fração do pote. Lembre qual % corresponde a cada fração.",
-    visualType: 'pot_odds',
-    tip: "Decore: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%. Esses 4 são os que mais aparecem.",
-  },
-  'm1-u3-l3': {
-    explanation: "Equidade é sua chance de vencer (%). Pot odds é quanto custa continuar.\n\nRegra: se equidade > pot odds → pode pagar. Se menor → melhor desistir.\n\nExemplo: pote 30, aposta 10 (1/3 do pote = 20% pot odds). Você tem 40% de chance de vencer. 40% > 20% → vale pagar.\n\nPense como uma balança: de um lado o que você paga, do outro sua chance de ganhar.",
-    howToAnswer: "Compare: equidade > pot odds → Call. equidade < pot odds → Fold.",
-    visualType: 'pot_odds',
-    tip: "Quanto maior sua equidade em relação ao pot odds, melhor o negócio.",
-  },
-  'm1-u3-l4': {
-    explanation: "Hora de juntar tudo. O passo a passo mental:\n\n1. Olhe a aposta: é 1/3, 1/2, 2/3 ou o pote todo?\n2. Lembre o pot odds: 20%, 25%, 30% ou 33%\n3. Compare com sua chance de vencer (equidade)\n4. Se equidade maior → Call. Menor → Fold.\n\nNa mesa você pensa rápido: 'apostou metade = 25%, tenho 40% de vencer, 40 > 25, call fácil.'",
-    howToAnswer: "1) fração → 2) % pot odds → 3) compara com equidade → 4) decide Call ou Fold.",
-    visualType: 'pot_odds',
-    tip: "É como uma receita: seguir os passos na ordem. Com prática, você faz em 2 segundos.",
-  },
-
-  // ── Unit 4: Terminology ──
-  'm1-u4-l1': {
     explanation: "Ações básicas do poker:\n\nFold — desistir da mão. Perde o que já apostou, não perde mais.\nCall — pagar o valor da aposta para continuar.\nRaise — aumentar o valor da aposta.\nCheck — passar a vez (só quando não há aposta a pagar).\n\nEstas quatro ações são a base de todas as decisões no poker.",
     howToAnswer: "Leia o termo e escolha a definição correta. Fold = desistir, Call = pagar, Raise = aumentar, Check = passar.",
     visualType: 'terminology',
     tip: "Fold, Call, Raise, Check — domine esses 4 e você entende 90% das ações no poker.",
   },
-  'm1-u4-l2': {
+  'm1-u3-l2': {
     explanation: "Termos avançados de apostas:\n\nC-Bet (Continuation Bet) — aposta no flop de quem deu raise pré-flop.\n3-Bet — terceiro aumento: alguém abre (1ª), alguém dá raise (2ª), você aumenta de novo (3ª).\nBlind — apostas obrigatórias (Small Blind e Big Blind) antes de ver as cartas.\nShowdown — revelação das cartas dos jogadores restantes para definir o vencedor.",
     howToAnswer: "C-bet e 3-bet são os mais importantes. C-bet = continuar a aposta. 3-bet = re-raise.",
     visualType: 'terminology',
     tip: "C-bet é eficaz quando você foi o agressor pré-flop. 3-bet indica força — use com AA, KK, AK.",
   },
-  'm1-u4-l3': {
+  'm1-u3-l3': {
     explanation: "Termos de probabilidade:\n\nOuts — cartas no baralho que melhoram sua mão. Ex: 4 cartas de copas = 9 outs.\n\nEquity — chance percentual de vencer a mão.\n\nPot Odds — relação entre valor do call e tamanho do pote.\n\nImplied Odds — ganhos futuros esperados se acertar o draw.",
     howToAnswer: "Outs = cartas que ajudam. Equity = chance de vencer. Pot Odds = valor do call vs pote.",
     visualType: 'terminology',
     tip: "Regra do 4 e 2: no flop, outs × 4 = equity. No turn, outs × 2 = equity.",
   },
-  'm1-u4-l4': {
+  'm1-u3-l4': {
     explanation: "Estratégia:\n\nBluff — apostar com mão fraca para fazer o oponente foldar uma mão melhor.\nValue Bet — apostar com mão forte para ser pago por mãos piores.\nRange — conjunto de mãos possíveis que o oponente pode ter.\nPosition — ordem de ação. Agir por último é vantagem por ter mais informação.",
     howToAnswer: "Bluff = enganar. Value Bet = cobrar com mão forte. Range = conjunto de mãos possíveis.",
     visualType: 'terminology',
     tip: "Misture bluff e value bet. Só bluff = previsível. Só value = fácil de ler.",
   },
 
-  // ── Unit 5: Checkpoint ──
-  'm1-u5-l1': {
-    explanation: "Checkpoint do Módulo 1. Esta lição mistura tudo que você aprendeu: ranking de mãos, posições, pot odds e terminologia.\n\nSe passar com 80% ou mais, desbloqueia o próximo módulo.\n\nAs perguntas alternam entre as quatro skills. Leia cada uma com calma e aplique o que praticou.",
+  // ── Unit 4: Checkpoint (renumbered) ──
+  'm1-u4-l1': {
+    explanation: "Checkpoint do Módulo 1. Esta lição testa tudo que você aprendeu: ranking de mãos, posições e terminologia.\n\nSe passar com 80% ou mais, desbloqueia o Módulo 2 — Pot Odds.\n\nLeia cada pergunta com calma.",
     howToAnswer: "Identifique qual skill cada pergunta testa e responda. Você já praticou tudo.",
     visualType: 'hand_ranking',
     tip: "Se uma pergunta for difícil, responda e siga em frente. O que importa é o resultado final.",
+  },
+
+  // ── Module 2: Pot Odds ──
+  'm2-u1-l1': {
+    explanation: "Pot Odds responde a uma pergunta simples: 'Vale a pena pagar pra continuar?'\n\nA conta: Pot Odds = valor do call ÷ pote total depois de pagar.\n\nExemplo: pote R$ 20. Vilão aposta R$ 10 (metade do pote).\nVocê paga R$ 10. O pote total fica R$ 40.\nPot odds = 10 ÷ 40 = 25%.\n\nSó isso! Na próxima lição vamos ver outros valores.",
+    howToAnswer: "Divida o valor do call pelo total do pote após seu call. Resultado em %.",
+    visualType: 'pot_odds',
+    tip: "Decore: metade do pote ≈ 25%. Esse é o mais comum.",
+  },
+  'm2-u1-l2': {
+    explanation: "Vamos aprender 4 padrões que você vai usar sempre no poker.\n\nCada aposta é uma fração do pote, e cada fração tem um pot odds fixo:\n\n- Aposta de 1/3 do pote (ex: pote 30, aposta 10) → pot odds ≈ 20%\n- Aposta de 1/2 do pote (ex: pote 20, aposta 10) → pot odds ≈ 25%\n- Aposta de 2/3 do pote (ex: pote 30, aposta 20) → pot odds ≈ 30%\n- Aposta do pote todo (ex: pote 20, aposta 20) → pot odds ≈ 33%\n\nVocê não precisa calcular na hora — é só reconhecer a fração e lembrar do %.",
+    howToAnswer: "Veja a aposta como fração do pote. Lembre qual % corresponde a cada fração.",
+    visualType: 'pot_odds',
+    tip: "Decore: 1/3→20%, 1/2→25%, 2/3→~30%, pote cheio→33%. Esses 4 são os que mais aparecem.",
+  },
+  'm2-u1-l3': {
+    explanation: "Equidade é sua chance de vencer (%). Pot odds é quanto custa continuar.\n\nRegra: se equidade > pot odds → pode pagar. Se menor → melhor desistir.\n\nExemplo: pote 30, aposta 10 (1/3 do pote = 20% pot odds). Você tem 40% de chance de vencer. 40% > 20% → vale pagar.\n\nPense como uma balança: de um lado o que você paga, do outro sua chance de ganhar.",
+    howToAnswer: "Compare: equidade > pot odds → Call. equidade < pot odds → Fold.",
+    visualType: 'pot_odds',
+    tip: "Quanto maior sua equidade em relação ao pot odds, melhor o negócio.",
+  },
+  'm2-u1-l4': {
+    explanation: "Hora de juntar tudo. O passo a passo mental:\n\n1. Olhe a aposta: é 1/3, 1/2, 2/3 ou o pote todo?\n2. Lembre o pot odds: 20%, 25%, 30% ou 33%\n3. Compare com sua chance de vencer (equidade)\n4. Se equidade maior → Call. Menor → Fold.\n\nNa mesa você pensa rápido: 'apostou metade = 25%, tenho 40% de vencer, 40 > 25, call fácil.'",
+    howToAnswer: "1) fração → 2) % pot odds → 3) compara com equidade → 4) decide Call ou Fold.",
+    visualType: 'pot_odds',
+    tip: "É como uma receita: seguir os passos na ordem. Com prática, você faz em 2 segundos.",
   },
 }
