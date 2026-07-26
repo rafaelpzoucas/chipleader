@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Check, X } from 'lucide-react'
+import { Check, X, Swords, User, Bot } from 'lucide-react'
 import type { Exercise, CardDisplay } from '@/lib/curriculum/types'
 
 const suitSymbol: Record<string, string> = {
@@ -21,9 +21,10 @@ const rankDisplay: Record<string, string> = {
   '5': '5', '4': '4', '3': '3', '2': '2',
 }
 
-function CardView({ card }: { card: CardDisplay }) {
+function CardView({ card, used, size = 'md' }: { card: CardDisplay; used?: boolean; size?: 'sm' | 'md' }) {
+  const dim = size === 'sm' ? 'w-8 h-11' : 'w-10 h-14'
   return (
-    <div className={`inline-flex items-center justify-center w-10 h-14 rounded-lg border border-border bg-card ${suitColor[card.suit]}`}>
+    <div className={`inline-flex items-center justify-center ${dim} rounded-lg border ${used ? 'border-yellow-400 ring-1 ring-yellow-400/50 bg-yellow-400/10' : 'border-border bg-card'} ${suitColor[card.suit]} transition-all`}>
       <div className="text-center leading-tight">
         <div className="text-sm font-bold">{rankDisplay[card.rank] ?? card.rank}</div>
         <div className="text-xs">{suitSymbol[card.suit]}</div>
@@ -32,34 +33,68 @@ function CardView({ card }: { card: CardDisplay }) {
   )
 }
 
-function HandRow({ cards, label }: { cards: CardDisplay[]; label?: string }) {
+function BoardView({ cards, used }: { cards: CardDisplay[]; used: boolean[] }) {
   return (
-    <div className="space-y-1">
-      {label && <p className="text-xs text-muted-foreground">{label}</p>}
-      <div className="flex items-center gap-1">
-        {cards.map((card, i) => (
-          <CardView key={i} card={card} />
-        ))}
-      </div>
+    <div className="flex items-center justify-center gap-1">
+      {cards.map((card, i) => (
+        <CardView key={i} card={card} used={used?.[i]} size="md" />
+      ))}
     </div>
   )
 }
 
-function HandRankingContent({ data }: { data: Record<string, unknown> }) {
-  const hand1 = data.hand1 as CardDisplay[] | undefined
-  const hand2 = data.hand2 as CardDisplay[] | undefined
-  const desc1 = data.hand1Desc as string | undefined
-  const desc2 = data.hand2Desc as string | undefined
+function HoleCards({ cards, used, label }: { cards: CardDisplay[]; used: boolean[]; label: string }) {
+  return (
+    <div className="flex items-center gap-1">
+      {cards.map((card, i) => (
+        <CardView key={i} card={card} used={used?.[i]} size="md" />
+      ))}
+    </div>
+  )
+}
+
+function TableLayout({ data }: { data: Record<string, unknown> }) {
+  const board = data.board as CardDisplay[]
+  const heroCards = data.heroCards as CardDisplay[]
+  const villainCards = data.villainCards as CardDisplay[]
+  const heroDesc = data.heroDesc as string
+  const villainDesc = data.villainDesc as string
+  const heroHoleUsed = data.heroHoleUsed as boolean[]
+  const villainHoleUsed = data.villainHoleUsed as boolean[]
+  const heroBoardUsed = data.heroBoardUsed as boolean[]
+  const villainBoardUsed = data.villainBoardUsed as boolean[]
+
+  if (!board || !heroCards || !villainCards) return null
 
   return (
     <div className="bg-muted rounded-xl p-5 space-y-4">
-      <div>
-        <HandRow cards={hand1 ?? []} label="Mão 1" />
-        {desc1 && <p className="text-xs text-muted-foreground mt-1">{desc1}</p>}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Bot className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">Oponente</span>
+        </div>
+        <HoleCards cards={villainCards} used={villainHoleUsed} label="Oponente" />
       </div>
-      <div>
-        <HandRow cards={hand2 ?? []} label="Mão 2" />
-        {desc2 && <p className="text-xs text-muted-foreground mt-1">{desc2}</p>}
+
+      <div className="text-center">
+        {villainDesc && <p className="text-xs text-muted-foreground mb-1">— {villainDesc} —</p>}
+      </div>
+
+      <div className="bg-background/60 rounded-xl p-4 border border-border">
+        <p className="text-center text-xs text-muted-foreground mb-2">Board</p>
+        <BoardView cards={board} used={heroBoardUsed} />
+      </div>
+
+      <div className="text-center">
+        {heroDesc && <p className="text-xs text-muted-foreground mb-1">— {heroDesc} —</p>}
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <User className="w-4 h-4 text-primary" />
+          <span className="text-xs text-muted-foreground">Jogador</span>
+        </div>
+        <HoleCards cards={heroCards} used={heroHoleUsed} label="Jogador" />
       </div>
     </div>
   )
@@ -85,33 +120,25 @@ export function ExerciseCard({
     setAnswered(true)
   }
 
-  const correct = selected === exercise.correctAnswer
-  const progressValue = total > 0 ? (index / total) * 100 : 0
+  const isCorrect = selected === exercise.correctAnswer
+  const progressValue = total > 0 ? Math.min(100, (index / total) * 100) : 0
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">
-          Exercício {index + 1} de {total}
+          Exercício {index + 1}{Number.isFinite(total) ? ` de ${total}` : ''}
         </span>
         {answered && (
-          <Badge variant="outline" className={correct ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}>
-            {correct ? 'Correto!' : 'Errado!'}
+          <Badge variant="outline" className={isCorrect ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}>
+            {isCorrect ? 'Correto!' : 'Errado!'}
           </Badge>
         )}
       </div>
 
       <Progress value={progressValue} className="h-1" />
 
-      {exercise.skillTag === 'hand_ranking' && (
-        <HandRankingContent data={exercise.data} />
-      )}
-
-      {exercise.skillTag === 'position' && (
-        <div className="bg-muted rounded-xl p-4 flex items-center gap-2 text-sm">
-          {exercise.prompt}
-        </div>
-      )}
+      {exercise.skillTag === 'hand_ranking' && <TableLayout data={exercise.data} />}
 
       <p className="font-medium">{exercise.prompt}</p>
 
@@ -155,11 +182,11 @@ export function ExerciseCard({
 
       {answered && (
         <div className="space-y-3">
-          <div className={`p-4 rounded-xl text-sm leading-relaxed ${correct ? 'bg-green-500/10 text-green-200' : 'bg-red-500/10 text-red-200'}`}>
+          <div className={`p-4 rounded-xl text-sm leading-relaxed ${isCorrect ? 'bg-green-500/10 text-green-200' : 'bg-red-500/10 text-red-200'}`}>
             {exercise.explanation}
           </div>
-          <Button className="w-full" onClick={() => onAnswer(correct)}>
-            {index + 1 >= total ? 'Ver resultado' : 'Próximo'}
+          <Button className="w-full" onClick={() => onAnswer(isCorrect)}>
+            {Number.isFinite(total) && index + 1 >= total ? 'Ver resultado' : 'Próximo'}
           </Button>
         </div>
       )}

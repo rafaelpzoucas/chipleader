@@ -17,7 +17,7 @@ export default function DashboardLayout({
       </section>
       <div className="fixed bottom-6 right-6">
         <Link
-          href="/learn"
+          href="/trilha"
           className="flex items-center gap-2 bg-primary text-primary-foreground rounded-full px-5 py-3 shadow-lg hover:opacity-90 transition-opacity"
         >
           <BookOpen className="w-5 h-5" />

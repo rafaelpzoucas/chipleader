@@ -24,56 +24,66 @@ function shuffle<T>(arr: T[]): T[] {
   return copy
 }
 
-function dealHands(): [string[], string[]] {
-  const deck = shuffle(createDeck())
-  return [deck.slice(0, 5), deck.slice(5, 10)]
-}
-
 function toCardDisplay(cardStr: string): CardDisplay {
   return { rank: cardStr[0], suit: cardStr[1] as CardDisplay['suit'] }
 }
 
-function handRankName(hand: string[]): string {
-  const solved = Hand.solve(hand)
-  return solved.name
-}
-
-function handDescr(hand: string[]): string {
-  const solved = Hand.solve(hand)
-  return solved.descr
+// Map pokersolver internal value to display rank
+const rankToDisplay: Record<string, string> = {
+  'A': 'A', 'K': 'K', 'Q': 'Q', 'J': 'J', 'T': '10',
+  '9': '9', '8': '8', '7': '7', '6': '6',
+  '5': '5', '4': '4', '3': '3', '2': '2',
 }
 
 let counter = 0
 
 export function generate(): Exercise {
   counter++
-  const [h1, h2] = dealHands()
-  const solved1 = Hand.solve(h1)
-  const solved2 = Hand.solve(h2)
-  const winners = Hand.winners([solved1, solved2])
+  const deck = shuffle(createDeck())
 
-  const descr1 = solved1.descr
-  const descr2 = solved2.descr
+  const hero = deck.slice(0, 2)
+  const villain = deck.slice(2, 4)
+  const board = deck.slice(4, 9)
 
-  const h1Display = h1.map(toCardDisplay)
-  const h2Display = h2.map(toCardDisplay)
+  const heroAll = [...hero, ...board]
+  const villainAll = [...villain, ...board]
+
+  const heroHand = Hand.solve(heroAll)
+  const villainHand = Hand.solve(villainAll)
+
+  // Get cards forming each player's best 5-card hand (filter internal helper cards)
+  const heroBestRaw = heroHand.cardPool.filter((c: any) => c.suit).map((c: any) => `${c.value}${c.suit}`)
+  const villainBestRaw = villainHand.cardPool.filter((c: any) => c.suit).map((c: any) => `${c.value}${c.suit}`)
+
+  // Which hole cards are used in the best hand
+  const heroHoleUsed = hero.map(c => heroBestRaw.includes(c))
+  const villainHoleUsed = villain.map(c => villainBestRaw.includes(c))
+
+  // Which board cards are used in the best hand
+  const heroBoardUsed = board.map(c => heroBestRaw.includes(c))
+  const villainBoardUsed = board.map(c => villainBestRaw.includes(c))
+
+  const heroDesc = heroHand.descr
+  const villainDesc = villainHand.descr
+
+  const winners = Hand.winners([heroHand, villainHand])
+
+  const heroCards = hero.map(toCardDisplay)
+  const villainCards = villain.map(toCardDisplay)
+  const boardCards = board.map(toCardDisplay)
 
   let correctAnswer: number
   let explanation: string
-  let options: string[]
 
   if (winners.length === 2) {
     correctAnswer = 2
-    options = ["Mão 1 vence", "Mão 2 vence", "Empate"]
-    explanation = `Empate! Ambas as mãos têm a mesma classificação: ${descr1}. Nenhuma das mãos é melhor que a outra.`
-  } else if (winners[0] === solved1) {
+    explanation = `Empate! Ambas as mãos têm a mesma classificação: ${heroDesc}.`
+  } else if (winners[0] === heroHand) {
     correctAnswer = 0
-    options = ["Mão 1 vence", "Mão 2 vence", "Empate"]
-    explanation = `Mão 1 vence! ${descr1} é mais forte que ${descr2}.`
+    explanation = `Mão do jogador vence! ${heroDesc} é mais forte que ${villainDesc}.`
   } else {
     correctAnswer = 1
-    options = ["Mão 1 vence", "Mão 2 vence", "Empate"]
-    explanation = `Mão 2 vence! ${descr2} é mais forte que ${descr1}.`
+    explanation = `Mão do oponente vence! ${villainDesc} é mais forte que ${heroDesc}.`
   }
 
   return {
@@ -82,12 +92,18 @@ export function generate(): Exercise {
     skillTag: SKILL_TAG,
     prompt: "Qual mão vence?",
     data: {
-      hand1: h1Display,
-      hand2: h2Display,
-      hand1Desc: descr1,
-      hand2Desc: descr2,
+      board: boardCards,
+      heroCards,
+      villainCards,
+      heroDesc,
+      villainDesc,
+      heroHoleUsed,
+      villainHoleUsed,
+      heroBoardUsed,
+      villainBoardUsed,
+      winner: correctAnswer,
     },
-    options,
+    options: ["Mão do jogador vence", "Mão do oponente vence", "Empate"],
     correctAnswer,
     explanation,
   }

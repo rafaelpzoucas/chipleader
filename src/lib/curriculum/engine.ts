@@ -22,6 +22,9 @@ export function completeLesson(
     newProgress.completedLessons = [...progress.completedLessons, lessonId]
   }
 
+  newProgress.lastActiveDate = now
+  newProgress.streak = progress.streak + 1
+
   newProgress.skillStrength = updateSkillStrength(progress.skillStrength, skillTags, correct === total, now)
 
   newProgress.unlockedUnits = computeUnlockedUnits(newProgress.completedLessons)
@@ -79,7 +82,7 @@ export function updateStreak(progress: UserProgress): UserProgress {
   const today = now.toISOString().slice(0, 10)
 
   if (!progress.lastActiveDate) {
-    return { ...progress, streak: 1, lastActiveDate: today }
+    return progress
   }
 
   const lastDate = progress.lastActiveDate.slice(0, 10)
